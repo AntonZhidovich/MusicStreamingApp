@@ -11,5 +11,6 @@ namespace Identity.BusinessLogic.Models
         public string Password { get; set; }
         [JsonIgnore]
         public DateTime CreationDate { get; set; } = DateTime.UtcNow;
+        public string Region { get; set; }
     }
 }

@@ -20,11 +20,23 @@ namespace Identity.BusinessLogic.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<GetUserDto>> GetAllAsync()
+        public async Task<UsersPageResponse> GetAllAsync(GetAllUsersRequest request)
         {
-            var users = await _userManager.Users.ToListAsync();
-            var usersDto = _mapper.Map<IEnumerable<GetUserDto>>(users);
-            return usersDto;
+            var users = await _userManager.Users
+                .Skip(request.PageSize * (request.CurrentPage - 1))
+                .Take(request.PageSize)
+                .OrderByDescending(u => u.UserName)
+                .ToListAsync();
+            var usersCount = _userManager.Users.Count();
+            var pagesCount = (int)Math.Ceiling((double)usersCount / request.PageSize);
+            var usersPage = new UsersPageResponse
+            {
+                PagesCount = pagesCount,
+                CurrentPage = request.CurrentPage,
+                PageSize = request.PageSize,
+                users = _mapper.Map<IEnumerable<GetUserDto>>(users)
+            };
+            return usersPage;
         }
 
         public async Task<GetUserDto> GetByEmailAsync(GetUserByEmailRequest request)
@@ -66,7 +78,6 @@ namespace Identity.BusinessLogic.Services
             var user = await GetDomainUserByEmailAsync(request.Email);
             await _userManager.AddToRoleAsync(user, request.RoleName);
         }
-
 
         public async Task RemoveFromRoleAsync(RemoveUserFromRoleAsync request)
         {

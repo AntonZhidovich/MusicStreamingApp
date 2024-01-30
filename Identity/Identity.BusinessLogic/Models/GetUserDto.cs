@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace Identity.BusinessLogic.Models
+﻿namespace Identity.BusinessLogic.Models
 {
     public class GetUserDto
     {
@@ -9,5 +7,6 @@ namespace Identity.BusinessLogic.Models
         public string Email { get; set; }
         public string UserName { get; set; }
         public DateTime CreationDate { get; set; }
+        public string Region { get; set; }
     }
 }

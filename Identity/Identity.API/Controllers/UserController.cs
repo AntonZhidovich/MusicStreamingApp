@@ -16,10 +16,10 @@ namespace Identity.API.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<GetUserDto>))]
-        public async Task<IActionResult> GetAllUsersAsync()
+        [ProducesResponseType(200, Type = typeof(UsersPageResponse))]
+        public async Task<IActionResult> GetAllUsersAsync([FromQuery] GetAllUsersRequest request)
         {
-            return Ok(await _userService.GetAllAsync());
+            return Ok(await _userService.GetAllAsync(request));
         }
 
         [HttpGet("{email}")]

@@ -19,6 +19,7 @@ namespace Identity.DataAccess.Data
                     NormalizedEmail = "DMITRY.IVANOV@GMAIL.COM",
                     PasswordHash = "AQAAAAIAAYagAAAAECu5BUlDI0sDkxmupwojpUNvz7hUGDPoO0pUl2XMg/aI6SBzW79FNA/sT8uaZtukug==",
                     CreationDate = DateTime.UtcNow,
+                    Region = "Italy"
                 });
 
             builder.Entity<IdentityRole>().HasData(

@@ -6,7 +6,7 @@ namespace Identity.BusinessLogic.Services
     {
         Task<bool> CheckPasswordAsync(CheckPasswordRequest request);
         Task<GetUserDto> GetByEmailAsync(GetUserByEmailRequest request);
-        Task<IEnumerable<GetUserDto>> GetAllAsync();
+        Task<UsersPageResponse> GetAllAsync(GetAllUsersRequest request);
         Task RegisterAsync(RegisterUserRequest request);
         Task DeleteAsync(DeleteUserRequest request);
         Task<IEnumerable<string>> GetRolesAsync(GetUserRolesRequest request);
