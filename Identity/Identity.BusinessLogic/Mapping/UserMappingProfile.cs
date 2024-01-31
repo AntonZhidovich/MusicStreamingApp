@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Identity.BusinessLogic.Models;
+using Identity.BusinessLogic.Models.TokenService;
+using Identity.BusinessLogic.Models.UserService;
 using Identity.DataAccess.Entities;
 
 namespace Identity.BusinessLogic.Mapping

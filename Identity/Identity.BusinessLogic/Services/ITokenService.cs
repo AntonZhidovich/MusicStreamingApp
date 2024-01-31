@@ -1,4 +1,4 @@
-﻿using Identity.BusinessLogic.Models;
+﻿using Identity.BusinessLogic.Models.TokenService;
 
 namespace Identity.BusinessLogic.Services
 {

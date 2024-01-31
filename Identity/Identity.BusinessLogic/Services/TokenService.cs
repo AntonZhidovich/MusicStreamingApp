@@ -1,4 +1,4 @@
-﻿using Identity.BusinessLogic.Models;
+﻿using Identity.BusinessLogic.Models.TokenService;
 using Identity.BusinessLogic.Options;
 using Identity.DataAccess.Entities;
 using Microsoft.Extensions.Options;

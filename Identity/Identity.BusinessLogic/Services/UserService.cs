@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Identity.BusinessLogic.Exceptions;
 using Identity.BusinessLogic.Models;
+using Identity.BusinessLogic.Models.UserService;
 using Identity.DataAccess.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

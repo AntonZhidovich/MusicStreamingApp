@@ -1,4 +1,5 @@
 ﻿using Identity.BusinessLogic.Models;
+using Identity.BusinessLogic.Models.UserService;
 using Identity.BusinessLogic.Services;
 using Microsoft.AspNetCore.Mvc;
 

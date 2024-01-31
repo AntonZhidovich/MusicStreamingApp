@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
-using Identity.BusinessLogic.Models;
+using Identity.BusinessLogic.Models.TokenService;
+using Identity.BusinessLogic.Models.UserService;
 
 namespace Identity.BusinessLogic.Services
 {

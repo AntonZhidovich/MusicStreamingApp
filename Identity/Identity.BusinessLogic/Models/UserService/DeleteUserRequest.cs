@@ -1,4 +1,4 @@
-﻿namespace Identity.BusinessLogic.Models
+﻿namespace Identity.BusinessLogic.Models.UserService
 {
     public class DeleteUserRequest
     {
