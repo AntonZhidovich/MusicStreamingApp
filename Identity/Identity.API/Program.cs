@@ -1,11 +1,10 @@
 using Identity.BusinessLogic.Mapping;
+using Identity.BusinessLogic.Options;
 using Identity.BusinessLogic.Services;
 using Identity.DataAccess.Data;
 using Identity.DataAccess.Entities;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
 
 namespace Identity.API
 {
@@ -23,6 +22,9 @@ namespace Identity.API
                 .AddEntityFrameworkStores<UserDBContext>();
             builder.Services.AddAutoMapper(typeof(UserMappingProfile));
             builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<ISignInService, SignInService>();
+            builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("JwtOptions"));
+            builder.Services.AddScoped<ITokenService, TokenService>();
 
             var app = builder.Build();
             if (app.Environment.IsDevelopment())

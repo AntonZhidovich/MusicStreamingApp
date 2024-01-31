@@ -23,7 +23,7 @@ namespace Identity.API.Controllers
         }
 
         [HttpGet("{email}")]
-        [ProducesResponseType(200, Type = typeof(GetUserDto))]
+        [ProducesResponseType(200, Type = typeof(UserDto))]
         public async Task<IActionResult> GetUserByEmailAsync([FromRoute] string email)
         {
             var user = await _userService.GetByEmailAsync(new GetUserByEmailRequest { Email = email });
@@ -35,7 +35,7 @@ namespace Identity.API.Controllers
         public async Task<IActionResult> RegisterAsync([FromBody] RegisterUserRequest request)
         {
             await _userService.RegisterAsync(request);
-            return Ok(request);
+            return Ok();
         }
 
         [HttpDelete("{email}")]

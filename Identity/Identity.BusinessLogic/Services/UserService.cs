@@ -34,15 +34,15 @@ namespace Identity.BusinessLogic.Services
                 PagesCount = pagesCount,
                 CurrentPage = request.CurrentPage,
                 PageSize = request.PageSize,
-                users = _mapper.Map<IEnumerable<GetUserDto>>(users)
+                users = _mapper.Map<IEnumerable<UserDto>>(users)
             };
             return usersPage;
         }
 
-        public async Task<GetUserDto> GetByEmailAsync(GetUserByEmailRequest request)
+        public async Task<UserDto> GetByEmailAsync(GetUserByEmailRequest request)
         {
             var user = await GetDomainUserByEmailAsync(request.Email);
-            return _mapper.Map<GetUserDto>(user);
+            return _mapper.Map<UserDto>(user);
         }
 
         public async Task RegisterAsync(RegisterUserRequest request)

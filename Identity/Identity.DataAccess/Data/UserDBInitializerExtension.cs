@@ -15,9 +15,13 @@ namespace Identity.DataAccess.Data
                     FirstName = "Dmitry",
                     LastName = "Ivanov",
                     UserName = "dmitry.ivanov",
+                    NormalizedUserName = "DMITRY.IVANOV",
                     Email = "dmitry.ivanov@gmail.com",
                     NormalizedEmail = "DMITRY.IVANOV@GMAIL.COM",
-                    PasswordHash = "AQAAAAIAAYagAAAAECu5BUlDI0sDkxmupwojpUNvz7hUGDPoO0pUl2XMg/aI6SBzW79FNA/sT8uaZtukug==",
+                    //Password_1234
+                    PasswordHash = "AQAAAAIAAYagAAAAEGnb9gCu0ZszBQAsOO8EfkSggUCxR0fk9mQJdz5Imzxtn6HipugF+ELehdTdFZ3wHg==",
+                    SecurityStamp = "LHOBZXJKHQASYZODSS7FPA2UQOKTAHDR",
+                    ConcurrencyStamp = "7af8d93c-9b9b-4e09-bc1d-9ef180915552",
                     CreationDate = DateTime.UtcNow,
                     Region = "Italy"
                 });
