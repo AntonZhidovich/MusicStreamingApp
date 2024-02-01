@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using System.Text.Json;
 
 namespace Identity.API.ExceptionHandlers
 {
@@ -13,13 +14,32 @@ namespace Identity.API.ExceptionHandlers
             var problemDetails = new ProblemDetails
             {
                 Status = statusCode,
-                Title = exception.Message
+                Title = exception.Message,
+                Detail = GetProblemDetails(exception)
             };
 
             httpContext.Response.StatusCode = statusCode;
             await httpContext.Response.WriteAsJsonAsync(problemDetails);
 
             return true;
+        }
+
+        private string GetProblemDetails(Exception e)
+        {
+            switch (e)
+            {
+                case InvalidAuthorizationException auth:
+                    
+                    string detail =  JsonSerializer.Serialize(
+                        auth.Errors?.Select(e => new
+                        {
+                            Error = e.Description
+                        }));
+
+                    return detail;
+                default:
+                    return string.Empty;
+            }
         }
 
         private static int GetErrorCode(Exception e)
