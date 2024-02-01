@@ -20,7 +20,6 @@ namespace Identity.API
             builder.Services.Configure<IdentityOptions>(builder.Configuration.GetSection("IdentityOptions"));
 
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-            builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<UserDBContext>(
@@ -32,6 +31,8 @@ namespace Identity.API
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<ITokenService, TokenService>();
             builder.Services.AddScoped<ISignInService, SignInService>();
+            builder.Services.AddScoped<IRoleService, RoleService>();
+            builder.Services.AddControllers();
 
             var app = builder.Build();
             app.UseExceptionHandler(options => { });
