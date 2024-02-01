@@ -8,10 +8,7 @@ namespace Identity.DataAccess.Data
     {
         public DbSet<RefreshToken> RefreshTokens { get; set; }
 
-        public UserDBContext(DbContextOptions options) : base (options)
-        {
-            Database.EnsureCreated();
-        }
+        public UserDBContext(DbContextOptions options) : base (options) { }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

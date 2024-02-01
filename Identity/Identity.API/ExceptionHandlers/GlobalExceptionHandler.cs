@@ -35,7 +35,6 @@ namespace Identity.API.ExceptionHandlers
                         {
                             Error = e.Description
                         }));
-
                     return detail;
                 default:
                     return string.Empty;
