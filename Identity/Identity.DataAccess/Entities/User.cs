@@ -8,5 +8,6 @@ namespace Identity.DataAccess.Entities
         public string LastName { get; set; } = null!;
         public DateTime CreationDate { get; set; }
         public string Region { get; set; } = null!;
+        public RefreshToken RefreshToken { get; set; }
     }
 }

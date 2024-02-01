@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Identity.BusinessLogic.Models;
 using Identity.BusinessLogic.Models.TokenService;
 using Identity.BusinessLogic.Models.UserService;
 
@@ -20,7 +21,7 @@ namespace Identity.BusinessLogic.Services
             _mapper = mapper;
         }
 
-        public async Task<TokenResponse> SignInAsync(CheckPasswordRequest request)
+        public async Task<Tokens> SignInAsync(CheckPasswordRequest request)
         {
             bool isAuthenticated = await _userService.CheckPasswordAsync(request);
             if (!isAuthenticated)
@@ -32,9 +33,15 @@ namespace Identity.BusinessLogic.Services
             var roles = await _userService.GetRolesAsync(new GetUserRolesRequest { Email = user.Email });
             var tokensRequest = _mapper.Map<GetTokensRequest>(user);
             tokensRequest.Roles = roles;
-            var tokens = _tokenService.GetTokens(tokensRequest);
+            var tokens = await _tokenService.GetTokensAsync(tokensRequest);
 
             return tokens;
+        }
+
+        public async Task<Tokens> SignInWithRefreshAsync(Tokens tokens)
+        {
+            var newTokens = await _tokenService.UseRefreshTokenAsync(tokens);
+            return newTokens;
         }
     }
 }

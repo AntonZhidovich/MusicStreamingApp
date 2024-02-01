@@ -1,4 +1,4 @@
-﻿using Identity.BusinessLogic.Models.TokenService;
+﻿using Identity.BusinessLogic.Models;
 using Identity.BusinessLogic.Models.UserService;
 using Identity.BusinessLogic.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -18,11 +18,19 @@ namespace Identity.API.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(200, Type = typeof(TokenResponse))]
+        [ProducesResponseType(200, Type = typeof(Tokens))]
         public async Task<IActionResult> SignInAsync([FromBody] CheckPasswordRequest request)
         {
             var tokens = await _signInService.SignInAsync(request);
             return Ok(tokens);
+        }
+
+        [HttpPost("Refresh/")]
+        [ProducesResponseType(200, Type = typeof(Tokens))]
+        public async Task<IActionResult> SignInWithRefreshAsync([FromBody] Tokens tokens)
+        {
+            var newTokens = await _signInService.SignInWithRefreshAsync(tokens);
+            return Ok(newTokens);
         }
     }
 }

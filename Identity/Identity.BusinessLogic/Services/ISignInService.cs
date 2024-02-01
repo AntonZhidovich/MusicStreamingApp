@@ -1,10 +1,11 @@
-﻿using Identity.BusinessLogic.Models.TokenService;
+﻿using Identity.BusinessLogic.Models;
 using Identity.BusinessLogic.Models.UserService;
 
 namespace Identity.BusinessLogic.Services
 {
     public interface ISignInService
     {
-        Task<TokenResponse> SignInAsync(CheckPasswordRequest request);
+        Task<Tokens> SignInAsync(CheckPasswordRequest request);
+        Task<Tokens> SignInWithRefreshAsync(Tokens tokens);
     }
 }
