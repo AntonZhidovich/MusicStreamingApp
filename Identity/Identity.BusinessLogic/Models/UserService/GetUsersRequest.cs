@@ -1,6 +1,6 @@
 ﻿namespace Identity.BusinessLogic.Models.UserService
 {
-    public class GetAllUsersRequest
+    public class GetUsersRequest
     {
         private const int _maxPageSize = 30;
         private int _pageNumber = 1;

@@ -19,7 +19,7 @@ namespace Identity.API.Controllers
 
         [HttpPost]
         [ProducesResponseType(200, Type = typeof(Tokens))]
-        public async Task<IActionResult> SignInAsync([FromBody] CheckPasswordRequest request)
+        public async Task<IActionResult> SignInAsync([FromBody] CheckPasswordRequest request, CancellationToken cancellationToken)
         {
             var tokens = await _signInService.SignInAsync(request);
             return Ok(tokens);
@@ -27,7 +27,7 @@ namespace Identity.API.Controllers
 
         [HttpPost("Refresh/")]
         [ProducesResponseType(200, Type = typeof(Tokens))]
-        public async Task<IActionResult> SignInWithRefreshAsync([FromBody] Tokens tokens)
+        public async Task<IActionResult> SignInWithRefreshAsync([FromBody] Tokens tokens, CancellationToken cancellationToken)
         {
             var newTokens = await _signInService.SignInWithRefreshAsync(tokens);
             return Ok(newTokens);

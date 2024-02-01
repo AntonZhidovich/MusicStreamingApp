@@ -89,6 +89,7 @@ namespace Identity.BusinessLogic.Services
 
             await _tokenRepository.DeleteTokenByUserIdAsync(token.UserId);
             await _tokenRepository.AddTokenAsync(token);
+
             return tokenString;
         }
 

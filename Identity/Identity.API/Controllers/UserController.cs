@@ -18,14 +18,14 @@ namespace Identity.API.Controllers
 
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(UsersPageResponse))]
-        public async Task<IActionResult> GetAllUsersAsync([FromQuery] GetAllUsersRequest request)
+        public async Task<IActionResult> GetAllUsersAsync([FromQuery] GetUsersRequest request, CancellationToken cancellationToken)
         {
             return Ok(await _userService.GetAllAsync(request));
         }
 
         [HttpGet("{email}")]
         [ProducesResponseType(200, Type = typeof(UserDto))]
-        public async Task<IActionResult> GetUserByEmailAsync([FromRoute] string email)
+        public async Task<IActionResult> GetUserByEmailAsync([FromRoute] string email, CancellationToken cancellationToken)
         {
             var user = await _userService.GetByEmailAsync(new GetUserByEmailRequest { Email = email });
             return Ok(user);
@@ -33,7 +33,7 @@ namespace Identity.API.Controllers
 
         [HttpPost]
         [ProducesResponseType(200)]
-        public async Task<IActionResult> RegisterAsync([FromBody] RegisterUserRequest request)
+        public async Task<IActionResult> RegisterAsync([FromBody] RegisterUserRequest request, CancellationToken cancellationToken)
         {
             await _userService.RegisterAsync(request);
             return Ok();
@@ -41,7 +41,7 @@ namespace Identity.API.Controllers
 
         [HttpDelete("{email}")]
         [ProducesResponseType(200)]
-        public async Task<IActionResult> DeleteUserAsync([FromRoute] string email)
+        public async Task<IActionResult> DeleteUserAsync([FromRoute] string email, CancellationToken cancellationToken)
         {
             await _userService.DeleteAsync(new DeleteUserRequest { Email = email });
             return Ok();
@@ -49,7 +49,7 @@ namespace Identity.API.Controllers
 
         [HttpGet("Roles/{email}")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<string>))]
-        public async Task<IActionResult> GetUserRolesAsync([FromRoute] string email)
+        public async Task<IActionResult> GetUserRolesAsync([FromRoute] string email, CancellationToken cancellationToken)
         {
             var roles = await _userService.GetRolesAsync(new GetUserRolesRequest { Email = email });
             return Ok(roles);
@@ -57,7 +57,7 @@ namespace Identity.API.Controllers
 
         [HttpPost("Roles")]
         [ProducesResponseType(200)]
-        public async Task<IActionResult> AddUserToRoleAsync(AddUserToRoleRequest request)
+        public async Task<IActionResult> AddUserToRoleAsync(AddUserToRoleRequest request, CancellationToken cancellationToken)
         {
             await _userService.AddToRoleAsync(request);
             return Ok();
@@ -65,7 +65,7 @@ namespace Identity.API.Controllers
 
         [HttpDelete("Roles")]
         [ProducesResponseType(200)]
-        public async Task<IActionResult> RemoveUserFromRoleAsync(RemoveUserFromRoleAsync request)
+        public async Task<IActionResult> RemoveUserFromRoleAsync(RemoveUserFromRoleAsync request, CancellationToken cancellationToken)
         {
             await _userService.RemoveFromRoleAsync(request);
             return Ok();

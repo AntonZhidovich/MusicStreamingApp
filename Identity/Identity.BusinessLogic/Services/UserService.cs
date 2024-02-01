@@ -21,22 +21,15 @@ namespace Identity.BusinessLogic.Services
             _mapper = mapper;
         }
 
-        public async Task<UsersPageResponse> GetAllAsync(GetAllUsersRequest request)
+        public async Task<UsersPageResponse> GetAllAsync(GetUsersRequest request)
         {
             var users = await _userManager.Users
                 .Skip(request.PageSize * (request.CurrentPage - 1))
                 .Take(request.PageSize)
                 .OrderByDescending(u => u.UserName)
                 .ToListAsync();
-            var usersCount = _userManager.Users.Count();
-            var pagesCount = (int)Math.Ceiling((double)usersCount / request.PageSize);
-            var usersPage = new UsersPageResponse
-            {
-                PagesCount = pagesCount,
-                CurrentPage = request.CurrentPage,
-                PageSize = request.PageSize,
-                users = _mapper.Map<IEnumerable<UserDto>>(users)
-            };
+            var usersPage = GetUsersPage(users, request);
+
             return usersPage;
         }
 
@@ -96,6 +89,21 @@ namespace Identity.BusinessLogic.Services
             }
 
             return user;
+        }
+
+        private UsersPageResponse GetUsersPage(IEnumerable<User> users, GetUsersRequest request)
+        {
+            var usersCount = users.Count();
+            var pagesCount = (int)Math.Ceiling((double)usersCount / request.PageSize);
+            var usersPage = new UsersPageResponse
+            {
+                PagesCount = pagesCount,
+                CurrentPage = request.CurrentPage,
+                PageSize = request.PageSize,
+                users = _mapper.Map<IEnumerable<UserDto>>(users)
+            };
+
+            return usersPage;
         }
     }
 }

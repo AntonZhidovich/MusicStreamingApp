@@ -17,7 +17,7 @@ namespace Identity.API.Controllers
 
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<RoleDto>))]
-        public async Task<IActionResult> GetAllRolesAsync()
+        public async Task<IActionResult> GetAllRolesAsync(CancellationToken cancellationToken)
         {
             var roles = await _roleService.GetAllAsync();
             return Ok(roles);
@@ -25,7 +25,7 @@ namespace Identity.API.Controllers
 
         [HttpPost]
         [ProducesResponseType(200)]
-        public async Task<IActionResult> AddRoleAsync([FromBody] RoleDto role)
+        public async Task<IActionResult> AddRoleAsync([FromBody] RoleDto role, CancellationToken cancellationToken)
         {
             await _roleService.AddAsync(role);
             return Ok();
@@ -33,7 +33,7 @@ namespace Identity.API.Controllers
 
         [HttpDelete]
         [ProducesResponseType(200)]
-        public async Task<IActionResult> RemoveRoleAsync([FromBody] RoleDto role)
+        public async Task<IActionResult> RemoveRoleAsync([FromBody] RoleDto role, CancellationToken cancellationToken)
         {
             await _roleService.RemoveAsync(role);
             return Ok();
