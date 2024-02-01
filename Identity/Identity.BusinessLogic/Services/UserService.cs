@@ -52,7 +52,7 @@ namespace Identity.BusinessLogic.Services
             var result = await _userManager.CreateAsync(user, request.Password);
             if(!result.Succeeded)
             {
-                throw new InvalidAuthorizationException("Invalid authorization input.", result.Errors);
+                throw new InvalidAuthorizationException("Invalid credentials.", result.Errors);
             }
         }
 

@@ -18,7 +18,7 @@ namespace Identity.DataAccess.Data
                     NormalizedUserName = "DMITRY.IVANOV",
                     Email = "dmitry.ivanov@gmail.com",
                     NormalizedEmail = "DMITRY.IVANOV@GMAIL.COM",
-                    //Password_1234
+                    //Pssword is Password_1234
                     PasswordHash = "AQAAAAIAAYagAAAAEGnb9gCu0ZszBQAsOO8EfkSggUCxR0fk9mQJdz5Imzxtn6HipugF+ELehdTdFZ3wHg==",
                     SecurityStamp = "LHOBZXJKHQASYZODSS7FPA2UQOKTAHDR",
                     ConcurrencyStamp = "7af8d93c-9b9b-4e09-bc1d-9ef180915552",

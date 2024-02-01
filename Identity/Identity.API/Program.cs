@@ -1,3 +1,4 @@
+using Identity.API.ExceptionHandlers;
 using Identity.BusinessLogic.Mapping;
 using Identity.BusinessLogic.Options;
 using Identity.BusinessLogic.Services;
@@ -18,6 +19,7 @@ namespace Identity.API
 
             builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("JwtOptions"));
 
+            builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -33,6 +35,7 @@ namespace Identity.API
             builder.Services.AddScoped<ISignInService, SignInService>();
 
             var app = builder.Build();
+            app.UseExceptionHandler(options => { });
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
