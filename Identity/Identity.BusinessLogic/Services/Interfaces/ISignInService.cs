@@ -1,7 +1,7 @@
 ﻿using Identity.BusinessLogic.Models;
 using Identity.BusinessLogic.Models.UserService;
 
-namespace Identity.BusinessLogic.Services
+namespace Identity.BusinessLogic.Services.Interfaces
 {
     public interface ISignInService
     {

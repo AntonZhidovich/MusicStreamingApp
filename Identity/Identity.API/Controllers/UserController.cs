@@ -1,12 +1,12 @@
 ﻿using Identity.BusinessLogic.Models;
 using Identity.BusinessLogic.Models.UserService;
-using Identity.BusinessLogic.Services;
+using Identity.BusinessLogic.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Identity.API.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/users")]
     public class UserController : Controller
     {
         private readonly IUserService _userService;
@@ -16,59 +16,59 @@ namespace Identity.API.Controllers
             _userService = userService;
         }
 
-        [HttpGet]
-        [ProducesResponseType(200, Type = typeof(UsersPageResponse))]
+        [HttpGet("")]
         public async Task<IActionResult> GetAllUsersAsync([FromQuery] GetUsersRequest request, CancellationToken cancellationToken)
         {
             return Ok(await _userService.GetAllAsync(request));
         }
 
         [HttpGet("{email}")]
-        [ProducesResponseType(200, Type = typeof(UserDto))]
         public async Task<IActionResult> GetUserByEmailAsync([FromRoute] string email, CancellationToken cancellationToken)
         {
             var user = await _userService.GetByEmailAsync(new GetUserByEmailRequest { Email = email });
             return Ok(user);
         }
 
-        [HttpPost]
-        [ProducesResponseType(200)]
+        [HttpPost("")]
         public async Task<IActionResult> RegisterAsync([FromBody] RegisterUserRequest request, CancellationToken cancellationToken)
         {
             await _userService.RegisterAsync(request);
-            return Ok();
+            return NoContent();
         }
 
-        [HttpDelete("{email}")]
-        [ProducesResponseType(200)]
+        [HttpPut("")]
+        public async Task<IActionResult> UpdateAsync([FromRoute] string email, [FromBody] UpdateUserRequest request, CancellationToken cancellationToken)
+        {
+            await _userService.UpdateAsync(email, request);
+            return NoContent();
+        }
+
+        [HttpDelete("")]
         public async Task<IActionResult> DeleteUserAsync([FromRoute] string email, CancellationToken cancellationToken)
         {
             await _userService.DeleteAsync(new DeleteUserRequest { Email = email });
-            return Ok();
+            return NoContent();
         }
 
-        [HttpGet("Roles/{email}")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<string>))]
+        [HttpGet("{email}/roles")]
         public async Task<IActionResult> GetUserRolesAsync([FromRoute] string email, CancellationToken cancellationToken)
         {
             var roles = await _userService.GetRolesAsync(new GetUserRolesRequest { Email = email });
             return Ok(roles);
         }
 
-        [HttpPost("Roles")]
-        [ProducesResponseType(200)]
+        [HttpPost("{email}/roles")]
         public async Task<IActionResult> AddUserToRoleAsync(AddUserToRoleRequest request, CancellationToken cancellationToken)
         {
             await _userService.AddToRoleAsync(request);
-            return Ok();
+            return NoContent();
         }
 
-        [HttpDelete("Roles")]
-        [ProducesResponseType(200)]
-        public async Task<IActionResult> RemoveUserFromRoleAsync(RemoveUserFromRoleAsync request, CancellationToken cancellationToken)
+        [HttpDelete("{email}/roles/{rolename}")]
+        public async Task<IActionResult> RemoveUserFromRoleAsync([FromRoute] string email, [FromRoute] string rolename)
         {
-            await _userService.RemoveFromRoleAsync(request);
-            return Ok();
+            await _userService.RemoveFromRoleAsync(new RemoveUserFromRoleRequest { Email = email, RoleName = rolename});
+            return NoContent();
         }
     }
 }

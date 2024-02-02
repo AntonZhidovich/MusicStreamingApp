@@ -1,10 +1,12 @@
 using Identity.API.ExceptionHandlers;
 using Identity.BusinessLogic.Mapping;
 using Identity.BusinessLogic.Options;
-using Identity.BusinessLogic.Services;
+using Identity.BusinessLogic.Services.Implementations;
+using Identity.BusinessLogic.Services.Interfaces;
 using Identity.DataAccess.Data;
 using Identity.DataAccess.Entities;
-using Identity.DataAccess.Repositories;
+using Identity.DataAccess.Repositories.Implementations;
+using Identity.DataAccess.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,6 +30,7 @@ namespace Identity.API
                 .AddEntityFrameworkStores<UserDBContext>();
             builder.Services.AddAutoMapper(typeof(UserMappingProfile));
             builder.Services.AddScoped<ITokenRepository, TokenRepository>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<ITokenService, TokenService>();
             builder.Services.AddScoped<ISignInService, SignInService>();

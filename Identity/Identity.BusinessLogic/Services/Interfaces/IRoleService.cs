@@ -1,6 +1,6 @@
 ﻿using Identity.BusinessLogic.Models;
 
-namespace Identity.BusinessLogic.Services
+namespace Identity.BusinessLogic.Services.Interfaces
 {
     public interface IRoleService
     {

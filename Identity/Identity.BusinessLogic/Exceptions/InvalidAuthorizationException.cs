@@ -2,14 +2,10 @@
 
 namespace Identity.BusinessLogic.Exceptions
 {
-    public class InvalidAuthorizationException : Exception
+    public class InvalidAuthorizationException : BaseIdentityException
     {
-        public IEnumerable<IdentityError>? Errors { get; set; }
-
-        public InvalidAuthorizationException(string message, IEnumerable<IdentityError>? errors = null) 
-            : base(message)
+        public InvalidAuthorizationException(string message, IEnumerable<IdentityError>? errors = null) : base(message)
         {
-            Errors = errors;
         }
     }
 }

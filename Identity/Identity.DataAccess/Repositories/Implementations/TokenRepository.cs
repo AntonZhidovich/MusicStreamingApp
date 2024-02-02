@@ -1,8 +1,9 @@
 ﻿using Identity.DataAccess.Data;
 using Identity.DataAccess.Entities;
+using Identity.DataAccess.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace Identity.DataAccess.Repositories
+namespace Identity.DataAccess.Repositories.Implementations
 {
     public class TokenRepository : ITokenRepository
     {
@@ -22,7 +23,8 @@ namespace Identity.DataAccess.Repositories
         public async Task DeleteTokenByUserIdAsync(string userId)
         {
             var token = await GetTokenByUserIdAsync(userId);
-            if(token != null) 
+
+            if (token != null)
             {
                 _dbContext.Remove(token);
             }
@@ -30,13 +32,9 @@ namespace Identity.DataAccess.Repositories
             await SaveChangesAsync();
         }
 
-        public async Task<RefreshToken> GetByTokenString(string tokenString)
+        public async Task<RefreshToken?> GetByTokenString(string tokenString)
         {
             var token = await _dbContext.RefreshTokens.FirstOrDefaultAsync(t => t.Token == tokenString);
-            if (token == null)
-            {
-                throw new ArgumentException("No token was found.");
-            }
 
             return token;
         }

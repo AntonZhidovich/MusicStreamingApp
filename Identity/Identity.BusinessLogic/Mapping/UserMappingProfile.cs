@@ -12,6 +12,7 @@ namespace Identity.BusinessLogic.Mapping
         {
             CreateMap<RegisterUserRequest, User>();
             CreateMap<User, UserDto>();
+            CreateMap<UpdateUserRequest, User>();
             CreateMap<UserDto, GetTokensRequest>().ForMember(s => s.Roles, opt => opt.Ignore());
         }
     }

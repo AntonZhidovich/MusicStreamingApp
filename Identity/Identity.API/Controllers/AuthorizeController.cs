@@ -1,11 +1,11 @@
 ﻿using Identity.BusinessLogic.Models;
 using Identity.BusinessLogic.Models.UserService;
-using Identity.BusinessLogic.Services;
+using Identity.BusinessLogic.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Identity.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/authorization")]
     [ApiController]
     public class AuthorizeController : ControllerBase
     {
@@ -17,16 +17,14 @@ namespace Identity.API.Controllers
             _signInService = signInService;
         }
 
-        [HttpPost]
-        [ProducesResponseType(200, Type = typeof(Tokens))]
+        [HttpPost("")]
         public async Task<IActionResult> SignInAsync([FromBody] CheckPasswordRequest request, CancellationToken cancellationToken)
         {
             var tokens = await _signInService.SignInAsync(request);
             return Ok(tokens);
         }
 
-        [HttpPost("Refresh/")]
-        [ProducesResponseType(200, Type = typeof(Tokens))]
+        [HttpPost("refresh")]
         public async Task<IActionResult> SignInWithRefreshAsync([FromBody] Tokens tokens, CancellationToken cancellationToken)
         {
             var newTokens = await _signInService.SignInWithRefreshAsync(tokens);

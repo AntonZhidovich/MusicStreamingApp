@@ -2,8 +2,9 @@
 using Identity.BusinessLogic.Models;
 using Identity.BusinessLogic.Models.TokenService;
 using Identity.BusinessLogic.Options;
+using Identity.BusinessLogic.Services.Interfaces;
 using Identity.DataAccess.Entities;
-using Identity.DataAccess.Repositories;
+using Identity.DataAccess.Repositories.Interfaces;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -11,7 +12,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Identity.BusinessLogic.Services
+namespace Identity.BusinessLogic.Services.Implementations
 {
     public class TokenService : ITokenService
     {
@@ -54,6 +55,28 @@ namespace Identity.BusinessLogic.Services
             };
 
             return newTokens;
+        }
+
+        public async Task<ClaimsIdentity> GetIdentityFromTokenAsync(string token)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Key));
+            var parameters = new TokenValidationParameters
+            {
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ValidateLifetime = false,
+                IssuerSigningKey = key
+            };
+
+            var validationResult = await handler.ValidateTokenAsync(token, parameters);
+
+            if (!validationResult.IsValid)
+            {
+                throw new InvalidAuthorizationException("Invalid access token.");
+            }
+
+            return validationResult.ClaimsIdentity;
         }
 
         private string GenerateAccessToken(ClaimsIdentity identity)
@@ -114,33 +137,18 @@ namespace Identity.BusinessLogic.Services
         private async Task<bool> ValidateRefreshToken(string refreshToken)
         {
             var token = await _tokenRepository.GetByTokenString(refreshToken);
+
+            if(token == null)
+            {
+                throw new NotFoundException("No token was found.");
+            }
+
             if (DateTime.UtcNow > token.ExpiresAt)
             {
                 throw new InvalidAuthorizationException("Refresh token expired.");
             }
 
             return true;
-        }
-
-        public async Task<ClaimsIdentity> GetIdentityFromTokenAsync(string token)
-        {
-            var handler = new JwtSecurityTokenHandler();
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Key));
-            var parameters = new TokenValidationParameters
-            {
-                ValidateIssuer = false,
-                ValidateAudience = false,
-                ValidateLifetime = false,
-                IssuerSigningKey = key
-            };
-
-            var validationResult = await handler.ValidateTokenAsync(token, parameters);
-            if (!validationResult.IsValid)
-            {
-                throw new InvalidAuthorizationException("Invalid access token.");
-            }
-
-            return validationResult.ClaimsIdentity;
         }
     }
 }

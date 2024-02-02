@@ -1,7 +1,7 @@
 ﻿using Identity.BusinessLogic.Models;
 using Identity.BusinessLogic.Models.UserService;
 
-namespace Identity.BusinessLogic.Services
+namespace Identity.BusinessLogic.Services.Interfaces
 {
     public interface IUserService
     {
@@ -9,9 +9,10 @@ namespace Identity.BusinessLogic.Services
         Task<UserDto> GetByEmailAsync(GetUserByEmailRequest request);
         Task<UsersPageResponse> GetAllAsync(GetUsersRequest request);
         Task RegisterAsync(RegisterUserRequest request);
+        Task UpdateAsync(string email, UpdateUserRequest request);
         Task DeleteAsync(DeleteUserRequest request);
         Task<IEnumerable<string>> GetRolesAsync(GetUserRolesRequest request);
         Task AddToRoleAsync(AddUserToRoleRequest request);
-        Task RemoveFromRoleAsync(RemoveUserFromRoleAsync request);
+        Task RemoveFromRoleAsync(RemoveUserFromRoleRequest request);
     }
 }

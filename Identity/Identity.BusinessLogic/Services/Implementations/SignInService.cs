@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using Identity.BusinessLogic.Exceptions;
 using Identity.BusinessLogic.Models;
 using Identity.BusinessLogic.Models.TokenService;
 using Identity.BusinessLogic.Models.UserService;
+using Identity.BusinessLogic.Services.Interfaces;
 
-namespace Identity.BusinessLogic.Services
+namespace Identity.BusinessLogic.Services.Implementations
 {
     public class SignInService : ISignInService
     {
@@ -26,7 +28,7 @@ namespace Identity.BusinessLogic.Services
             bool isAuthenticated = await _userService.CheckPasswordAsync(request);
             if (!isAuthenticated)
             {
-                throw new ArgumentException("Invalid password.");
+                throw new InvalidAuthorizationException("Invalid password.");
             }
 
             var user = await _userService.GetByEmailAsync(new GetUserByEmailRequest { Email = request.Email });

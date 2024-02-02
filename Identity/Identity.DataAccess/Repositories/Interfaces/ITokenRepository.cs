@@ -1,6 +1,6 @@
 ﻿using Identity.DataAccess.Entities;
 
-namespace Identity.DataAccess.Repositories
+namespace Identity.DataAccess.Repositories.Interfaces
 {
     public interface ITokenRepository
     {

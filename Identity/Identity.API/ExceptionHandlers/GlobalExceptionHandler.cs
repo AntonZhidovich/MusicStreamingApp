@@ -28,13 +28,10 @@ namespace Identity.API.ExceptionHandlers
         {
             switch (e)
             {
-                case InvalidAuthorizationException auth:
+                case BaseIdentityException identityException:
                     
                     string detail =  JsonSerializer.Serialize(
-                        auth.Errors?.Select(e => new
-                        {
-                            Error = e.Description
-                        }));
+                        identityException.Errors?.Select(e => new { Error = e.Description }));
                     return detail;
                 default:
                     return string.Empty;
@@ -45,9 +42,9 @@ namespace Identity.API.ExceptionHandlers
         {
             switch (e)
             {
-                case ArgumentNullException _:
+                case UnprocessableEntityException _:
                     return (int)HttpStatusCode.UnprocessableEntity;
-                case ArgumentException _:
+                case NotFoundException _:
                     return (int)HttpStatusCode.NotFound;
                 case InvalidAuthorizationException _:
                     return (int)HttpStatusCode.Unauthorized;
