@@ -43,6 +43,7 @@ namespace Identity.BusinessLogic.Services.Implementations
         public async Task<Tokens> SignInWithRefreshAsync(Tokens tokens)
         {
             var newTokens = await _tokenService.UseRefreshTokenAsync(tokens);
+
             return newTokens;
         }
     }

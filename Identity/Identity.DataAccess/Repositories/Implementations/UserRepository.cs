@@ -70,8 +70,7 @@ namespace Identity.DataAccess.Repositories.Implementations
 
         public async Task AddUserToRoleAsync(User user, string roleName)
         {
-            var result = await _userManager.AddToRoleAsync(user, roleName);
-            Console.Write(result);
+            await _userManager.AddToRoleAsync(user, roleName);
         }
 
         public async Task RemoveUserFromRoleAsync(User user, string roleName)

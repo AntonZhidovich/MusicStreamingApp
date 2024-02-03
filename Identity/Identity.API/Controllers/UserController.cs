@@ -31,6 +31,7 @@ namespace Identity.API.Controllers
         public async Task<IActionResult> GetUserByEmailAsync([FromRoute] string email, CancellationToken cancellationToken)
         {
             var user = await _userService.GetByEmailAsync(new GetUserByEmailRequest { Email = email });
+
             return Ok(user);
         }
 
@@ -38,6 +39,7 @@ namespace Identity.API.Controllers
         public async Task<IActionResult> RegisterAsync([FromBody] RegisterUserRequest request, CancellationToken cancellationToken)
         {
             await _userService.RegisterAsync(request);
+
             return NoContent();
         }
 
@@ -45,6 +47,7 @@ namespace Identity.API.Controllers
         public async Task<IActionResult> UpdateAsync([FromRoute] string email, [FromBody] UpdateUserRequest request, CancellationToken cancellationToken)
         {
             await _userService.UpdateAsync(email, request);
+
             return NoContent();
         }
 
@@ -52,6 +55,7 @@ namespace Identity.API.Controllers
         public async Task<IActionResult> DeleteUserAsync([FromRoute] string email, CancellationToken cancellationToken)
         {
             await _userService.DeleteAsync(new DeleteUserRequest { Email = email });
+
             return NoContent();
         }
 
@@ -59,6 +63,7 @@ namespace Identity.API.Controllers
         public async Task<IActionResult> GetUserRolesAsync([FromRoute] string email, CancellationToken cancellationToken)
         {
             var roles = await _userService.GetRolesAsync(new GetUserRolesRequest { Email = email });
+
             return Ok(roles);
         }
 
@@ -66,6 +71,7 @@ namespace Identity.API.Controllers
         public async Task<IActionResult> AddUserToRoleAsync(AddUserToRoleRequest request, CancellationToken cancellationToken)
         {
             await _userService.AddToRoleAsync(request);
+
             return NoContent();
         }
 
@@ -73,6 +79,7 @@ namespace Identity.API.Controllers
         public async Task<IActionResult> RemoveUserFromRoleAsync([FromRoute] string email, [FromRoute] string rolename)
         {
             await _userService.RemoveFromRoleAsync(new RemoveUserFromRoleRequest { Email = email, RoleName = rolename});
+
             return NoContent();
         }
     }
