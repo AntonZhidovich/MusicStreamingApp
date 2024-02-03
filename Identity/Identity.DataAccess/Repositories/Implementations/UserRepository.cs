@@ -1,6 +1,7 @@
 ﻿using Identity.DataAccess.Entities;
 using Identity.DataAccess.Extensions;
 using Identity.DataAccess.Repositories.Interfaces;
+using Identity.DataAccess.Specifications;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,6 +21,16 @@ namespace Identity.DataAccess.Repositories.Implementations
             return await _userManager.Users.GetPage(currentPage, pageSize).ToListAsync();
         }
 
+        public async Task<IEnumerable<User>> ApplySpecificationAsync(ISpecification<User> specification, int currentPage, int pageSize)
+        {
+            var users = await _userManager.Users
+                .ApplySpecification(specification)
+                .GetPage(currentPage, pageSize)
+                .ToListAsync();
+
+            return users;
+        }
+
         public Task<User?> GetUserByEmail(string email)
         {
             return _userManager.Users.FirstOrDefaultAsync(x => x.Email == email);
@@ -33,6 +44,11 @@ namespace Identity.DataAccess.Repositories.Implementations
         public async Task<int> Count()
         {
             return await _userManager.Users.CountAsync();
+        }
+
+        public async Task<int> Count(ISpecification<User> specification)
+        {
+            return await _userManager.Users.ApplySpecification(specification).CountAsync();
         }
 
         public async Task DeleteUserAsync(User user)

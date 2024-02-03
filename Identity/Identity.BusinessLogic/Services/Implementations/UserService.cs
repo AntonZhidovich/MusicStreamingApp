@@ -3,6 +3,7 @@ using Identity.BusinessLogic.Exceptions;
 using Identity.BusinessLogic.Models;
 using Identity.BusinessLogic.Models.UserService;
 using Identity.BusinessLogic.Services.Interfaces;
+using Identity.BusinessLogic.Specifications;
 using Identity.DataAccess.Entities;
 using Identity.DataAccess.Repositories.Interfaces;
 
@@ -25,6 +26,16 @@ namespace Identity.BusinessLogic.Services.Implementations
         {
             var users = await _userRepository.GetAllUsersAsync(request.CurrentPage, request.PageSize);
             var allUsersCount = await _userRepository.Count();
+            var usersPage = GetUsersPage(users, allUsersCount, request);
+
+            return usersPage;
+        }
+
+        public async Task<UsersPageResponse> GetFromRegionAsync(GetUsersRequest request, string region)
+        {
+            var specification = new UsersFromRegionSpecification(region);
+            var users = await _userRepository.ApplySpecificationAsync(specification, request.CurrentPage, request.PageSize);
+            var allUsersCount = await _userRepository.Count(specification);
             var usersPage = GetUsersPage(users, allUsersCount, request);
 
             return usersPage;

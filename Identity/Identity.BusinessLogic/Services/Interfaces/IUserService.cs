@@ -5,9 +5,10 @@ namespace Identity.BusinessLogic.Services.Interfaces
 {
     public interface IUserService
     {
-        Task<bool> CheckPasswordAsync(CheckPasswordRequest request);
-        Task<UserDto> GetByEmailAsync(GetUserByEmailRequest request);
         Task<UsersPageResponse> GetAllAsync(GetUsersRequest request);
+        Task<UsersPageResponse> GetFromRegionAsync(GetUsersRequest request, string region);
+        Task<UserDto> GetByEmailAsync(GetUserByEmailRequest request);
+        Task<bool> CheckPasswordAsync(CheckPasswordRequest request);
         Task RegisterAsync(RegisterUserRequest request);
         Task UpdateAsync(string email, UpdateUserRequest request);
         Task DeleteAsync(DeleteUserRequest request);

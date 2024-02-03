@@ -1,5 +1,4 @@
-﻿using Identity.BusinessLogic.Models;
-using Identity.BusinessLogic.Models.UserService;
+﻿using Identity.BusinessLogic.Models.UserService;
 using Identity.BusinessLogic.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,6 +19,12 @@ namespace Identity.API.Controllers
         public async Task<IActionResult> GetAllUsersAsync([FromQuery] GetUsersRequest request, CancellationToken cancellationToken)
         {
             return Ok(await _userService.GetAllAsync(request));
+        }
+
+        [HttpGet("from-region/{region}")]
+        public async Task<IActionResult> GetUsersFromRegionAsync([FromRoute] string region, [FromQuery] GetUsersRequest request, CancellationToken cancellationToken)
+        {
+            return Ok(await _userService.GetFromRegionAsync(request, region));
         }
 
         [HttpGet("{email}")]
