@@ -140,7 +140,7 @@ namespace Identity.BusinessLogic.Services.Implementations
 
             if (token == null)
             {
-                throw new NotFoundException("No token was found.");
+                throw new NotFoundException("Invalid refresh token.");
             }
 
             if (DateTime.UtcNow > token.ExpiresAt)

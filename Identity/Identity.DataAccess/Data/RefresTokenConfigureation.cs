@@ -11,7 +11,9 @@ namespace Identity.DataAccess.Data
             builder
                 .HasIndex(token => token.Token)
                 .IsUnique(true);
+
             builder.HasKey(token => token.Token);
+
             builder
                 .HasOne(token => token.User)
                 .WithOne(user => user.RefreshToken)

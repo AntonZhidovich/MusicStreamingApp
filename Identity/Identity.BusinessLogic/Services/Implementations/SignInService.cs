@@ -26,6 +26,7 @@ namespace Identity.BusinessLogic.Services.Implementations
         public async Task<Tokens> SignInAsync(CheckPasswordRequest request)
         {
             bool isAuthenticated = await _userService.CheckPasswordAsync(request);
+
             if (!isAuthenticated)
             {
                 throw new InvalidAuthorizationException("Invalid password.");
