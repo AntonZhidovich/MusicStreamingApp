@@ -7,7 +7,7 @@ namespace Identity.DataAccess.Extensions
         public static IQueryable<User> GetPage(this IQueryable<User> source, int currentPage, int pageSize)
         {
             return source
-                .OrderByDescending(x => x.UserName)
+                .OrderByDescending(user => user.UserName)
                 .Skip(pageSize * (currentPage - 1))
                 .Take(pageSize);
         }    

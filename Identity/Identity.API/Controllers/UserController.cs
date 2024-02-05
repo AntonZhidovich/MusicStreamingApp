@@ -1,4 +1,5 @@
-﻿using Identity.BusinessLogic.Models.UserService;
+﻿using Identity.BusinessLogic.Models;
+using Identity.BusinessLogic.Models.UserService;
 using Identity.BusinessLogic.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -43,7 +44,7 @@ namespace Identity.API.Controllers
             return NoContent();
         }
 
-        [HttpPut("")]
+        [HttpPut("{email}")]
         public async Task<IActionResult> UpdateAsync([FromRoute] string email, [FromBody] UpdateUserRequest request, CancellationToken cancellationToken)
         {
             await _userService.UpdateAsync(email, request);
@@ -51,7 +52,7 @@ namespace Identity.API.Controllers
             return NoContent();
         }
 
-        [HttpDelete("")]
+        [HttpDelete("{email}")]
         public async Task<IActionResult> DeleteUserAsync([FromRoute] string email, CancellationToken cancellationToken)
         {
             await _userService.DeleteAsync(new DeleteUserRequest { Email = email });
@@ -68,9 +69,9 @@ namespace Identity.API.Controllers
         }
 
         [HttpPost("{email}/roles")]
-        public async Task<IActionResult> AddUserToRoleAsync(AddUserToRoleRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> AddUserToRoleAsync([FromRoute] string email, [FromBody] RoleDto roleDto, CancellationToken cancellationToken)
         {
-            await _userService.AddToRoleAsync(request);
+            await _userService.AddToRoleAsync(email, roleDto);
 
             return NoContent();
         }

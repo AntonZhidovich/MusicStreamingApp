@@ -91,10 +91,10 @@ namespace Identity.BusinessLogic.Services.Implementations
             return await _userRepository.CheckPasswordAsync(user, request.Password);
         }
 
-        public async Task AddToRoleAsync(AddUserToRoleRequest request)
+        public async Task AddToRoleAsync(string email, RoleDto roleDto)
         {
-            var user = await GetDomainUserByEmailAsync(request.Email);
-            await _userRepository.AddUserToRoleAsync(user, request.RoleName);
+            var user = await GetDomainUserByEmailAsync(email);
+            await _userRepository.AddUserToRoleAsync(user, roleDto.RoleName);
         }
 
         public async Task RemoveFromRoleAsync(RemoveUserFromRoleRequest request)

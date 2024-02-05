@@ -22,7 +22,7 @@ namespace Identity.BusinessLogic.Services.Implementations
         public async Task<IEnumerable<RoleDto>> GetAllAsync()
         {
             var roles = await _roleManager.Roles
-                .Select(r => new RoleDto { RoleName = r.Name! })
+                .Select(role => new RoleDto { RoleName = role.Name! })
                 .ToListAsync();
 
             return roles;

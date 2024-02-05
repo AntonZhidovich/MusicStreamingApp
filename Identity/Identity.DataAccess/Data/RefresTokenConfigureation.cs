@@ -9,13 +9,13 @@ namespace Identity.DataAccess.Data
         public void Configure(EntityTypeBuilder<RefreshToken> builder)
         {
             builder
-                .HasIndex(k => k.Token)
+                .HasIndex(token => token.Token)
                 .IsUnique(true);
-            builder.HasKey(k => k.Token);
+            builder.HasKey(token => token.Token);
             builder
-                .HasOne(t => t.User)
-                .WithOne(u => u.RefreshToken)
-                .HasForeignKey<RefreshToken>(t => t.UserId);
+                .HasOne(token => token.User)
+                .WithOne(user => user.RefreshToken)
+                .HasForeignKey<RefreshToken>(token => token.UserId);
         }
     }
 }

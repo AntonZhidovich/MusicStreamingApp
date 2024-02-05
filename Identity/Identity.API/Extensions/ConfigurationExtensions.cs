@@ -1,8 +1,11 @@
-﻿using Identity.API.ExceptionHandlers;
+﻿using FluentValidation;
+using FluentValidation.AspNetCore;
+using Identity.API.ExceptionHandlers;
 using Identity.BusinessLogic.Mapping;
 using Identity.BusinessLogic.Options;
 using Identity.BusinessLogic.Services.Implementations;
 using Identity.BusinessLogic.Services.Interfaces;
+using Identity.BusinessLogic.Validators;
 using Identity.DataAccess.Data;
 using Identity.DataAccess.Entities;
 using Identity.DataAccess.Repositories.Implementations;
@@ -12,10 +15,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Identity.API.Extensions
 {
-    public static class ConfigureationExtensions
+    public static class ConfigurationExtensions
     {
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
+            services.AddFluentValidationAutoValidation();
+            services.AddValidatorsFromAssemblyContaining<RegisterUserValidator>();
             services.AddExceptionHandler<GlobalExceptionHandler>();
             services.AddAutoMapper(typeof(UserMappingProfile));
             services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<UserDBContext>();

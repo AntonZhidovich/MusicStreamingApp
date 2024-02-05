@@ -12,8 +12,8 @@ namespace Identity.API
             builder.Services.AddSwaggerGen();
             builder.Services.AddDataBase(builder.Configuration);
             builder.Services.AddRepositories();
-            builder.Services.AddServices();
             builder.Services.AddControllers();
+            builder.Services.AddServices();
 
             var app = builder.Build();
             app.UseMiddleware();

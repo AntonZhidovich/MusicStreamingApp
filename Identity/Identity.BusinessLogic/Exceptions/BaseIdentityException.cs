@@ -8,7 +8,7 @@ namespace Identity.BusinessLogic.Exceptions
 
         protected BaseIdentityException(string message, IEnumerable<IdentityError>? errors = null) : base(message) 
         {
-            Errors = errors;
+            Errors = errors ?? Enumerable.Empty<IdentityError>();
         }
     }
 }

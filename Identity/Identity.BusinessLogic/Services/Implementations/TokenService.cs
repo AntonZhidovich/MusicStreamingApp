@@ -44,8 +44,8 @@ namespace Identity.BusinessLogic.Services.Implementations
             await ValidateRefreshToken(tokens.RefreshToken);
             var identity = await GetIdentityFromTokenAsync(tokens.AccessToken);
             var userId = identity.Claims
-                .Where(c => c.Type == ClaimTypes.NameIdentifier)
-                .Select(c => c.Value)
+                .Where(claim => claim.Type == ClaimTypes.NameIdentifier)
+                .Select(claim => claim.Value)
                 .FirstOrDefault()!;
 
             var newTokens = new Tokens
@@ -138,7 +138,7 @@ namespace Identity.BusinessLogic.Services.Implementations
         {
             var token = await _tokenRepository.GetByTokenString(refreshToken);
 
-            if(token == null)
+            if (token == null)
             {
                 throw new NotFoundException("No token was found.");
             }

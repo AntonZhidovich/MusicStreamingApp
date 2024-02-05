@@ -13,7 +13,7 @@ namespace Identity.BusinessLogic.Services.Interfaces
         Task UpdateAsync(string email, UpdateUserRequest request);
         Task DeleteAsync(DeleteUserRequest request);
         Task<IEnumerable<string>> GetRolesAsync(GetUserRolesRequest request);
-        Task AddToRoleAsync(AddUserToRoleRequest request);
+        Task AddToRoleAsync(string email, RoleDto roleDto);
         Task RemoveFromRoleAsync(RemoveUserFromRoleRequest request);
     }
 }
