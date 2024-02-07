@@ -17,6 +17,7 @@ namespace MusicService.Infrastructure.Data
                     UserName = "Chester.Bennington",
                     Region = "California",
                     Roles = new List<string> { UserRoles.creator, UserRoles.listener, UserRoles.admin },
+                    Email = "chester.bennington@outlook.com",
                     AuthorId = "e372c6da-4c4d-4cd5-a1ca-c8507cf2d326"
                 },
                 new User
@@ -25,6 +26,7 @@ namespace MusicService.Infrastructure.Data
                     FirstName = "Martijn",
                     LastName = "Garritsen",
                     UserName = "Martijn-Garritsen",
+                    Email = "garritsen@gmail.com",
                     Region = "Netherlands",
                     Roles = new List<string> { UserRoles.creator, UserRoles.listener },
                     AuthorId = "7bfe40e0-f945-487b-ae93-a07cfbdc87db"
@@ -35,6 +37,7 @@ namespace MusicService.Infrastructure.Data
                     FirstName = "Mike",
                     LastName = "Shinoda",
                     UserName = "MikeShinoda1977",
+                    Email = "shinoda77@gmail.com",
                     Region = "California",
                     Roles = new List<string> { UserRoles.creator, UserRoles.listener },
                     AuthorId = "e372c6da-4c4d-4cd5-a1ca-c8507cf2d326"
@@ -45,6 +48,7 @@ namespace MusicService.Infrastructure.Data
                     FirstName = "Dmitry",
                     LastName = "Ivanov",
                     UserName = "dmitry.ivanov",
+                    Email = "dmitry.ivanov@gmail.com",
                     Region = "Italy",
                     Roles = new List<string> { UserRoles.listener }
                 },
@@ -54,6 +58,7 @@ namespace MusicService.Infrastructure.Data
                     FirstName = "Yegor",
                     LastName = "Kozlov",
                     UserName = "yegor.kozlov02",
+                    Email = "yegor.kozlov02@mail.ru",
                     Region = "Minsk",
                     Roles = new List<string> { UserRoles.listener, UserRoles.admin }
                 });

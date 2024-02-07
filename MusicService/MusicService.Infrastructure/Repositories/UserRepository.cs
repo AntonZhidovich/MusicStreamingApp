@@ -21,6 +21,14 @@ namespace MusicService.Infrastructure.Repositories
             return user?.Author;
         }
 
+        public async Task<User?> GetByEmailAsync(string email)
+        {
+            return await _dbContext.Users
+                .Include(user => user.Author)
+                .Where(user => user.Email.Trim().ToLower() == email.Trim().ToLower())
+                .FirstOrDefaultAsync();
+        }
+
         public async Task<User?> GetByUserNameAsync(string userName)
         {
             return await _dbContext.Users

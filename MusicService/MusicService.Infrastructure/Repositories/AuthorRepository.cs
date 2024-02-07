@@ -2,6 +2,7 @@
 using MusicService.Domain.Entities;
 using MusicService.Domain.Interfaces;
 using MusicService.Infrastructure.Data;
+using MusicService.Infrastructure.Extensions;
 
 namespace MusicService.Infrastructure.Repositories
 {
@@ -14,22 +15,27 @@ namespace MusicService.Infrastructure.Repositories
             _dbContext = dbContext;
         }
 
+        public async Task<int> CountAsync()
+        {
+            return await _dbContext.Authors.CountAsync();
+        }
+
         public async Task CreateAsync(Author author)
         {
             await _dbContext.AddAsync(author);
-            await SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(Author author)
+        public void Delete(Author author)
         {
             _dbContext.Remove(author);
-            await SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<Author>> GetAllAsync()
+        public async Task<IEnumerable<Author>> GetAllAsync(int currentPage, int pageSize)
         {
             var authors = await _dbContext.Authors
                 .Include(author => author.Users)
+                .OrderByDescending(author => author.Name)
+                .GetPage(currentPage, pageSize)
                 .ToListAsync();
 
             return authors;
@@ -50,10 +56,9 @@ namespace MusicService.Infrastructure.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(Author author)
+        public void Update(Author author)
         {
             _dbContext.Update(author);
-            await SaveChangesAsync();
         }
     }
 }

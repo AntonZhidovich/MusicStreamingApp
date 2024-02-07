@@ -34,7 +34,7 @@ namespace MusicService.Infrastructure.Migrations
 
                     b.HasIndex("ReleasesId");
 
-                    b.ToTable("AuthorRelease");
+                    b.ToTable("AuthorRelease", (string)null);
                 });
 
             modelBuilder.Entity("GenreSong", b =>
@@ -49,7 +49,7 @@ namespace MusicService.Infrastructure.Migrations
 
                     b.HasIndex("SongsId");
 
-                    b.ToTable("GenreSong");
+                    b.ToTable("GenreSong", (string)null);
                 });
 
             modelBuilder.Entity("MusicService.Domain.Entities.Author", b =>
@@ -83,7 +83,7 @@ namespace MusicService.Infrastructure.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Authors");
+                    b.ToTable("Authors", (string)null);
 
                     b.HasData(
                         new
@@ -126,7 +126,7 @@ namespace MusicService.Infrastructure.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Genres");
+                    b.ToTable("Genres", (string)null);
                 });
 
             modelBuilder.Entity("MusicService.Domain.Entities.Release", b =>
@@ -156,7 +156,7 @@ namespace MusicService.Infrastructure.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Releases");
+                    b.ToTable("Releases", (string)null);
                 });
 
             modelBuilder.Entity("MusicService.Domain.Entities.Song", b =>
@@ -183,7 +183,7 @@ namespace MusicService.Infrastructure.Migrations
 
                     b.HasIndex("ReleaseId");
 
-                    b.ToTable("Songs");
+                    b.ToTable("Songs", (string)null);
                 });
 
             modelBuilder.Entity("MusicService.Domain.Entities.User", b =>
@@ -221,7 +221,7 @@ namespace MusicService.Infrastructure.Migrations
                     b.HasIndex("UserName")
                         .IsUnique();
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
 
                     b.HasData(
                         new

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MusicService.Application.Interfaces;
+using MusicService.Application.Models;
 using MusicService.Application.Models.AuthorService;
 using MusicService.Domain.Constants;
 
@@ -19,9 +20,9 @@ namespace MusicService.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync() 
+        public async Task<IActionResult> GetAllAsync([FromQuery] GetPageRequest request) 
         {
-            var authors = await _authorService.GetAllAsync();
+            var authors = await _authorService.GetAllAsync(request);
 
             return Ok(authors);
         }

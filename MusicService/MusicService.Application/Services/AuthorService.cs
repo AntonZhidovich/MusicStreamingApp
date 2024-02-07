@@ -3,29 +3,28 @@ using Microsoft.AspNetCore.Http;
 using MusicService.Application.Interfaces;
 using MusicService.Application.Models;
 using MusicService.Application.Models.AuthorService;
+using MusicService.Application.Models.DTOs;
 using MusicService.Domain.Constants;
 using MusicService.Domain.Entities;
 using MusicService.Domain.Exceptions;
 using MusicService.Domain.Interfaces;
+using MusicService.Infrastructure.Extensions;
 
 namespace MusicService.Application.Services
 {
     public class AuthorService : IAuthorService
     {
-        private readonly IAuthorRepository _authorRepository;
         private readonly IMapper _mapper;
-        private readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IHttpContextAccessor _contextAccessor;
 
         public AuthorService(
-            IAuthorRepository authorRepository, 
             IMapper mapper,
-            IUserRepository userRepository,
+            IUnitOfWork unitOfWork,
             IHttpContextAccessor contextAccessor )
         {
-            _authorRepository = authorRepository;
             _mapper = mapper;
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
             _contextAccessor = contextAccessor;
         }
 
@@ -46,7 +45,7 @@ namespace MusicService.Application.Services
             var author = await GetDomainAuthorAsync(request.AuthorName);
             CheckIfMember(author);
             author.Users.Add(user);
-            await _authorRepository.SaveChangesAsync();
+            await _unitOfWork.Authors.SaveChangesAsync();
         }
 
         public async Task BreakAuthorAsync(string name, BreakAuthorRequest request)
@@ -54,7 +53,7 @@ namespace MusicService.Application.Services
             var author = await GetDomainAuthorAsync(name);
             author.IsBroken = true;
             author.BrokenAt = request.BrokenAt;
-            await _authorRepository.SaveChangesAsync();
+            await _unitOfWork.Authors.SaveChangesAsync();
         }
 
         public async Task CreateAsync(CreateAuthorRequest request)
@@ -81,21 +80,24 @@ namespace MusicService.Application.Services
             var author = _mapper.Map<Author>(request);
             author.Id = Guid.NewGuid().ToString();
             author.Users = artists;
-            await _authorRepository.CreateAsync(author);
+            await _unitOfWork.Authors.CreateAsync(author);
+            await _unitOfWork.CommitAsync();
         }
 
         public async Task DeleteAsync(string name)
         {
             var author = await GetDomainAuthorAsync(name);
             CheckIfMember(author);
-            await _authorRepository.DeleteAsync(author);
+            _unitOfWork.Authors.Delete(author);
+            await _unitOfWork.CommitAsync();
         }
 
-        public async Task<IEnumerable<AuthorDto>> GetAllAsync()
+        public async Task<PageResponse<AuthorDto>> GetAllAsync(GetPageRequest request)
         {
-            var authors = await _authorRepository.GetAllAsync();
-            
-            return _mapper.Map<IEnumerable<AuthorDto>>(authors);
+            var authors = await _unitOfWork.Authors.GetAllAsync(request.CurrentPage, request.PageSize);
+            int allAuthorsCount = await _unitOfWork.Authors.CountAsync();
+
+            return authors.GetPageResponse<Author, AuthorDto>(allAuthorsCount, request, _mapper);
         }
 
         public async Task<AuthorDto> GetByNameAsync(string name)
@@ -122,26 +124,26 @@ namespace MusicService.Application.Services
             }
 
             author.Users.Remove(user);
-            await _authorRepository.SaveChangesAsync();
+            await _unitOfWork.Authors.SaveChangesAsync();
         }
 
         public async Task UnbreakAuthorAsync(string name)
         {
             var author = await GetDomainAuthorAsync(name);
             author.IsBroken = false;
-            await _authorRepository.SaveChangesAsync();
+            await _unitOfWork.Authors.SaveChangesAsync();
         }
 
         public async Task UpdateDesctiptionAsync(string name, UpdateAuthorDescriptionRequest request)
         {
             var author = await GetDomainAuthorAsync(name);
             author.Description = request.NewDescription;
-            await _authorRepository.SaveChangesAsync();
+            await _unitOfWork.Authors.SaveChangesAsync();
         }
 
         private async Task<Author> GetDomainAuthorAsync(string name)
         {
-            var author = await _authorRepository.GetByNameAsync(name);
+            var author = await _unitOfWork.Authors.GetByNameAsync(name);
 
             if(author == null)
             {
@@ -153,7 +155,7 @@ namespace MusicService.Application.Services
 
         private async Task<User> GetDomainUserAsync(string userName)
         {
-            var user = await _userRepository.GetByUserNameAsync(userName);
+            var user = await _unitOfWork.Users.GetByUserNameAsync(userName);
 
             if (user == null)
             {
@@ -175,7 +177,7 @@ namespace MusicService.Application.Services
             var currentUserName = user.Identity!.Name;
             var artistUserNames = author.Users.Select(user => user.UserName);
 
-            if (!artistUserNames.Contains(currentUserName)) 
+            if (!artistUserNames.Contains(currentUserName))
             {
                 throw new UnauthorizedException("Only group members can do this action.");
             }

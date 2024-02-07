@@ -1,11 +1,12 @@
 ﻿using MusicService.Application.Models;
 using MusicService.Application.Models.AuthorService;
+using MusicService.Application.Models.DTOs;
 
 namespace MusicService.Application.Interfaces
 {
     public interface IAuthorService
     {
-        Task<IEnumerable<AuthorDto>> GetAllAsync();
+        Task<PageResponse<AuthorDto>> GetAllAsync(GetPageRequest request);
         Task<AuthorDto> GetByNameAsync(string name);
         Task CreateAsync(CreateAuthorRequest request);
         Task AddArtistToAuthorAsync(AuthorArtistRequest request);

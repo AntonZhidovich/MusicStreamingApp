@@ -10,7 +10,7 @@ namespace MusicService.Infrastructure.Data.Configurations
         {
             builder.HasKey(song => song.Id);
 
-            builder.HasMany(song => song.Genre)
+            builder.HasMany(song => song.Genres)
                 .WithMany(genre => genre.Songs);
 
             builder.HasOne(song => song.Release)

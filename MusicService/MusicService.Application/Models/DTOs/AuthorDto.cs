@@ -1,6 +1,6 @@
 ﻿using MusicService.Domain.Entities;
 
-namespace MusicService.Application.Models
+namespace MusicService.Application.Models.DTOs
 {
     public class AuthorDto
     {

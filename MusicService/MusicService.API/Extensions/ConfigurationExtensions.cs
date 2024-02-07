@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MusicService.Application.Interfaces;
@@ -9,7 +10,7 @@ using MusicService.Infrastructure.Data;
 using MusicService.Infrastructure.Repositories;
 using System.Text;
 
-namespace MusicService.API
+namespace MusicService.API.Extensions
 {
     public static class ConfigurationExtensions
     {
@@ -18,13 +19,14 @@ namespace MusicService.API
             services.AddJwtAuthentication(configuration);
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IAuthorService, AuthorService>();
+            services.AddScoped<ISongService, SongService>();
 
             return services;
         }
 
         public static IServiceCollection AddDatabases(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<MusicDbContext>(options => 
+            services.AddDbContext<MusicDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("sqlserver")));
 
             return services;
@@ -34,11 +36,14 @@ namespace MusicService.API
         {
             services.AddScoped<IAuthorRepository, AuthorRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IGenreRepository, GenreRepository>();
+            services.AddScoped<ISongRepository, SongRepository>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;
         }
 
-        public static IServiceCollection ConfigureSwagger(this IServiceCollection services) 
+        public static IServiceCollection ConfigureSwagger(this IServiceCollection services)
         {
             services.AddSwaggerGen(options =>
             {
