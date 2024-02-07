@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MusicService.Application.Interfaces;
 using MusicService.Application.Models.AuthorService;
+using MusicService.Domain.Constants;
 
 namespace MusicService.API.Controllers
 {
-    [Route("api/author")]
+    [Authorize(Roles = $"{UserRoles.admin},{UserRoles.creator}")]
+    [Route("api/authors")]
     [ApiController]
     public class AuthorController : ControllerBase
     {

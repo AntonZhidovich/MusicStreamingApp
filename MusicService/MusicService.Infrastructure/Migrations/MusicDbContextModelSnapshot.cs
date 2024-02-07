@@ -63,6 +63,10 @@ namespace MusicService.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("CreatedByUsername")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -86,7 +90,8 @@ namespace MusicService.Infrastructure.Migrations
                         {
                             Id = "e372c6da-4c4d-4cd5-a1ca-c8507cf2d326",
                             BrokenAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2024, 2, 7, 0, 6, 10, 986, DateTimeKind.Local).AddTicks(3341),
+                            CreatedAt = new DateTime(2024, 2, 7, 11, 51, 51, 312, DateTimeKind.Local).AddTicks(3021),
+                            CreatedByUsername = "Chester.Bennington",
                             Description = "Linkin Park is an American rock band from Agoura Hills, California. The band's current lineup comprises vocalist/rhythm guitarist/keyboardist Mike Shinoda, lead guitarist Brad Delson, bassist Dave Farrell, DJ/turntables Joe Hahn and drummer Rob Bourdon, all of whom are founding members.",
                             IsBroken = false,
                             Name = "Linkin park"
@@ -95,7 +100,8 @@ namespace MusicService.Infrastructure.Migrations
                         {
                             Id = "7bfe40e0-f945-487b-ae93-a07cfbdc87db",
                             BrokenAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2024, 2, 7, 0, 6, 10, 986, DateTimeKind.Local).AddTicks(3354),
+                            CreatedAt = new DateTime(2024, 2, 7, 11, 51, 51, 312, DateTimeKind.Local).AddTicks(3046),
+                            CreatedByUsername = "Martijn-Garritsen",
                             Description = "Dutch electronic music producer whose multi-platinum dance anthems topped charts around the globe.",
                             IsBroken = false,
                             Name = "Martin Garrix"

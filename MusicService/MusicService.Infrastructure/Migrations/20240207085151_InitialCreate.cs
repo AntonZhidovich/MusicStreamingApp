@@ -22,7 +22,8 @@ namespace MusicService.Infrastructure.Migrations
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsBroken = table.Column<bool>(type: "bit", nullable: false),
                     BrokenAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedByUsername = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -152,11 +153,11 @@ namespace MusicService.Infrastructure.Migrations
 
             migrationBuilder.InsertData(
                 table: "Authors",
-                columns: new[] { "Id", "BrokenAt", "CreatedAt", "Description", "IsBroken", "Name" },
+                columns: new[] { "Id", "BrokenAt", "CreatedAt", "CreatedByUsername", "Description", "IsBroken", "Name" },
                 values: new object[,]
                 {
-                    { "7bfe40e0-f945-487b-ae93-a07cfbdc87db", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 2, 7, 0, 6, 10, 986, DateTimeKind.Local).AddTicks(3354), "Dutch electronic music producer whose multi-platinum dance anthems topped charts around the globe.", false, "Martin Garrix" },
-                    { "e372c6da-4c4d-4cd5-a1ca-c8507cf2d326", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 2, 7, 0, 6, 10, 986, DateTimeKind.Local).AddTicks(3341), "Linkin Park is an American rock band from Agoura Hills, California. The band's current lineup comprises vocalist/rhythm guitarist/keyboardist Mike Shinoda, lead guitarist Brad Delson, bassist Dave Farrell, DJ/turntables Joe Hahn and drummer Rob Bourdon, all of whom are founding members.", false, "Linkin park" }
+                    { "7bfe40e0-f945-487b-ae93-a07cfbdc87db", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 2, 7, 11, 51, 51, 312, DateTimeKind.Local).AddTicks(3046), "Martijn-Garritsen", "Dutch electronic music producer whose multi-platinum dance anthems topped charts around the globe.", false, "Martin Garrix" },
+                    { "e372c6da-4c4d-4cd5-a1ca-c8507cf2d326", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 2, 7, 11, 51, 51, 312, DateTimeKind.Local).AddTicks(3021), "Chester.Bennington", "Linkin Park is an American rock band from Agoura Hills, California. The band's current lineup comprises vocalist/rhythm guitarist/keyboardist Mike Shinoda, lead guitarist Brad Delson, bassist Dave Farrell, DJ/turntables Joe Hahn and drummer Rob Bourdon, all of whom are founding members.", false, "Linkin park" }
                 });
 
             migrationBuilder.InsertData(

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using MusicService.Application.Interfaces;
 using MusicService.Application.Models;
 using MusicService.Application.Models.AuthorService;
@@ -14,15 +15,18 @@ namespace MusicService.Application.Services
         private readonly IAuthorRepository _authorRepository;
         private readonly IMapper _mapper;
         private readonly IUserRepository _userRepository;
+        private readonly IHttpContextAccessor _contextAccessor;
 
         public AuthorService(
             IAuthorRepository authorRepository, 
             IMapper mapper,
-            IUserRepository userRepository)
+            IUserRepository userRepository,
+            IHttpContextAccessor contextAccessor )
         {
             _authorRepository = authorRepository;
             _mapper = mapper;
             _userRepository = userRepository;
+            _contextAccessor = contextAccessor;
         }
 
         public async Task AddArtistToAuthorAsync(AuthorArtistRequest request)
@@ -40,6 +44,7 @@ namespace MusicService.Application.Services
             }
 
             var author = await GetDomainAuthorAsync(request.AuthorName);
+            CheckIfMember(author);
             author.Users.Add(user);
             await _authorRepository.SaveChangesAsync();
         }
@@ -82,6 +87,7 @@ namespace MusicService.Application.Services
         public async Task DeleteAsync(string name)
         {
             var author = await GetDomainAuthorAsync(name);
+            CheckIfMember(author);
             await _authorRepository.DeleteAsync(author);
         }
 
@@ -102,6 +108,7 @@ namespace MusicService.Application.Services
         public async Task RemoveArtistFromAuthorAsync(AuthorArtistRequest request)
         {
             var author = await GetDomainAuthorAsync(request.AuthorName);
+            CheckIfMember(author);
             var user = await GetDomainUserAsync(request.ArtistUserName);
 
             if (user == null)
@@ -154,6 +161,24 @@ namespace MusicService.Application.Services
             }
 
             return user;
+        }
+
+        private void CheckIfMember(Author author)
+        {
+            var user = _contextAccessor.HttpContext.User;
+
+            if (user.IsInRole(UserRoles.admin))
+            {
+                return;
+            }
+
+            var currentUserName = user.Identity!.Name;
+            var artistUserNames = author.Users.Select(user => user.UserName);
+
+            if (!artistUserNames.Contains(currentUserName)) 
+            {
+                throw new UnauthorizedException("Only group members can do this action.");
+            }
         }
     }
 }

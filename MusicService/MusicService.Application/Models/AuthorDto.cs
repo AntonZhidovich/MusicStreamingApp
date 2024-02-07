@@ -8,6 +8,7 @@ namespace MusicService.Application.Models
         public List<string> UserNames { get; set; }
         public List<Release> Releases { get; set; } = [];
         public DateTime CreatedAt { get; set; }
+        public string CreatedByUsername { get; set; }
         public bool IsBroken { get; set; }
         public DateTime BrokenAt { get; set; }
         public string Description { get; set; }

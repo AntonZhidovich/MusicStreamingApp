@@ -68,7 +68,7 @@ namespace MusicService.Infrastructure.Data
                     Description = "Linkin Park is an American rock band from Agoura Hills, California. " +
                     "The band's current lineup comprises vocalist/rhythm guitarist/keyboardist Mike Shinoda, " +
                     "lead guitarist Brad Delson, bassist Dave Farrell, DJ/turntables Joe Hahn and drummer Rob" +
-                    " Bourdon, all of whom are founding members."
+                    " Bourdon, all of whom are founding members.",
                 },
                 new Author
                 {
@@ -77,7 +77,7 @@ namespace MusicService.Infrastructure.Data
                     CreatedAt = DateTime.Now,
                     IsBroken = false,
                     Description = "Dutch electronic music producer whose multi-platinum dance anthems topped " +
-                "charts around the globe."
+                "charts around the globe.",
                 });
         }
     }
