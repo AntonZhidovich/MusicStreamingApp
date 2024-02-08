@@ -10,6 +10,7 @@ namespace MusicService.Domain.Interfaces
         Task CreateAsync(Author author);
         void Update(Author author);
         void Delete(Author author);
+        bool UserIsMember(Author author, string userName);
         Task SaveChangesAsync();
     }
 }

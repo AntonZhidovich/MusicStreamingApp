@@ -6,7 +6,6 @@ namespace MusicService.Domain.Interfaces
     {
         Task<IEnumerable<Song>> GetAllAsync(int currentPage, int pageSize);
         Task<int> CountAsync();
-        Task<IEnumerable<Song>> GetByTitleAsync(string title, int currentPage, int pageSize);
         Task<Song?> GetByIdAsync(string id);
         Task CreateAsync(Song song);
         void Update(Song song);

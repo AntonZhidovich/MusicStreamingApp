@@ -60,5 +60,12 @@ namespace MusicService.Infrastructure.Repositories
         {
             _dbContext.Update(author);
         }
+
+        public bool UserIsMember(Author author, string userName)
+        {
+            var artistUserNames = author.Users.Select(user => user.UserName);
+
+            return artistUserNames.Contains(userName);
+        }
     }
 }

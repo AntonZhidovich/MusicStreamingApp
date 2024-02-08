@@ -6,7 +6,6 @@ namespace MusicService.Application.Models.DTOs
     {
         public string Name { get; set; }
         public List<string> UserNames { get; set; }
-        public List<Release> Releases { get; set; } = [];
         public DateTime CreatedAt { get; set; }
         public string CreatedByUsername { get; set; }
         public bool IsBroken { get; set; }

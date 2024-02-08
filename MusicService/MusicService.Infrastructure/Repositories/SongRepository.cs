@@ -36,7 +36,7 @@ namespace MusicService.Infrastructure.Repositories
                 .Include(song => song.Genres)
                 .Include(song => song.Release)
                     .ThenInclude(release => release.Authors)
-                .OrderByDescending(song => song.Release.CreatedAt)
+                .OrderByDescending(song => song.Release.ReleasedAt)
                 .GetPage(currentPage, pageSize)
                 .ToListAsync();
         }
@@ -50,20 +50,6 @@ namespace MusicService.Infrastructure.Repositories
                 .FirstOrDefaultAsync(song => song.Id == id);
 
             return song;
-        }
-
-        public async Task<IEnumerable<Song>> GetByTitleAsync(string title, int currentPage, int pageSize)
-        {
-            var songs = await _dbContext.Songs
-                .Include(song => song.Genres)
-                .Include(song => song.Release)
-                    .ThenInclude(release => release.Authors)
-                .Where(song => song.Title.Trim().ToLower() == title.Trim().ToLower())
-                .OrderByDescending(song => song.Release.CreatedAt)
-                .GetPage(currentPage, pageSize)
-                .ToListAsync();
-
-            return songs;
         }
 
         public async Task SaveChangesAsync()

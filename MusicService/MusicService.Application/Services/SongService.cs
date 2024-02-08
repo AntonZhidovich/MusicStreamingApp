@@ -7,7 +7,6 @@ using MusicService.Domain.Entities;
 using MusicService.Domain.Exceptions;
 using MusicService.Domain.Interfaces;
 using MusicService.Infrastructure.Extensions;
-using System.Runtime.InteropServices;
 
 namespace MusicService.Application.Services
 {
@@ -45,19 +44,6 @@ namespace MusicService.Application.Services
             return Task.FromResult(true);
         }
 
-        public async Task DeleteAsync(string id)
-        {
-            var song = await GetDomainSongAsync(id);
-
-            foreach (var genre in song.Genres)
-            {
-                genre.Songs.Remove(song);
-            }
-
-            _unitOfWork.Songs.Delete(song);
-            await _unitOfWork.CommitAsync();
-        }
-
         public async Task<PageResponse<SongDto>> GetAllAsync(GetPageRequest request)
         {
             var songs = await _unitOfWork.Songs.GetAllAsync(request.CurrentPage, request.PageSize);
@@ -81,7 +67,7 @@ namespace MusicService.Application.Services
 
             foreach(var genreName in request.Genres) 
             {
-                var genre = await GetDomainGenreAsync(genreName);
+                var genre = await _unitOfWork.Genres.GetOrCreateAsync(genreName);
                 genres.Add(genre);
             }
 
@@ -102,6 +88,12 @@ namespace MusicService.Application.Services
             var genre = await GetDomainGenreAsync(name);
 
             return _mapper.Map<GenreDto>(genre);
+        }
+
+        public async Task DeleteEmptyGenres()
+        {
+            _unitOfWork.Genres.DeleteAllEmpty();
+            await _unitOfWork.CommitAsync();
         }
 
         private async Task<Song> GetDomainSongAsync(string id)

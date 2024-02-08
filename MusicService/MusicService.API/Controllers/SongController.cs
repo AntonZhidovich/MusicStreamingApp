@@ -7,9 +7,9 @@ using MusicService.Domain.Constants;
 
 namespace MusicService.API.Controllers
 {
-    [Authorize(Roles = $"{UserRoles.creator},{UserRoles.admin}")]
-    [Route("api/songs")]
+    [Authorize]
     [ApiController]
+    [Route("api/songs")]
     public class SongController : ControllerBase
     {
         private readonly ISongService _songService;
@@ -36,6 +36,7 @@ namespace MusicService.API.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = $"{UserRoles.creator},{UserRoles.admin}")]
         public async Task<IActionResult> UpdateByIdASync([FromRoute] string id, [FromBody] UpdateSongRequest request)
         {
             await _songService.UpdateAsync(id, request);
@@ -43,15 +44,8 @@ namespace MusicService.API.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteByIdAsync([FromRoute] string id)
-        {
-            await _songService.DeleteAsync(id);
-
-            return NoContent();
-        }
-
         [HttpPut("{id}/source")]
+        [Authorize(Roles = UserRoles.admin)]
         public async Task<IActionResult> ChangeSourceAsync([FromRoute] string id, [FromBody] ChangeSongSourceRequest request)
         {
             await _songService.ChangeSongSourceAsync(id, request);

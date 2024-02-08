@@ -30,6 +30,14 @@ namespace MusicService.Infrastructure.Repositories
             _dbContext.Remove(genre);
         }
 
+        public void DeleteAllEmpty()
+        {
+            _dbContext.RemoveRange(
+                _dbContext.Genres
+                .Include(genre => genre.Songs)
+                .Where(genre => genre.Songs.Count == 0));
+        }
+
         public async Task<IEnumerable<Genre>> GetAllAsync(int currentPage, int pageSize)
         {
             return await _dbContext.Genres
@@ -47,6 +55,31 @@ namespace MusicService.Infrastructure.Repositories
                 .FirstOrDefaultAsync();
 
             return genre;
+        }
+
+        public async Task<Genre> GetOrCreateAsync(string name)
+        {
+            var genre = GetTrackedByName(name);
+
+            if (genre == null)
+            {
+                genre = await GetByNameAsync(name);
+
+                if (genre == null)
+                {
+                    genre = new Genre { Id = Guid.NewGuid().ToString(), Name = name, Description = string.Empty };
+                    await CreateAsync(genre);
+                }
+            }
+
+            return genre;
+        }
+
+        public Genre? GetTrackedByName(string name)
+        {
+            return _dbContext.ChangeTracker.Entries<Genre>()
+                .Select(entry => entry.Entity)
+                .FirstOrDefault(genre => genre.Name == name);
         }
 
         public async Task SaveChangesAsync()

@@ -3,12 +3,13 @@ using MusicService.Application.Models.SongService;
 using MusicService.Application.Models;
 using MusicService.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using MusicService.Domain.Constants;
 
 namespace MusicService.API.Controllers
 {
     [Authorize]
-    [Route("api/genres")]
     [ApiController]
+    [Route("api/genres")]
     public class GenreController : ControllerBase
     {
         private readonly ISongService _songService;
@@ -27,6 +28,7 @@ namespace MusicService.API.Controllers
         }
 
         [HttpGet("{name}")]
+        [Authorize(Roles = $"{UserRoles.admin},{UserRoles.creator}")]
         public async Task<IActionResult> ChangeGenreDescriptionAsync([FromRoute] string name)
         {
             var genre = await _songService.GetGenreByNameAsync(name);
@@ -35,9 +37,19 @@ namespace MusicService.API.Controllers
         }
 
         [HttpPut("{name}")]
+        [Authorize(Roles = $"{UserRoles.admin},{UserRoles.creator}")]
         public async Task<IActionResult> ChangeGenreDescriptionAsync([FromRoute] string name, [FromBody] ChangeGenreDescriptionRequest request)
         {
             await _songService.ChangeGenreDescriptionAsync(name, request);
+
+            return NoContent();
+        }
+
+        [HttpDelete("empty")]
+        [Authorize(Roles = UserRoles.admin)]
+        public async Task<IActionResult> DeleteEmptyAsync()
+        {
+            await _songService.DeleteEmptyGenres();
 
             return NoContent();
         }

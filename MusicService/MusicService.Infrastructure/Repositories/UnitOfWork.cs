@@ -9,6 +9,7 @@ namespace MusicService.Infrastructure.Repositories
 
         public IAuthorRepository Authors { get; }
         public IGenreRepository Genres { get; }
+        public IReleaseRepository Releases { get; }
         public ISongRepository Songs { get; }
         public IUserRepository Users { get; }
 
@@ -16,12 +17,14 @@ namespace MusicService.Infrastructure.Repositories
             MusicDbContext context,
             IAuthorRepository authors,
             IGenreRepository genreRepository,
+            IReleaseRepository releases,
             ISongRepository songRepository,
             IUserRepository users)
         {
             _context = context;
             Authors = authors;
             Genres = genreRepository;
+            Releases = releases;
             Songs = songRepository;
             Users = users;
         }

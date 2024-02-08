@@ -9,6 +9,7 @@ using MusicService.Domain.Entities;
 using MusicService.Domain.Exceptions;
 using MusicService.Domain.Interfaces;
 using MusicService.Infrastructure.Extensions;
+using System.Security.Claims;
 
 namespace MusicService.Application.Services
 {
@@ -16,19 +17,16 @@ namespace MusicService.Application.Services
     {
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IHttpContextAccessor _contextAccessor;
 
         public AuthorService(
             IMapper mapper,
-            IUnitOfWork unitOfWork,
-            IHttpContextAccessor contextAccessor )
+            IUnitOfWork unitOfWork)
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
-            _contextAccessor = contextAccessor;
         }
 
-        public async Task AddArtistToAuthorAsync(AuthorArtistRequest request)
+        public async Task AddArtistToAuthorAsync(AuthorArtistRequest request, ClaimsPrincipal currentUser)
         {
             var user = await GetDomainUserAsync(request.ArtistUserName);
 
@@ -43,7 +41,9 @@ namespace MusicService.Application.Services
             }
 
             var author = await GetDomainAuthorAsync(request.AuthorName);
-            CheckIfMember(author);
+
+            if (!currentUser.IsInRole(UserRoles.admin)) { CheckIfUserIsMember(author, currentUser); }
+
             author.Users.Add(user);
             await _unitOfWork.Authors.SaveChangesAsync();
         }
@@ -84,10 +84,12 @@ namespace MusicService.Application.Services
             await _unitOfWork.CommitAsync();
         }
 
-        public async Task DeleteAsync(string name)
+        public async Task DeleteAsync(string name, ClaimsPrincipal currentUser)
         {
             var author = await GetDomainAuthorAsync(name);
-            CheckIfMember(author);
+
+            if (!currentUser.IsInRole(UserRoles.admin)) { CheckIfUserIsMember(author, currentUser); }
+
             _unitOfWork.Authors.Delete(author);
             await _unitOfWork.CommitAsync();
         }
@@ -107,10 +109,12 @@ namespace MusicService.Application.Services
             return _mapper.Map<AuthorDto>(author);
         }
 
-        public async Task RemoveArtistFromAuthorAsync(AuthorArtistRequest request)
+        public async Task RemoveArtistFromAuthorAsync(AuthorArtistRequest request, ClaimsPrincipal currentUser)
         {
             var author = await GetDomainAuthorAsync(request.AuthorName);
-            CheckIfMember(author);
+
+            if (!currentUser.IsInRole(UserRoles.admin)) { CheckIfUserIsMember(author, currentUser); }
+
             var user = await GetDomainUserAsync(request.ArtistUserName);
 
             if (user == null)
@@ -134,9 +138,12 @@ namespace MusicService.Application.Services
             await _unitOfWork.Authors.SaveChangesAsync();
         }
 
-        public async Task UpdateDesctiptionAsync(string name, UpdateAuthorDescriptionRequest request)
+        public async Task UpdateDesctiptionAsync(string name, UpdateAuthorDescriptionRequest request, ClaimsPrincipal currentUser)
         {
             var author = await GetDomainAuthorAsync(name);
+
+            if (!currentUser.IsInRole(UserRoles.admin)) { CheckIfUserIsMember(author, currentUser); }
+
             author.Description = request.NewDescription;
             await _unitOfWork.Authors.SaveChangesAsync();
         }
@@ -145,7 +152,7 @@ namespace MusicService.Application.Services
         {
             var author = await _unitOfWork.Authors.GetByNameAsync(name);
 
-            if(author == null)
+            if (author == null)
             {
                 throw new NotFoundException("No author was found.");
             }
@@ -165,21 +172,13 @@ namespace MusicService.Application.Services
             return user;
         }
 
-        private void CheckIfMember(Author author)
+        private void CheckIfUserIsMember(Author author, ClaimsPrincipal currentUser)
         {
-            var user = _contextAccessor.HttpContext.User;
+            var currentUserName = currentUser.Identity!.Name!;
 
-            if (user.IsInRole(UserRoles.admin))
+            if (!_unitOfWork.Authors.UserIsMember(author, currentUserName))
             {
-                return;
-            }
-
-            var currentUserName = user.Identity!.Name;
-            var artistUserNames = author.Users.Select(user => user.UserName);
-
-            if (!artistUserNames.Contains(currentUserName))
-            {
-                throw new UnauthorizedException("Only group members can do this action.");
+                throw new UnauthorizedException("Only author members can do this action.");
             }
         }
     }

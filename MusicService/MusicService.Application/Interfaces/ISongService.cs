@@ -10,10 +10,10 @@ namespace MusicService.Application.Interfaces
         Task<SongDto> GetByIdAsync(string id);
         Task ChangeSongSourceAsync(string id, ChangeSongSourceRequest request);
         Task UpdateAsync(string id, UpdateSongRequest request);
-        Task DeleteAsync(string id);
         Task ChangeGenreDescriptionAsync(string name, ChangeGenreDescriptionRequest request);
         Task<PageResponse<GenreDto>> GetAllGenresAsync(GetPageRequest request);
         Task<GenreDto> GetGenreByNameAsync(string name);
         Task CheckIfSourceExists(string source);
+        Task DeleteEmptyGenres();
     }
 }

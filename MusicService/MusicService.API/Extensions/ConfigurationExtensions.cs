@@ -20,6 +20,7 @@ namespace MusicService.API.Extensions
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IAuthorService, AuthorService>();
             services.AddScoped<ISongService, SongService>();
+            services.AddScoped<IReleaseService, ReleaseService>();
 
             return services;
         }
@@ -38,6 +39,7 @@ namespace MusicService.API.Extensions
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IGenreRepository, GenreRepository>();
             services.AddScoped<ISongRepository, SongRepository>();
+            services.AddScoped<IReleaseRepository, ReleaseRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;

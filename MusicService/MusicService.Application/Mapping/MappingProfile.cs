@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using MusicService.Application.Models.AuthorService;
 using MusicService.Application.Models.DTOs;
+using MusicService.Application.Models.ReleaseService;
 using MusicService.Application.Models.SongService;
 using MusicService.Domain.Entities;
 
@@ -28,6 +29,21 @@ namespace MusicService.Application.Mapping
                 .ForMember(dest => dest.Release, options => options.MapFrom(src => src.Release));
 
             CreateMap<Genre, GenreDto>();
+
+            CreateMap<AddSongToReleaseRequest, Song>()
+                .ForMember(dest => dest.Genres, options => options.MapFrom(src => new List<Genre>()));
+
+            CreateMap<CreateReleaseRequest, Release>()
+                .ForMember(dest => dest.Songs, options => options.MapFrom(src => new List<Song>()))
+                .ForMember(dest => dest.Authors, options => options.MapFrom(src => new List<Author>()))
+                .ForMember(dest => dest.SongsCount, options => options.Ignore());
+
+            CreateMap<Song, SongInReleaseDto>();
+
+            CreateMap<Release, ReleaseDto>()
+                .ForMember(dest => dest.AuthorNames, options => options.MapFrom(src => src.Authors.Select(author => author.Name)));
+
+            CreateMap<UpdateReleaseRequest, Release>();
         }
     }
 }
