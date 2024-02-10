@@ -35,20 +35,27 @@ namespace MusicService.API.Controllers
             return Ok(songs);
         }
 
+        [HttpGet("genre/{genreName}")]
+        public async Task<IActionResult> GetSongsFromGenreAsync([FromRoute] string genreName, [FromQuery] GetPageRequest request)
+        {
+            var songs = await _songService.GetSongsFromGenreAsync(request, genreName);
+
+            return Ok(songs);
+        }
+
+        [HttpGet("name/{name}")]
+        public async Task<IActionResult> GetSongsByNameAsync([FromRoute] string name, [FromQuery] GetPageRequest request)
+        {
+            var songs = await _songService.GetSongsByNameAsync(request, name);
+
+            return Ok(songs);
+        }
+
         [HttpPut("{id}")]
-        [Authorize(Roles = $"{UserRoles.creator},{UserRoles.admin}")]
+        [Authorize(Roles = $"{UserRoles.admin}")]
         public async Task<IActionResult> UpdateByIdASync([FromRoute] string id, [FromBody] UpdateSongRequest request)
         {
             await _songService.UpdateAsync(id, request);
-
-            return NoContent();
-        }
-
-        [HttpPut("{id}/source")]
-        [Authorize(Roles = UserRoles.admin)]
-        public async Task<IActionResult> ChangeSourceAsync([FromRoute] string id, [FromBody] ChangeSongSourceRequest request)
-        {
-            await _songService.ChangeSongSourceAsync(id, request);
 
             return NoContent();
         }

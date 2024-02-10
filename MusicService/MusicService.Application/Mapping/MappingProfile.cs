@@ -4,6 +4,7 @@ using MusicService.Application.Models.DTOs;
 using MusicService.Application.Models.ReleaseService;
 using MusicService.Application.Models.SongService;
 using MusicService.Domain.Entities;
+using System.ComponentModel.Design;
 
 namespace MusicService.Application.Mapping
 {
@@ -18,8 +19,12 @@ namespace MusicService.Application.Mapping
                 .ForMember(dest => dest.Users, options => options.Ignore())
                 .ForMember(dest => dest.Releases, options => options.Ignore());
 
+            CreateMap<UpdateAuthorRequest, Author>()
+                .ForAllMembers(options => options.Condition((source, dest, member) => member != null));
+
             CreateMap<UpdateSongRequest, Song>()
-                .ForMember(dest => dest.Genres, options => options.Ignore());
+                .ForMember(dest => dest.Genres, options => options.Ignore())
+                .ForAllMembers(options => options.Condition((source, dest, member) => member != null));
 
             CreateMap<Release, ReleaseInSongDto>()
                 .ForMember(dest => dest.Authors, options => options.MapFrom(src => src.Authors.Select(author => author.Name)));

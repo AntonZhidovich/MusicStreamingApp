@@ -45,11 +45,11 @@ namespace MusicService.API.Controllers
             return NoContent();
         }
 
-        [HttpDelete("empty")]
-        [Authorize(Roles = UserRoles.admin)]
-        public async Task<IActionResult> DeleteEmptyAsync()
+        [HttpDelete("{name}")]
+        [Authorize(Roles = $"{UserRoles.admin},{UserRoles.creator}")]
+        public async Task<IActionResult> DeleteAsync([FromRoute] string name)
         {
-            await _songService.DeleteEmptyGenres();
+            await _songService.DeleteGenreAsync(name);
 
             return NoContent();
         }

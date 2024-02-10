@@ -8,6 +8,7 @@ namespace MusicService.Application.Interfaces
     public interface IReleaseService
     {
         Task<PageResponse<ReleaseDto>> GetAllAsync(GetPageRequest request);
+        Task<PageResponse<ReleaseDto>> GetAllFromAuthorAsync(GetPageRequest request, string artistName);
         Task CreateAsync(CreateReleaseRequest request, ClaimsPrincipal user);
         Task DeleteAsync(string id, ClaimsPrincipal user);
         Task UpdateAsync(string id, UpdateReleaseRequest request, ClaimsPrincipal user);

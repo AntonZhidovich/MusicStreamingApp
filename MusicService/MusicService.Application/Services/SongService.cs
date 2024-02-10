@@ -7,6 +7,7 @@ using MusicService.Domain.Entities;
 using MusicService.Domain.Exceptions;
 using MusicService.Domain.Interfaces;
 using MusicService.Infrastructure.Extensions;
+using MusicService.Infrastructure.Specifications;
 
 namespace MusicService.Application.Services
 {
@@ -30,14 +31,14 @@ namespace MusicService.Application.Services
             await _unitOfWork.CommitAsync();
         }
 
-        public async Task ChangeSongSourceAsync(string id, ChangeSongSourceRequest request)
+        public async Task DeleteGenreAsync(string name)
         {
-            var song = await GetDomainSongAsync(id);
-            song.SourceName = request.NewSource;
+            var genre = await GetDomainGenreAsync(name);
+            _unitOfWork.Genres.Delete(genre);
             await _unitOfWork.CommitAsync();
         }
 
-        public Task CheckIfSourceExists(string source)
+        public Task CheckIfSourceExistsAsync(string source)
         {
             //TODO: implement it after adding MinIO
 
@@ -48,6 +49,24 @@ namespace MusicService.Application.Services
         {
             var songs = await _unitOfWork.Songs.GetAllAsync(request.CurrentPage, request.PageSize);
             var allSongsCount = await _unitOfWork.Songs.CountAsync();
+
+            return songs.GetPageResponse<Song, SongDto>(allSongsCount, request, _mapper);
+        }
+
+        public async Task<PageResponse<SongDto>> GetSongsByNameAsync(GetPageRequest request, string name)
+        {
+            var specification = new SongFromGenreSpecification(name);
+            var songs = await _unitOfWork.Songs.ApplySpecificationAsync(specification, request.CurrentPage, request.PageSize);
+            var allSongsCount = await _unitOfWork.Songs.CountAsync(specification);
+
+            return songs.GetPageResponse<Song, SongDto>(allSongsCount, request, _mapper);
+        }
+
+        public async Task<PageResponse<SongDto>> GetSongsFromGenreAsync(GetPageRequest request, string genreName)
+        {
+            var specification = new SongFromGenreSpecification(genreName);
+            var songs = await _unitOfWork.Songs.ApplySpecificationAsync(specification, request.CurrentPage, request.PageSize);
+            var allSongsCount = await _unitOfWork.Songs.CountAsync(specification);
 
             return songs.GetPageResponse<Song, SongDto>(allSongsCount, request, _mapper);
         }
@@ -63,15 +82,9 @@ namespace MusicService.Application.Services
         {
             var song = await GetDomainSongAsync(id);
             _mapper.Map(request, song);
-            List<Genre> genres = new List<Genre>();
 
-            foreach(var genreName in request.Genres) 
-            {
-                var genre = await _unitOfWork.Genres.GetOrCreateAsync(genreName);
-                genres.Add(genre);
-            }
+            if (request.Genres != null) { await UpdateSongGenresAsync(song, request.Genres); }
 
-            song.Genres = genres;
             await _unitOfWork.CommitAsync();
         }
 
@@ -88,12 +101,6 @@ namespace MusicService.Application.Services
             var genre = await GetDomainGenreAsync(name);
 
             return _mapper.Map<GenreDto>(genre);
-        }
-
-        public async Task DeleteEmptyGenres()
-        {
-            _unitOfWork.Genres.DeleteAllEmpty();
-            await _unitOfWork.CommitAsync();
         }
 
         private async Task<Song> GetDomainSongAsync(string id)
@@ -118,6 +125,19 @@ namespace MusicService.Application.Services
             }
 
             return genre;
+        }
+
+        private async Task UpdateSongGenresAsync(Song song, List<string> genreNames)
+        {
+            List<Genre> genres = new List<Genre>();
+
+            foreach (var genreName in genreNames)
+            {
+                var genre = await _unitOfWork.Genres.GetOrCreateAsync(genreName);
+                genres.Add(genre);
+            }
+
+            song.Genres = genres;
         }
     }
 }

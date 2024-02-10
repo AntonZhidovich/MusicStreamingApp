@@ -6,29 +6,9 @@ using MusicService.Infrastructure.Extensions;
 
 namespace MusicService.Infrastructure.Repositories
 {
-    public class AuthorRepository : IAuthorRepository
+    public class AuthorRepository : BaseRepository<Author>, IAuthorRepository
     {
-        private readonly MusicDbContext _dbContext;
-
-        public AuthorRepository(MusicDbContext dbContext)
-        {
-            _dbContext = dbContext;
-        }
-
-        public async Task<int> CountAsync()
-        {
-            return await _dbContext.Authors.CountAsync();
-        }
-
-        public async Task CreateAsync(Author author)
-        {
-            await _dbContext.AddAsync(author);
-        }
-
-        public void Delete(Author author)
-        {
-            _dbContext.Remove(author);
-        }
+        public AuthorRepository(MusicDbContext dbContext) : base(dbContext) { }
 
         public async Task<IEnumerable<Author>> GetAllAsync(int currentPage, int pageSize)
         {
@@ -44,21 +24,21 @@ namespace MusicService.Infrastructure.Repositories
         public Task<Author?> GetByNameAsync(string name)
         {
             var author = _dbContext.Authors
-                .Where(author => author.Name.Trim().ToLower() == name.Trim().ToLower())
                 .Include(author => author.Users)
+                .Where(author => author.Name.Trim().ToLower() == name.Trim().ToLower())
                 .FirstOrDefaultAsync();
 
             return author;
         }
 
-        public async Task SaveChangesAsync()
+        public async Task<IEnumerable<Author?>> GetByNameAsync(IEnumerable<string> authorNames)
         {
-            await _dbContext.SaveChangesAsync();
-        }
+            var authors = await _dbContext.Authors
+                .Include(author => author.Users)
+                .Where(author => authorNames.Contains(author.Name))
+                .ToListAsync();
 
-        public void Update(Author author)
-        {
-            _dbContext.Update(author);
+            return authors;
         }
 
         public bool UserIsMember(Author author, string userName)

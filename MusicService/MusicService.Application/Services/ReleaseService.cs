@@ -3,12 +3,15 @@ using MusicService.Application.Interfaces;
 using MusicService.Application.Models;
 using MusicService.Application.Models.DTOs;
 using MusicService.Application.Models.ReleaseService;
+using MusicService.Application.Specifications;
 using MusicService.Domain.Constants;
 using MusicService.Domain.Entities;
 using MusicService.Domain.Exceptions;
 using MusicService.Domain.Interfaces;
 using MusicService.Infrastructure.Extensions;
+using MusicService.Infrastructure.Specifications;
 using System.Security.Claims;
+using System.Xml.Linq;
 
 namespace MusicService.Application.Services
 {
@@ -36,6 +39,15 @@ namespace MusicService.Application.Services
             return releases.GetPageResponse<Release, ReleaseDto>(allReleasesCount, request, _mapper);
         }
 
+        public async Task<PageResponse<ReleaseDto>> GetAllFromAuthorAsync(GetPageRequest request, string artistName)
+        {
+            var specification = new ReleasesFromAuthorSpecification(artistName);
+            var authors = await _unitOfWork.Releases.ApplySpecificationAsync(specification, request.CurrentPage, request.PageSize);
+            var allSongsCount = await _unitOfWork.Releases.CountAsync(specification);
+
+            return authors.GetPageResponse<Release, ReleaseDto>(allSongsCount, request, _mapper);
+        }
+
         public async Task AddSongToReleaseAsync(string releaseId, AddSongToReleaseRequest request, ClaimsPrincipal user)
         {
             var release = await GetDomainReleaseAsync(releaseId);
@@ -52,20 +64,19 @@ namespace MusicService.Application.Services
             var release = _mapper.Map<Release>(request);
             release.Id = Guid.NewGuid().ToString();
 
-            foreach (var authorName in request.AuthorNames)
-            {
-                var author = await _unitOfWork.Authors.GetByNameAsync(authorName);
+            var authors = await _unitOfWork.Authors.GetByNameAsync(request.AuthorNames);
 
+            foreach (var author in authors)
+            { 
                 if (author == null)
                 {
-                    throw new NotFoundException($"No author with name {authorName} was found.");
+                    throw new NotFoundException($"One of authors was not found.");
                 }
 
-                if (!user.IsInRole(UserRoles.admin)) { CheckIfUserIsMember(author, user); }
-
                 release.Authors.Add(author);
-                
             }
+
+            if (!user.IsInRole(UserRoles.admin)) { CheckIfUserIsMember(authors!, user); }
 
             foreach (var songRequest in request.Songs)
             {
@@ -79,8 +90,9 @@ namespace MusicService.Application.Services
         public async Task DeleteAsync(string id, ClaimsPrincipal user)
         {
             var release = await GetDomainReleaseAsync(id);
+            var authors = await _unitOfWork.Authors.GetByNameAsync(release.Authors.Select(author => author.Name));
 
-            if (!user.IsInRole(UserRoles.admin)) { CheckIfUserIsMember(release.Authors, user); }
+            if (!user.IsInRole(UserRoles.admin)) { CheckIfUserIsMember(authors!, user); }
 
             _unitOfWork.Releases.Delete(release);
             await _unitOfWork.CommitAsync();
@@ -119,7 +131,7 @@ namespace MusicService.Application.Services
         private async Task AddSongToGivenReleaseAsync(Release release, AddSongToReleaseRequest request)
         {
             var song = _mapper.Map<Song>(request);
-            await _songService.CheckIfSourceExists(song.SourceName);
+            await _songService.CheckIfSourceExistsAsync(song.SourceName);
 
             foreach (var genreName in request.Genres)
             {
@@ -162,22 +174,16 @@ namespace MusicService.Application.Services
             }
         }
 
-        private void CheckIfUserIsMember(Author author, ClaimsPrincipal user)
+        private void CheckIfUserIsMember(IEnumerable<Author> authors, ClaimsPrincipal user)
         {
             var currentUserName = user.Identity!.Name!;
 
-            if (!_unitOfWork.Authors.UserIsMember(author, currentUserName))
-            {
-                throw new UnauthorizedException("Only author members can do this action.");
-            }
-        }
-
-        private void CheckIfUserIsMember(IEnumerable<Author> authors, ClaimsPrincipal user)
-        {
             foreach (var author in authors)
             {
-                CheckIfUserIsMember(author, user);
+                if (_unitOfWork.Authors.UserIsMember(author, currentUserName)) { return; }
             }
+
+            throw new UnauthorizedException("Only author members can do this action.");
         }
     }
 }

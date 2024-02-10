@@ -2,15 +2,11 @@
 
 namespace MusicService.Domain.Interfaces
 {
-    public interface IAuthorRepository
+    public interface IAuthorRepository : IBaseRepository<Author>
     {
         Task<IEnumerable<Author>> GetAllAsync(int currentPage, int pageSize);
         Task<Author?> GetByNameAsync(string name);
-        Task<int> CountAsync();
-        Task CreateAsync(Author author);
-        void Update(Author author);
-        void Delete(Author author);
+        Task<IEnumerable<Author?>> GetByNameAsync(IEnumerable<string> authorNames);
         bool UserIsMember(Author author, string userName);
-        Task SaveChangesAsync();
     }
 }

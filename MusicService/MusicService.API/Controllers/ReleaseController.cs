@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using MusicService.Application.Interfaces;
 using MusicService.Application.Models;
 using MusicService.Application.Models.ReleaseService;
+using MusicService.Application.Services;
 using MusicService.Domain.Constants;
 
 namespace MusicService.API.Controllers
@@ -27,6 +28,14 @@ namespace MusicService.API.Controllers
             return Ok(releases);
         }
 
+        [HttpGet("author/{authorName}")]
+        public async Task<IActionResult> GetAllFromAuthorAsync([FromRoute] string authorName, [FromQuery] GetPageRequest request)
+        {
+            var authors = await _releaseService.GetAllFromAuthorAsync(request, authorName);
+
+            return Ok(authors);
+        }
+
         [HttpPost]
         [Authorize(Roles = $"{UserRoles.creator},{UserRoles.admin}")]
         public async Task<IActionResult> CreateAsync(CreateReleaseRequest request)
@@ -36,7 +45,7 @@ namespace MusicService.API.Controllers
             return NoContent();
         }
 
-        [HttpPatch("{releaseId}")]
+        [HttpPut("{releaseId}")]
         [Authorize(Roles = $"{UserRoles.creator},{UserRoles.admin}")]
         public async Task<IActionResult> UpdateAsync([FromRoute] string releaseId, [FromBody] UpdateReleaseRequest request)
         {

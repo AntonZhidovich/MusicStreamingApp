@@ -76,27 +76,9 @@ namespace MusicService.API.Controllers
 
         [HttpPut("{authorName}/description")]
         [Authorize(Roles = $"{UserRoles.admin},{UserRoles.creator}")]
-        public async Task<IActionResult> UpdateAuthorDescriptionAsync([FromRoute] string authorName, [FromBody] UpdateAuthorDescriptionRequest request)
+        public async Task<IActionResult> UpdateAuthorAsync([FromRoute] string authorName, [FromBody] UpdateAuthorRequest request)
         {
-            await _authorService.UpdateDesctiptionAsync(authorName, request, HttpContext.User);
-
-            return NoContent();
-        }
-
-        [HttpPost("{authorName}/broken-at")]
-        [Authorize(Roles = $"{UserRoles.admin},{UserRoles.creator}")]
-        public async Task<IActionResult> BreakArtistAsync([FromRoute] string authorName, [FromBody] BreakAuthorRequest request)
-        {
-            await _authorService.BreakAuthorAsync(authorName, request);
-
-            return NoContent();
-        }
-
-        [HttpDelete("{authorName}/broken-at")]
-        [Authorize(Roles = $"{UserRoles.admin},{UserRoles.creator}")]
-        public async Task<IActionResult> BreakArtistAsync([FromRoute] string authorName)
-        {
-            await _authorService.UnbreakAuthorAsync(authorName);
+            await _authorService.UpdateAsync(authorName, request, HttpContext.User);
 
             return NoContent();
         }

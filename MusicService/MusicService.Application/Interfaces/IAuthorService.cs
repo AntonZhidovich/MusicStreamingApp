@@ -13,8 +13,6 @@ namespace MusicService.Application.Interfaces
         Task AddArtistToAuthorAsync(AuthorArtistRequest request, ClaimsPrincipal currentUser);
         Task RemoveArtistFromAuthorAsync(AuthorArtistRequest request, ClaimsPrincipal currentUser);
         Task DeleteAsync(string name, ClaimsPrincipal currentUser);
-        Task UpdateDesctiptionAsync(string name, UpdateAuthorDescriptionRequest request, ClaimsPrincipal currentUser);
-        Task BreakAuthorAsync(string name, BreakAuthorRequest request);
-        Task UnbreakAuthorAsync(string name);
+        Task UpdateAsync(string name, UpdateAuthorRequest request, ClaimsPrincipal currentUser);
     }
 }

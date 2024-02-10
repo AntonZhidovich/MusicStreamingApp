@@ -6,36 +6,16 @@ using MusicService.Infrastructure.Extensions;
 
 namespace MusicService.Infrastructure.Repositories
 {
-    public class SongRepository : ISongRepository
+    public class SongRepository : BaseRepository<Song>, ISongRepository
     {
-        private readonly MusicDbContext _dbContext;
-
-        public SongRepository(MusicDbContext dbContext)
-        {
-            _dbContext = dbContext;
-        }
-
-        public async Task<int> CountAsync()
-        {
-            return await _dbContext.Songs.CountAsync();
-        }
-
-        public async Task CreateAsync(Song song)
-        {
-            await _dbContext.AddAsync(song);
-        }
-
-        public void Delete(Song song)
-        {
-            _dbContext.Remove(song);
-        }
+        public SongRepository(MusicDbContext dbContext) : base(dbContext) { }
 
         public async Task<IEnumerable<Song>> GetAllAsync(int currentPage, int pageSize)
         {
             return await _dbContext.Songs
                 .Include(song => song.Genres)
                 .Include(song => song.Release)
-                    .ThenInclude(release => release.Authors)
+                .ThenInclude(release => release.Authors)
                 .OrderByDescending(song => song.Release.ReleasedAt)
                 .GetPage(currentPage, pageSize)
                 .ToListAsync();
@@ -46,20 +26,10 @@ namespace MusicService.Infrastructure.Repositories
             var song = await _dbContext.Songs
                 .Include(song => song.Genres)
                 .Include(song => song.Release)
-                    .ThenInclude(release => release.Authors)
+                .ThenInclude(release => release.Authors)
                 .FirstOrDefaultAsync(song => song.Id == id);
 
             return song;
-        }
-
-        public async Task SaveChangesAsync()
-        {
-            await _dbContext.SaveChangesAsync();
-        }
-
-        public void Update(Song song)
-        {
-            _dbContext.Update(song);
         }
     }
 }

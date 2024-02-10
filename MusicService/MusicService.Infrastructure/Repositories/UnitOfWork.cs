@@ -1,4 +1,5 @@
-﻿using MusicService.Domain.Interfaces;
+﻿using Microsoft.Extensions.DependencyInjection;
+using MusicService.Domain.Interfaces;
 using MusicService.Infrastructure.Data;
 
 namespace MusicService.Infrastructure.Repositories
@@ -6,27 +7,25 @@ namespace MusicService.Infrastructure.Repositories
     public class UnitOfWork : IUnitOfWork
     {
         private readonly MusicDbContext _context;
+        private readonly IServiceProvider _serviceProvider;
+        private IAuthorRepository? authors = null;
+        private IGenreRepository? genres = null;
+        private IReleaseRepository? releases = null;
+        private ISongRepository? songs = null;
+        private IUserRepository? users = null;
 
-        public IAuthorRepository Authors { get; }
-        public IGenreRepository Genres { get; }
-        public IReleaseRepository Releases { get; }
-        public ISongRepository Songs { get; }
-        public IUserRepository Users { get; }
+        public IAuthorRepository Authors => authors ??= _serviceProvider.GetService<IAuthorRepository>()!;
+        public IGenreRepository Genres => genres ??= _serviceProvider.GetService<IGenreRepository>()!;
+        public IReleaseRepository Releases => releases ??= _serviceProvider.GetService<IReleaseRepository>()!;
+        public ISongRepository Songs => songs ??= _serviceProvider.GetService<ISongRepository>()!;
+        public IUserRepository Users => users ??= _serviceProvider.GetService<IUserRepository>()!;
 
-        public UnitOfWork(
+        public UnitOfWork( 
             MusicDbContext context,
-            IAuthorRepository authors,
-            IGenreRepository genreRepository,
-            IReleaseRepository releases,
-            ISongRepository songRepository,
-            IUserRepository users)
+            IServiceProvider serviceProvider)
         {
             _context = context;
-            Authors = authors;
-            Genres = genreRepository;
-            Releases = releases;
-            Songs = songRepository;
-            Users = users;
+            _serviceProvider = serviceProvider;
         }
 
         public async Task CommitAsync()

@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using MusicService.Application.Interfaces;
 using MusicService.Application.Models;
 using MusicService.Application.Models.AuthorService;
@@ -45,14 +44,6 @@ namespace MusicService.Application.Services
             if (!currentUser.IsInRole(UserRoles.admin)) { CheckIfUserIsMember(author, currentUser); }
 
             author.Users.Add(user);
-            await _unitOfWork.Authors.SaveChangesAsync();
-        }
-
-        public async Task BreakAuthorAsync(string name, BreakAuthorRequest request)
-        {
-            var author = await GetDomainAuthorAsync(name);
-            author.IsBroken = true;
-            author.BrokenAt = request.BrokenAt;
             await _unitOfWork.Authors.SaveChangesAsync();
         }
 
@@ -128,24 +119,17 @@ namespace MusicService.Application.Services
             }
 
             author.Users.Remove(user);
-            await _unitOfWork.Authors.SaveChangesAsync();
+            await _unitOfWork.CommitAsync();
         }
 
-        public async Task UnbreakAuthorAsync(string name)
-        {
-            var author = await GetDomainAuthorAsync(name);
-            author.IsBroken = false;
-            await _unitOfWork.Authors.SaveChangesAsync();
-        }
-
-        public async Task UpdateDesctiptionAsync(string name, UpdateAuthorDescriptionRequest request, ClaimsPrincipal currentUser)
+        public async Task UpdateAsync(string name, UpdateAuthorRequest request, ClaimsPrincipal currentUser)
         {
             var author = await GetDomainAuthorAsync(name);
 
             if (!currentUser.IsInRole(UserRoles.admin)) { CheckIfUserIsMember(author, currentUser); }
 
-            author.Description = request.NewDescription;
-            await _unitOfWork.Authors.SaveChangesAsync();
+            _mapper.Map(request, author);
+            await _unitOfWork.CommitAsync();
         }
 
         private async Task<Author> GetDomainAuthorAsync(string name)
