@@ -14,29 +14,33 @@ namespace MusicService.Infrastructure.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<T>> ApplySpecificationAsync(ISpecification<T> specification, int currentPage, int pageSize)
+        public async Task<IEnumerable<T>> ApplySpecificationAsync(
+            ISpecification<T> specification, 
+            int currentPage, 
+            int pageSize, 
+            CancellationToken cancellationToken = default)
         {
             return await _dbContext.Set<T>()
                 .ApplySpecification(specification)
                 .GetPage(currentPage, pageSize)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
 
-        public async Task<int> CountAsync()
+        public async Task<int> CountAsync(CancellationToken cancellationToken = default)
         {
-            return await _dbContext.Set<T>().CountAsync();
+            return await _dbContext.Set<T>().CountAsync(cancellationToken);
         }
 
-        public async Task<int> CountAsync(ISpecification<T> specification)
+        public async Task<int> CountAsync(ISpecification<T> specification, CancellationToken cancellationToken = default)
         {
             return await _dbContext.Set<T>()
                 .ApplySpecification(specification)
-                .CountAsync();
+                .CountAsync(cancellationToken);
         }
 
-        public async Task CreateAsync(T entity)
+        public async Task CreateAsync(T entity, CancellationToken cancellationToken = default)
         {
-            await _dbContext.AddAsync(entity);
+            await _dbContext.AddAsync(entity, cancellationToken);
         }
 
         public void Delete(T entity)
@@ -44,7 +48,7 @@ namespace MusicService.Infrastructure.Repositories
             _dbContext.Remove(entity);
         }
 
-        public async Task SaveChangesAsync()
+        public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             await _dbContext.SaveChangesAsync();
         }

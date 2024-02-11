@@ -4,8 +4,8 @@ namespace MusicService.Domain.Interfaces
 {
     public interface IUserRepository
     {
-        Task<User?> GetByUserNameAsync(string userName);
-        Task<User?> GetByEmailAsync(string email);
-        Task<Author?> GetAuthorByUserNameAsync(string userName);
+        Task<User?> GetByUserNameAsync(string userName, CancellationToken cancellationToken = default);
+        Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default);
+        Task<Author?> GetAuthorByUserNameAsync(string userName, CancellationToken cancellationToken = default);
     }
 }

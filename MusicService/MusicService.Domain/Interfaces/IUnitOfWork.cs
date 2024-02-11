@@ -8,6 +8,6 @@
         ISongRepository Songs {  get; }
         IUserRepository Users { get; }
 
-        Task CommitAsync();
+        Task CommitAsync(CancellationToken cancellationToken = default);
     }
 }

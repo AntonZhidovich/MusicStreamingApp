@@ -22,7 +22,7 @@ namespace MusicService.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllAsync([FromQuery] GetPageRequest request) 
         {
-            var authors = await _authorService.GetAllAsync(request);
+            var authors = await _authorService.GetAllAsync(request, HttpContext.RequestAborted);
 
             return Ok(authors);
         }
@@ -30,7 +30,7 @@ namespace MusicService.API.Controllers
         [HttpGet("{name}")]
         public async Task<IActionResult> GetAsync([FromRoute] string name)
         {
-            var author = await _authorService.GetByNameAsync(name);
+            var author = await _authorService.GetByNameAsync(name, HttpContext.RequestAborted);
 
             return Ok(author);
         }
@@ -39,7 +39,7 @@ namespace MusicService.API.Controllers
         [Authorize(Roles = $"{UserRoles.admin},{UserRoles.creator}")]
         public async Task<IActionResult> DeleteAsync([FromRoute] string name)
         {
-            await _authorService.DeleteAsync(name, HttpContext.User);
+            await _authorService.DeleteAsync(name, HttpContext.User, HttpContext.RequestAborted);
 
             return NoContent();
         }
@@ -49,7 +49,7 @@ namespace MusicService.API.Controllers
         [Authorize(Roles = $"{UserRoles.admin},{UserRoles.creator}")]
         public async Task<IActionResult> CreateAsync([FromBody] CreateAuthorRequest request)
         {
-            await _authorService.CreateAsync(request);
+            await _authorService.CreateAsync(request, HttpContext.RequestAborted);
 
             return NoContent();
         }
@@ -59,7 +59,7 @@ namespace MusicService.API.Controllers
         public async Task<IActionResult> RemoveArtistFromAuthorAsync([FromRoute] string authorName, [FromRoute] string artistName)
         {
             var request = new AuthorArtistRequest { AuthorName = authorName, ArtistUserName = artistName };
-            await _authorService.RemoveArtistFromAuthorAsync(request , HttpContext.User);
+            await _authorService.RemoveArtistFromAuthorAsync(request , HttpContext.User, HttpContext.RequestAborted);
 
             return NoContent();
         }
@@ -69,7 +69,7 @@ namespace MusicService.API.Controllers
         public async Task<IActionResult> AddArtistToAuthorAsync([FromRoute] string authorName, [FromRoute] string artistName)
         {
             var request = new AuthorArtistRequest { AuthorName = authorName, ArtistUserName = artistName };
-            await _authorService.AddArtistToAuthorAsync(request, HttpContext.User);
+            await _authorService.AddArtistToAuthorAsync(request, HttpContext.User, HttpContext.RequestAborted);
 
             return NoContent();
         }
@@ -78,7 +78,7 @@ namespace MusicService.API.Controllers
         [Authorize(Roles = $"{UserRoles.admin},{UserRoles.creator}")]
         public async Task<IActionResult> UpdateAuthorAsync([FromRoute] string authorName, [FromBody] UpdateAuthorRequest request)
         {
-            await _authorService.UpdateAsync(authorName, request, HttpContext.User);
+            await _authorService.UpdateAsync(authorName, request, HttpContext.User, HttpContext.RequestAborted);
 
             return NoContent();
         }

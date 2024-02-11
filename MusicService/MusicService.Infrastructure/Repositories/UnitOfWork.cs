@@ -28,9 +28,9 @@ namespace MusicService.Infrastructure.Repositories
             _serviceProvider = serviceProvider;
         }
 
-        public async Task CommitAsync()
+        public async Task CommitAsync(CancellationToken cancellationToken = default)
         {
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
     }
 }

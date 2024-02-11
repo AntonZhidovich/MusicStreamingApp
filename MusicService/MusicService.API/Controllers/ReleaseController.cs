@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using MusicService.Application.Interfaces;
 using MusicService.Application.Models;
 using MusicService.Application.Models.ReleaseService;
-using MusicService.Application.Services;
 using MusicService.Domain.Constants;
 
 namespace MusicService.API.Controllers
@@ -23,7 +22,7 @@ namespace MusicService.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllAsync([FromQuery] GetPageRequest request)
         {
-            var releases = await _releaseService.GetAllAsync(request);
+            var releases = await _releaseService.GetAllAsync(request, HttpContext.RequestAborted);
 
             return Ok(releases);
         }
@@ -40,7 +39,7 @@ namespace MusicService.API.Controllers
         [Authorize(Roles = $"{UserRoles.creator},{UserRoles.admin}")]
         public async Task<IActionResult> CreateAsync(CreateReleaseRequest request)
         {
-            await _releaseService.CreateAsync(request, HttpContext.User);
+            await _releaseService.CreateAsync(request, HttpContext.User, HttpContext.RequestAborted);
 
             return NoContent();
         }
@@ -49,7 +48,7 @@ namespace MusicService.API.Controllers
         [Authorize(Roles = $"{UserRoles.creator},{UserRoles.admin}")]
         public async Task<IActionResult> UpdateAsync([FromRoute] string releaseId, [FromBody] UpdateReleaseRequest request)
         {
-            await _releaseService.UpdateAsync(releaseId, request, HttpContext.User);
+            await _releaseService.UpdateAsync(releaseId, request, HttpContext.User, HttpContext.RequestAborted);
 
             return NoContent();
         }
@@ -58,7 +57,7 @@ namespace MusicService.API.Controllers
         [Authorize(Roles = $"{UserRoles.creator},{UserRoles.admin}")]
         public async Task<IActionResult> DeleteAsync([FromRoute] string releaseId)
         {
-            await _releaseService.DeleteAsync(releaseId, HttpContext.User);
+            await _releaseService.DeleteAsync(releaseId, HttpContext.User, HttpContext.RequestAborted);
 
             return NoContent();
         }
@@ -67,7 +66,7 @@ namespace MusicService.API.Controllers
         [Authorize(Roles = $"{UserRoles.creator},{UserRoles.admin}")]
         public async Task<IActionResult> AddSongAsync([FromRoute] string releaseId, [FromBody] AddSongToReleaseRequest request)
         {
-            await _releaseService.AddSongToReleaseAsync(releaseId, request, HttpContext.User);
+            await _releaseService.AddSongToReleaseAsync(releaseId, request, HttpContext.User, HttpContext.RequestAborted);
 
             return NoContent();
         }
@@ -77,7 +76,7 @@ namespace MusicService.API.Controllers
         [Authorize(Roles = $"{UserRoles.creator},{UserRoles.admin}")]
         public async Task<IActionResult> RemoveSongAsync([FromRoute] string releaseId, [FromRoute] string songId)
         {
-            await _releaseService.RemoveSongFromReleaseAsync(releaseId, songId, HttpContext.User);
+            await _releaseService.RemoveSongFromReleaseAsync(releaseId, songId, HttpContext.User, HttpContext.RequestAborted);
 
             return NoContent();
         }

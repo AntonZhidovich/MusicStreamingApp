@@ -10,22 +10,22 @@ namespace MusicService.Infrastructure.Repositories
     {
         public ReleaseRepository(MusicDbContext dbContext) : base(dbContext) { }
 
-        public async Task<IEnumerable<Release>> GetAllAsync(int currentPage, int pageSize)
+        public async Task<IEnumerable<Release>> GetAllAsync(int currentPage, int pageSize, CancellationToken cancellationToken = default)
         {
             return await _dbContext.Releases
                 .Include(release => release.Authors)
                 .Include(release => release.Songs)
                 .OrderBy(release => release.Name)
                 .GetPage(currentPage, pageSize)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
 
-        public async Task<Release?> GetByIdAsync(string id)
+        public async Task<Release?> GetByIdAsync(string id, CancellationToken cancellationToken = default)
         {
             return await _dbContext.Releases
                 .Include(release => release.Authors)
                 .Include(release => release.Songs)
-                .FirstOrDefaultAsync(release => release.Id == id);
+                .FirstOrDefaultAsync(release => release.Id == id, cancellationToken);
         }
     }
 }

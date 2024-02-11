@@ -25,9 +25,9 @@ namespace MusicService.Application.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task AddArtistToAuthorAsync(AuthorArtistRequest request, ClaimsPrincipal currentUser)
+        public async Task AddArtistToAuthorAsync(AuthorArtistRequest request, ClaimsPrincipal currentUser, CancellationToken cancellationToken = default)
         {
-            var user = await GetDomainUserAsync(request.ArtistUserName);
+            var user = await GetDomainUserAsync(request.ArtistUserName, cancellationToken);
 
             if (!user.Roles.Contains(UserRoles.creator))
             {
@@ -39,21 +39,21 @@ namespace MusicService.Application.Services
                 throw new BadRequestException("User is already in author group.");
             }
 
-            var author = await GetDomainAuthorAsync(request.AuthorName);
+            var author = await GetDomainAuthorAsync(request.AuthorName, cancellationToken);
 
             if (!currentUser.IsInRole(UserRoles.admin)) { CheckIfUserIsMember(author, currentUser); }
 
             author.Users.Add(user);
-            await _unitOfWork.Authors.SaveChangesAsync();
+            await _unitOfWork.CommitAsync(cancellationToken);
         }
 
-        public async Task CreateAsync(CreateAuthorRequest request)
+        public async Task CreateAsync(CreateAuthorRequest request, CancellationToken cancellationToken = default)
         {
             List<User> artists = new List<User>();
 
             foreach (var username in request.UserNames)
             {
-                var user = await GetDomainUserAsync(username);
+                var user = await GetDomainUserAsync(username, cancellationToken);
 
                 if (!user.Roles.Contains(UserRoles.creator))
                 {
@@ -71,42 +71,44 @@ namespace MusicService.Application.Services
             var author = _mapper.Map<Author>(request);
             author.Id = Guid.NewGuid().ToString();
             author.Users = artists;
-            await _unitOfWork.Authors.CreateAsync(author);
-            await _unitOfWork.CommitAsync();
+            await _unitOfWork.Authors.CreateAsync(author, cancellationToken);
+            await _unitOfWork.CommitAsync(cancellationToken);
         }
 
-        public async Task DeleteAsync(string name, ClaimsPrincipal currentUser)
+        public async Task DeleteAsync(string name, ClaimsPrincipal currentUser, CancellationToken cancellationToken = default)
         {
-            var author = await GetDomainAuthorAsync(name);
+            var author = await GetDomainAuthorAsync(name, cancellationToken);
 
             if (!currentUser.IsInRole(UserRoles.admin)) { CheckIfUserIsMember(author, currentUser); }
 
             _unitOfWork.Authors.Delete(author);
-            await _unitOfWork.CommitAsync();
+            await _unitOfWork.CommitAsync(cancellationToken);
         }
 
-        public async Task<PageResponse<AuthorDto>> GetAllAsync(GetPageRequest request)
+        public async Task<PageResponse<AuthorDto>> GetAllAsync(GetPageRequest request, CancellationToken cancellationToken = default)
         {
-            var authors = await _unitOfWork.Authors.GetAllAsync(request.CurrentPage, request.PageSize);
-            int allAuthorsCount = await _unitOfWork.Authors.CountAsync();
+            var authors = await _unitOfWork.Authors.GetAllAsync(request.CurrentPage, request.PageSize, cancellationToken);
+            int allAuthorsCount = await _unitOfWork.Authors.CountAsync(cancellationToken);
 
             return authors.GetPageResponse<Author, AuthorDto>(allAuthorsCount, request, _mapper);
         }
 
-        public async Task<AuthorDto> GetByNameAsync(string name)
+        public async Task<AuthorDto> GetByNameAsync(string name, CancellationToken cancellationToken = default)
         {
-            var author = await GetDomainAuthorAsync(name);
+            var author = await GetDomainAuthorAsync(name, cancellationToken);
 
             return _mapper.Map<AuthorDto>(author);
         }
 
-        public async Task RemoveArtistFromAuthorAsync(AuthorArtistRequest request, ClaimsPrincipal currentUser)
+        public async Task RemoveArtistFromAuthorAsync(AuthorArtistRequest request, 
+            ClaimsPrincipal currentUser, 
+            CancellationToken cancellationToken = default)
         {
-            var author = await GetDomainAuthorAsync(request.AuthorName);
+            var author = await GetDomainAuthorAsync(request.AuthorName, cancellationToken);
 
             if (!currentUser.IsInRole(UserRoles.admin)) { CheckIfUserIsMember(author, currentUser); }
 
-            var user = await GetDomainUserAsync(request.ArtistUserName);
+            var user = await GetDomainUserAsync(request.ArtistUserName, cancellationToken);
 
             if (user == null)
             {
@@ -119,22 +121,25 @@ namespace MusicService.Application.Services
             }
 
             author.Users.Remove(user);
-            await _unitOfWork.CommitAsync();
+            await _unitOfWork.CommitAsync(cancellationToken);
         }
 
-        public async Task UpdateAsync(string name, UpdateAuthorRequest request, ClaimsPrincipal currentUser)
+        public async Task UpdateAsync(string name, 
+            UpdateAuthorRequest request, 
+            ClaimsPrincipal currentUser, 
+            CancellationToken cancellationToken = default)
         {
-            var author = await GetDomainAuthorAsync(name);
+            var author = await GetDomainAuthorAsync(name, cancellationToken);
 
             if (!currentUser.IsInRole(UserRoles.admin)) { CheckIfUserIsMember(author, currentUser); }
 
             _mapper.Map(request, author);
-            await _unitOfWork.CommitAsync();
+            await _unitOfWork.CommitAsync(cancellationToken);
         }
 
-        private async Task<Author> GetDomainAuthorAsync(string name)
+        private async Task<Author> GetDomainAuthorAsync(string name, CancellationToken cancellationToken = default)
         {
-            var author = await _unitOfWork.Authors.GetByNameAsync(name);
+            var author = await _unitOfWork.Authors.GetByNameAsync(name, cancellationToken);
 
             if (author == null)
             {
@@ -144,9 +149,9 @@ namespace MusicService.Application.Services
             return author;
         }
 
-        private async Task<User> GetDomainUserAsync(string userName)
+        private async Task<User> GetDomainUserAsync(string userName, CancellationToken cancellationToken = default)
         {
-            var user = await _unitOfWork.Users.GetByUserNameAsync(userName);
+            var user = await _unitOfWork.Users.GetByUserNameAsync(userName, cancellationToken);
 
             if (user == null)
             {

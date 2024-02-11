@@ -10,33 +10,33 @@ namespace MusicService.Infrastructure.Repositories
     {
         public AuthorRepository(MusicDbContext dbContext) : base(dbContext) { }
 
-        public async Task<IEnumerable<Author>> GetAllAsync(int currentPage, int pageSize)
+        public async Task<IEnumerable<Author>> GetAllAsync(int currentPage, int pageSize, CancellationToken cancellationToken = default)
         {
             var authors = await _dbContext.Authors
                 .Include(author => author.Users)
                 .OrderByDescending(author => author.Name)
                 .GetPage(currentPage, pageSize)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
             return authors;
         }
 
-        public Task<Author?> GetByNameAsync(string name)
+        public Task<Author?> GetByNameAsync(string name, CancellationToken cancellationToken = default)
         {
             var author = _dbContext.Authors
                 .Include(author => author.Users)
                 .Where(author => author.Name.Trim().ToLower() == name.Trim().ToLower())
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(cancellationToken);
 
             return author;
         }
 
-        public async Task<IEnumerable<Author?>> GetByNameAsync(IEnumerable<string> authorNames)
+        public async Task<IEnumerable<Author?>> GetByNameAsync(IEnumerable<string> authorNames, CancellationToken cancellationToken = default)
         {
             var authors = await _dbContext.Authors
                 .Include(author => author.Users)
                 .Where(author => authorNames.Contains(author.Name))
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
             return authors;
         }

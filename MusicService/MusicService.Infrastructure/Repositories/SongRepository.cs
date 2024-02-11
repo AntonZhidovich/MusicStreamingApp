@@ -10,7 +10,7 @@ namespace MusicService.Infrastructure.Repositories
     {
         public SongRepository(MusicDbContext dbContext) : base(dbContext) { }
 
-        public async Task<IEnumerable<Song>> GetAllAsync(int currentPage, int pageSize)
+        public async Task<IEnumerable<Song>> GetAllAsync(int currentPage, int pageSize, CancellationToken cancellationToken = default)
         {
             return await _dbContext.Songs
                 .Include(song => song.Genres)
@@ -18,16 +18,16 @@ namespace MusicService.Infrastructure.Repositories
                 .ThenInclude(release => release.Authors)
                 .OrderByDescending(song => song.Release.ReleasedAt)
                 .GetPage(currentPage, pageSize)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
 
-        public async Task<Song?> GetByIdAsync(string id)
+        public async Task<Song?> GetByIdAsync(string id, CancellationToken cancellationToken = default)
         {
             var song = await _dbContext.Songs
                 .Include(song => song.Genres)
                 .Include(song => song.Release)
                 .ThenInclude(release => release.Authors)
-                .FirstOrDefaultAsync(song => song.Id == id);
+                .FirstOrDefaultAsync(song => song.Id == id, cancellationToken);
 
             return song;
         }

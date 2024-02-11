@@ -14,27 +14,27 @@ namespace MusicService.Infrastructure.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<Author?> GetAuthorByUserNameAsync(string userName)
+        public async Task<Author?> GetAuthorByUserNameAsync(string userName, CancellationToken cancellationToken = default)
         {
-            var user = await GetByUserNameAsync(userName);
+            var user = await GetByUserNameAsync(userName, cancellationToken);
 
             return user?.Author;
         }
 
-        public async Task<User?> GetByEmailAsync(string email)
+        public async Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
         {
             return await _dbContext.Users
                 .Include(user => user.Author)
                 .Where(user => user.Email.Trim().ToLower() == email.Trim().ToLower())
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(cancellationToken);
         }
 
-        public async Task<User?> GetByUserNameAsync(string userName)
+        public async Task<User?> GetByUserNameAsync(string userName, CancellationToken cancellationToken = default)
         {
             return await _dbContext.Users
                 .Include(user => user.Author)
                 .Where(user => user.UserName.Trim().ToLower() == userName.Trim().ToLower())
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(cancellationToken);
         }
     }
 }

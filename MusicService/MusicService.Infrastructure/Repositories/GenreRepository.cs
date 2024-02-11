@@ -10,37 +10,37 @@ namespace MusicService.Infrastructure.Repositories
     {
         public GenreRepository(MusicDbContext dbContext) : base(dbContext) { }
 
-        public async Task<IEnumerable<Genre>> GetAllAsync(int currentPage, int pageSize)
+        public async Task<IEnumerable<Genre>> GetAllAsync(int currentPage, int pageSize, CancellationToken cancellationToken = default)
         {
             return await _dbContext.Genres
                 .Include(genre => genre.Songs)
                 .OrderBy(genre => genre.Name)
                 .GetPage(currentPage, pageSize)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
 
-        public async Task<Genre?> GetByNameAsync(string name)
+        public async Task<Genre?> GetByNameAsync(string name, CancellationToken cancellationToken = default)
         {
             var genre = await _dbContext.Genres
                 .Include (genre => genre.Songs)
                 .Where(genre => genre.Name.Trim().ToLower() == name.Trim().ToLower())
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(cancellationToken);
 
             return genre;
         }
 
-        public async Task<Genre> GetOrCreateAsync(string name)
+        public async Task<Genre> GetOrCreateAsync(string name, CancellationToken cancellationToken = default)
         {
             var genre = GetTrackedByName(name);
 
             if (genre == null)
             {
-                genre = await GetByNameAsync(name);
+                genre = await GetByNameAsync(name, cancellationToken);
 
                 if (genre == null)
                 {
                     genre = new Genre { Id = Guid.NewGuid().ToString(), Name = name, Description = string.Empty };
-                    await CreateAsync(genre);
+                    await CreateAsync(genre, cancellationToken);
                 }
             }
 
