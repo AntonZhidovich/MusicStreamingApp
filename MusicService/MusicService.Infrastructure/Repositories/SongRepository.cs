@@ -31,5 +31,17 @@ namespace MusicService.Infrastructure.Repositories
 
             return song;
         }
+
+        public async Task<IEnumerable<Song>> GetByIdAsync(IEnumerable<string> ids, CancellationToken cancellationToken = default)
+        {
+            var songs = await _dbContext.Songs
+                .Include(song => song.Genres)
+                .Include(song => song.Release)
+                .ThenInclude(release => release.Authors)
+                .Where(song => ids.Contains(song.Id))
+                .ToListAsync(cancellationToken);
+
+            return songs;
+        }
     }
 }

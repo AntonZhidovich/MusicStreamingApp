@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using MusicService.Application.Models.AuthorService;
 using MusicService.Application.Models.DTOs;
+using MusicService.Application.Models.PlaylistService;
 using MusicService.Application.Models.ReleaseService;
 using MusicService.Application.Models.SongService;
 using MusicService.Domain.Entities;
-using System.ComponentModel.Design;
 
 namespace MusicService.Application.Mapping
 {
@@ -50,6 +50,12 @@ namespace MusicService.Application.Mapping
 
             CreateMap<UpdateReleaseRequest, Release>()
                 .ForAllMembers(options => options.Condition((source, dest, member) => member != null));
+
+            CreateMap<Playlist, ShortPlaylistDto>()
+                .ForMember(dest => dest.SongsCount, options => options.MapFrom(source => source.SongIds.Count));
+
+            CreateMap<CreatePlaylistRequest, Playlist>();
+            CreateMap<Playlist, FullPlaylistDto>();
         }
     }
 }

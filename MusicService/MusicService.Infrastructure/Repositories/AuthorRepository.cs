@@ -31,7 +31,7 @@ namespace MusicService.Infrastructure.Repositories
             return author;
         }
 
-        public async Task<IEnumerable<Author?>> GetByNameAsync(IEnumerable<string> authorNames, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<Author>> GetByNameAsync(IEnumerable<string> authorNames, CancellationToken cancellationToken = default)
         {
             var authors = await _dbContext.Authors
                 .Include(author => author.Users)

@@ -8,6 +8,7 @@ namespace MusicService.API
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            builder.Services.ApplyConfigurations(builder.Configuration);
             builder.Services.AddDatabases(builder.Configuration);
             builder.Services.AddRepositories();
             builder.Services.AddServices(builder.Configuration);

@@ -68,16 +68,9 @@ namespace MusicService.Application.Services
             release.Id = Guid.NewGuid().ToString();
 
             var authors = await _unitOfWork.Authors.GetByNameAsync(request.AuthorNames, cancellationToken);
+            release.Authors.AddRange(authors);
 
-            foreach (var author in authors)
-            { 
-                if (author == null)
-                {
-                    throw new NotFoundException($"One of authors was not found.");
-                }
-
-                release.Authors.Add(author);
-            }
+            if (release.Authors.Count != authors.Count()) { throw new NotFoundException("Some authors could not be found."); }
 
             if (!user.IsInRole(UserRoles.admin)) { CheckIfUserIsMember(authors!, user); }
 

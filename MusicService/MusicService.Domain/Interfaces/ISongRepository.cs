@@ -6,5 +6,6 @@ namespace MusicService.Domain.Interfaces
     {
         Task<IEnumerable<Song>> GetAllAsync(int currentPage, int pageSize, CancellationToken cancellationToken = default);
         Task<Song?> GetByIdAsync(string id, CancellationToken cancellationToken = default);
+        Task<IEnumerable<Song>> GetByIdAsync(IEnumerable<string> ids, CancellationToken cancellationToken = default);
     }
 }
