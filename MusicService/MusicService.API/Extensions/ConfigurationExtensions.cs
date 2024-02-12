@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
+using MusicService.API.ExceptionHandlers;
 using MusicService.Application.Interfaces;
 using MusicService.Application.Options;
 using MusicService.Application.Services;
@@ -12,7 +13,6 @@ using MusicService.Application.Validators;
 using MusicService.Domain.Interfaces;
 using MusicService.Infrastructure.Data;
 using MusicService.Infrastructure.Repositories;
-using System.Net.NetworkInformation;
 using System.Text;
 
 namespace MusicService.API.Extensions
@@ -28,6 +28,7 @@ namespace MusicService.API.Extensions
 
         public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddExceptionHandler<GlobalExceptionHandler>();
             services.AddValidation();
             services.AddJwtAuthentication(configuration);
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();

@@ -43,7 +43,7 @@ namespace MusicService.Application.Services
 
             if (playlist.UserName != user.Identity!.Name!)
             {
-                throw new UnauthorizedException("Authorized user doesn's acces to this playlist.");
+                throw new AuthorizationException("Authorized user doesn't have acces to this playlist.");
             }
 
             playlist.SongIds.Add(song.Id);
@@ -56,7 +56,7 @@ namespace MusicService.Application.Services
 
             if (playlist.UserName != user.Identity!.Name!)
             {
-                throw new UnauthorizedException("Authorized user doesn's acces to this playlist.");
+                throw new AuthorizationException("Authorized user doesn's acces to this playlist.");
             }
 
             if (!playlist.SongIds.Contains(songId))
@@ -81,7 +81,7 @@ namespace MusicService.Application.Services
 
             if (playlist.UserName != user.Identity!.Name!)
             {
-                throw new UnauthorizedException("Authorized user doesn's acces to this playlist.");
+                throw new AuthorizationException("Authorized user doesn's acces to this playlist.");
             }
 
             await _playlistRepository.DeleteAsync(id, cancellationToken);
@@ -93,7 +93,7 @@ namespace MusicService.Application.Services
 
             if (playlist.UserName != user.Identity!.Name!)
             {
-                throw new UnauthorizedException("Authorized user doesn's acces to this playlist.");
+                throw new AuthorizationException("Authorized user doesn's acces to this playlist.");
             }
 
             var songs = await _unitOfWork.Songs.GetByIdAsync(playlist.SongIds, cancellationToken);

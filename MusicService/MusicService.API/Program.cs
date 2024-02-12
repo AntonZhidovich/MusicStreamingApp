@@ -29,6 +29,7 @@ namespace MusicService.API
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
+            app.UseExceptionHandler(options => { });
             app.Run();
         }
     }

@@ -167,7 +167,7 @@ namespace MusicService.Application.Services
 
             if (!_unitOfWork.Authors.UserIsMember(author, currentUserName))
             {
-                throw new UnauthorizedException("Only author members can do this action.");
+                throw new AuthorizationException("Only author members can do this action.");
             }
         }
     }
