@@ -12,7 +12,7 @@ using MusicService.Infrastructure.Data;
 namespace MusicService.Infrastructure.Migrations
 {
     [DbContext(typeof(MusicDbContext))]
-    [Migration("20240207085151_InitialCreate")]
+    [Migration("20240211211258_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -28,10 +28,10 @@ namespace MusicService.Infrastructure.Migrations
             modelBuilder.Entity("AuthorRelease", b =>
                 {
                     b.Property<string>("AuthorsId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("ReleasesId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("AuthorsId", "ReleasesId");
 
@@ -42,13 +42,13 @@ namespace MusicService.Infrastructure.Migrations
 
             modelBuilder.Entity("GenreSong", b =>
                 {
-                    b.Property<string>("GenreId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<string>("GenresId")
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("SongsId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(50)");
 
-                    b.HasKey("GenreId", "SongsId");
+                    b.HasKey("GenresId", "SongsId");
 
                     b.HasIndex("SongsId");
 
@@ -58,7 +58,8 @@ namespace MusicService.Infrastructure.Migrations
             modelBuilder.Entity("MusicService.Domain.Entities.Author", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime>("BrokenAt")
                         .HasColumnType("datetime2");
@@ -66,20 +67,18 @@ namespace MusicService.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreatedByUsername")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<bool>("IsBroken")
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
@@ -93,8 +92,7 @@ namespace MusicService.Infrastructure.Migrations
                         {
                             Id = "e372c6da-4c4d-4cd5-a1ca-c8507cf2d326",
                             BrokenAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2024, 2, 7, 11, 51, 51, 312, DateTimeKind.Local).AddTicks(3021),
-                            CreatedByUsername = "Chester.Bennington",
+                            CreatedAt = new DateTime(2024, 2, 12, 0, 12, 58, 178, DateTimeKind.Local).AddTicks(2280),
                             Description = "Linkin Park is an American rock band from Agoura Hills, California. The band's current lineup comprises vocalist/rhythm guitarist/keyboardist Mike Shinoda, lead guitarist Brad Delson, bassist Dave Farrell, DJ/turntables Joe Hahn and drummer Rob Bourdon, all of whom are founding members.",
                             IsBroken = false,
                             Name = "Linkin park"
@@ -103,8 +101,7 @@ namespace MusicService.Infrastructure.Migrations
                         {
                             Id = "7bfe40e0-f945-487b-ae93-a07cfbdc87db",
                             BrokenAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2024, 2, 7, 11, 51, 51, 312, DateTimeKind.Local).AddTicks(3046),
-                            CreatedByUsername = "Martijn-Garritsen",
+                            CreatedAt = new DateTime(2024, 2, 12, 0, 12, 58, 178, DateTimeKind.Local).AddTicks(2295),
                             Description = "Dutch electronic music producer whose multi-platinum dance anthems topped charts around the globe.",
                             IsBroken = false,
                             Name = "Martin Garrix"
@@ -114,15 +111,18 @@ namespace MusicService.Infrastructure.Migrations
             modelBuilder.Entity("MusicService.Domain.Entities.Genre", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.HasKey("Id");
 
@@ -135,24 +135,27 @@ namespace MusicService.Infrastructure.Migrations
             modelBuilder.Entity("MusicService.Domain.Entities.Release", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                    b.Property<TimeSpan>("Duration")
-                        .HasColumnType("time");
+                    b.Property<int>("DurationMinutes")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("ReleasedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("SongsCount")
                         .HasColumnType("int");
 
                     b.Property<string>("Type")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Year")
-                        .HasColumnType("int");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.HasKey("Id");
 
@@ -165,22 +168,25 @@ namespace MusicService.Infrastructure.Migrations
             modelBuilder.Entity("MusicService.Domain.Entities.Song", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                    b.Property<TimeSpan>("Duration")
-                        .HasColumnType("time");
+                    b.Property<int>("DurationMinutes")
+                        .HasColumnType("int");
 
                     b.Property<string>("ReleaseId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("SourceName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
@@ -195,6 +201,10 @@ namespace MusicService.Infrastructure.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("AuthorId")
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("FirstName")
@@ -221,6 +231,9 @@ namespace MusicService.Infrastructure.Migrations
 
                     b.HasIndex("AuthorId");
 
+                    b.HasIndex("Email")
+                        .IsUnique();
+
                     b.HasIndex("UserName")
                         .IsUnique();
 
@@ -231,6 +244,7 @@ namespace MusicService.Infrastructure.Migrations
                         {
                             Id = "70d71f5a-a4ef-488a-b4e9-eb86f82481a8",
                             AuthorId = "e372c6da-4c4d-4cd5-a1ca-c8507cf2d326",
+                            Email = "chester.bennington@outlook.com",
                             FirstName = "Chester",
                             LastName = "Bennington",
                             Region = "California",
@@ -241,6 +255,7 @@ namespace MusicService.Infrastructure.Migrations
                         {
                             Id = "7b761e59-78f3-4862-b1ad-87065bc8f51b",
                             AuthorId = "7bfe40e0-f945-487b-ae93-a07cfbdc87db",
+                            Email = "garritsen@gmail.com",
                             FirstName = "Martijn",
                             LastName = "Garritsen",
                             Region = "Netherlands",
@@ -251,6 +266,7 @@ namespace MusicService.Infrastructure.Migrations
                         {
                             Id = "d480a3c1-99aa-4775-819b-94e9183d0e21",
                             AuthorId = "e372c6da-4c4d-4cd5-a1ca-c8507cf2d326",
+                            Email = "shinoda77@gmail.com",
                             FirstName = "Mike",
                             LastName = "Shinoda",
                             Region = "California",
@@ -260,6 +276,7 @@ namespace MusicService.Infrastructure.Migrations
                         new
                         {
                             Id = "76ef2410-4e2e-4542-a20b-b0f19dfd5d76",
+                            Email = "dmitry.ivanov@gmail.com",
                             FirstName = "Dmitry",
                             LastName = "Ivanov",
                             Region = "Italy",
@@ -269,6 +286,7 @@ namespace MusicService.Infrastructure.Migrations
                         new
                         {
                             Id = "3e4cc735-f041-424d-9ada-f835a7c1978a",
+                            Email = "yegor.kozlov02@mail.ru",
                             FirstName = "Yegor",
                             LastName = "Kozlov",
                             Region = "Minsk",
@@ -296,7 +314,7 @@ namespace MusicService.Infrastructure.Migrations
                 {
                     b.HasOne("MusicService.Domain.Entities.Genre", null)
                         .WithMany()
-                        .HasForeignKey("GenreId")
+                        .HasForeignKey("GenresId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

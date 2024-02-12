@@ -82,7 +82,7 @@ namespace MusicService.Infrastructure.Data
                     CreatedAt = DateTime.Now,
                     IsBroken = false,
                     Description = "Dutch electronic music producer whose multi-platinum dance anthems topped " +
-                "charts around the globe.",
+                    "charts around the globe.",
                 });
         }
     }

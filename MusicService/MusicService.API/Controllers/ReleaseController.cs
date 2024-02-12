@@ -37,7 +37,7 @@ namespace MusicService.API.Controllers
 
         [HttpPost]
         [Authorize(Roles = $"{UserRoles.creator},{UserRoles.admin}")]
-        public async Task<IActionResult> CreateAsync(CreateReleaseRequest request)
+        public async Task<IActionResult> CreateAsync([FromBody] CreateReleaseRequest request)
         {
             await _releaseService.CreateAsync(request, HttpContext.User, HttpContext.RequestAborted);
 

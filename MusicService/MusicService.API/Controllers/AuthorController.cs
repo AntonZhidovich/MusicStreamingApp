@@ -74,7 +74,7 @@ namespace MusicService.API.Controllers
             return NoContent();
         }
 
-        [HttpPut("{authorName}/description")]
+        [HttpPut("{authorName}")]
         [Authorize(Roles = $"{UserRoles.admin},{UserRoles.creator}")]
         public async Task<IActionResult> UpdateAuthorAsync([FromRoute] string authorName, [FromBody] UpdateAuthorRequest request)
         {

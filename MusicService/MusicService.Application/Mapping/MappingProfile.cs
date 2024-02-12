@@ -48,7 +48,8 @@ namespace MusicService.Application.Mapping
             CreateMap<Release, ReleaseDto>()
                 .ForMember(dest => dest.AuthorNames, options => options.MapFrom(src => src.Authors.Select(author => author.Name)));
 
-            CreateMap<UpdateReleaseRequest, Release>();
+            CreateMap<UpdateReleaseRequest, Release>()
+                .ForAllMembers(options => options.Condition((source, dest, member) => member != null));
         }
     }
 }

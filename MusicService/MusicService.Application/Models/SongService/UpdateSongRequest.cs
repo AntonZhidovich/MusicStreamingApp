@@ -1,6 +1,4 @@
-﻿using MusicService.Domain.Entities;
-
-namespace MusicService.Application.Models.SongService
+﻿namespace MusicService.Application.Models.SongService
 {
     public class UpdateSongRequest
     {
