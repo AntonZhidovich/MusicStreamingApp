@@ -7,7 +7,7 @@ namespace MusicService.Application.Validators
     {
         private const int titleMaxLength = 50;
         private const int sourceMaxLength = 100;
-        private const int maxDuration = 60;
+        private readonly TimeSpan maxDuration = TimeSpan.FromHours(1);
 
         public UpdateSongValidator()
         {
@@ -15,7 +15,6 @@ namespace MusicService.Application.Validators
             RuleFor(request => request.SourceName).MaximumLength(sourceMaxLength);
             
             RuleFor(request => request.DurationMinutes)
-                .GreaterThan(0)
                 .LessThan(maxDuration);
         }
     }

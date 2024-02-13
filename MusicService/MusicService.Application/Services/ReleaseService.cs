@@ -138,7 +138,7 @@ namespace MusicService.Application.Services
             song.Id = Guid.NewGuid().ToString();
             song.Release = release;
             release.SongsCount++;
-            release.DurationMinutes += request.DurationMinutes;
+            release.DurationMinutes += song.DurationMinutes;
             await _unitOfWork.Songs.CreateAsync(song, cancellationToken);
         }
 

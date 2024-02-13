@@ -5,11 +5,14 @@ using MusicService.Application.Models.PlaylistService;
 using MusicService.Application.Models.ReleaseService;
 using MusicService.Application.Models.SongService;
 using MusicService.Domain.Entities;
+using System.Globalization;
 
 namespace MusicService.Application.Mapping
 {
     public class MappingProfile : Profile
     {
+        private const string timeSpanFormat = "hh\\:mm\\:ss";
+
         public MappingProfile()
         {
             CreateMap<Author, AuthorDto>()
@@ -30,12 +33,15 @@ namespace MusicService.Application.Mapping
                 .ForMember(dest => dest.Authors, options => options.MapFrom(src => src.Authors.Select(author => author.Name)));
 
             CreateMap<Song, SongDto>()
+                .ForMember(dest => dest.DurationMinutes, options => options.MapFrom(src => src.DurationMinutes.ToString()))
                 .ForMember(dest => dest.Genres, options => options.MapFrom(src => src.Genres.Select(genre => genre.Name)))
                 .ForMember(dest => dest.Release, options => options.MapFrom(src => src.Release));
 
             CreateMap<Genre, GenreDto>();
 
             CreateMap<AddSongToReleaseRequest, Song>()
+                .ForMember(dest => dest.DurationMinutes, options => 
+                options.MapFrom(src => TimeSpan.ParseExact(src.DurationMinutes, timeSpanFormat, CultureInfo.InvariantCulture)))
                 .ForMember(dest => dest.Genres, options => options.MapFrom(src => new List<Genre>()));
 
             CreateMap<CreateReleaseRequest, Release>()

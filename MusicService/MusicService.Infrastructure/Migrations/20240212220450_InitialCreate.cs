@@ -35,7 +35,7 @@ namespace MusicService.Infrastructure.Migrations
                 {
                     Id = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Name = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: false)
+                    Description = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -51,7 +51,7 @@ namespace MusicService.Infrastructure.Migrations
                     Type = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     ReleasedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     SongsCount = table.Column<int>(type: "int", nullable: false),
-                    DurationMinutes = table.Column<int>(type: "int", nullable: false)
+                    DurationMinutes = table.Column<TimeSpan>(type: "time", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -113,7 +113,7 @@ namespace MusicService.Infrastructure.Migrations
                     Id = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Title = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     ReleaseId = table.Column<string>(type: "nvarchar(50)", nullable: false),
-                    DurationMinutes = table.Column<int>(type: "int", nullable: false),
+                    DurationMinutes = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
                     SourceName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
@@ -156,8 +156,8 @@ namespace MusicService.Infrastructure.Migrations
                 columns: new[] { "Id", "BrokenAt", "CreatedAt", "Description", "IsBroken", "Name" },
                 values: new object[,]
                 {
-                    { "7bfe40e0-f945-487b-ae93-a07cfbdc87db", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 2, 12, 0, 12, 58, 178, DateTimeKind.Local).AddTicks(2295), "Dutch electronic music producer whose multi-platinum dance anthems topped charts around the globe.", false, "Martin Garrix" },
-                    { "e372c6da-4c4d-4cd5-a1ca-c8507cf2d326", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 2, 12, 0, 12, 58, 178, DateTimeKind.Local).AddTicks(2280), "Linkin Park is an American rock band from Agoura Hills, California. The band's current lineup comprises vocalist/rhythm guitarist/keyboardist Mike Shinoda, lead guitarist Brad Delson, bassist Dave Farrell, DJ/turntables Joe Hahn and drummer Rob Bourdon, all of whom are founding members.", false, "Linkin park" }
+                    { "7bfe40e0-f945-487b-ae93-a07cfbdc87db", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 2, 13, 1, 4, 50, 639, DateTimeKind.Local).AddTicks(1114), "Dutch electronic music producer whose multi-platinum dance anthems topped charts around the globe.", false, "Martin Garrix" },
+                    { "e372c6da-4c4d-4cd5-a1ca-c8507cf2d326", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 2, 13, 1, 4, 50, 639, DateTimeKind.Local).AddTicks(1092), "Linkin Park is an American rock band from Agoura Hills, California. The band's current lineup comprises vocalist/rhythm guitarist/keyboardist Mike Shinoda, lead guitarist Brad Delson, bassist Dave Farrell, DJ/turntables Joe Hahn and drummer Rob Bourdon, all of whom are founding members.", false, "Linkin park" }
                 });
 
             migrationBuilder.InsertData(

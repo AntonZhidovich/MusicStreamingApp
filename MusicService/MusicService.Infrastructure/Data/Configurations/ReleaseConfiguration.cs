@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MusicService.Domain.Entities;
+using System.Globalization;
 
 namespace MusicService.Infrastructure.Data.Configurations
 {
@@ -9,6 +10,7 @@ namespace MusicService.Infrastructure.Data.Configurations
         private const int idMaxLength = 50;
         private const int nameMaxLength = 100;
         private const int typeMaxLength = 20;
+        private const string timeSpanFormat = "hh\\:mm\\:ss";
 
         public void Configure(EntityTypeBuilder<Release> builder)
         {
@@ -32,7 +34,11 @@ namespace MusicService.Infrastructure.Data.Configurations
                 .IsRequired()
                 .HasMaxLength(typeMaxLength);
 
-            builder.Property(release => release.DurationMinutes).IsRequired();
+            builder.Property(release => release.DurationMinutes)
+                .HasConversion(src => src.ToString(), dest => TimeSpan.ParseExact(dest, timeSpanFormat, CultureInfo.InvariantCulture))
+                .IsRequired()
+                .HasMaxLength(timeSpanFormat.Length);
+
             builder.Property(release => release.SongsCount).IsRequired();
             builder.Property(release => release.ReleasedAt).IsRequired();
         }

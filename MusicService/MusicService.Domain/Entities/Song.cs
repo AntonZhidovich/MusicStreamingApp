@@ -6,7 +6,7 @@
         public string Title { get; set; }
         public List<Genre> Genres { get; set; }
         public Release Release {  get; set; }
-        public int DurationMinutes { get; set; }
+        public TimeSpan DurationMinutes { get; set; }
         public string SourceName { get; set; }
     }
 }

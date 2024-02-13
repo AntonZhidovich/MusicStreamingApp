@@ -9,6 +9,6 @@
         public List<Author> Authors { get; set; }
         public List<Song> Songs { get; set; }
         public int SongsCount { get; set; }
-        public int DurationMinutes { get; set; }
+        public TimeSpan DurationMinutes { get; set; }
     }
 }

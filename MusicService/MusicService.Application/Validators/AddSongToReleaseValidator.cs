@@ -7,7 +7,7 @@ namespace MusicService.Application.Validators
     {
         private const int titleMaxLength = 50;
         private const int sourceMaxLength = 100;
-        private const int maxDuration = 60;
+        private readonly int durationMaxLendth = "hh\\:mm\\:ss".Length;
         private const int genreMaxLength = 30;
 
         public AddSongToReleaseValidator()
@@ -18,7 +18,7 @@ namespace MusicService.Application.Validators
 
             RuleFor(request => request.Genres).NotEmpty();
             RuleForEach(request => request.Genres).NotEmpty().MaximumLength(genreMaxLength);
-            RuleFor(request => request.DurationMinutes).NotEmpty().LessThanOrEqualTo(maxDuration);
+            RuleFor(request => request.DurationMinutes).NotEmpty().MaximumLength(durationMaxLendth);
             RuleFor(request => request.SourceName).NotEmpty().MaximumLength(sourceMaxLength);
         }
     }
