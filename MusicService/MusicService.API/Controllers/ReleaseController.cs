@@ -30,6 +30,14 @@ namespace MusicService.API.Controllers
             return Ok(releases);
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetByIdAsync([FromRoute] string id)
+        {
+            var release = await _releaseService.GetByIdAsync(id);
+
+            return Ok(release);
+        }
+
         [HttpGet("author/{authorName}")]
         public async Task<IActionResult> GetAllFromAuthorAsync([FromRoute] string authorName, [FromQuery] GetPageRequest request)
         {

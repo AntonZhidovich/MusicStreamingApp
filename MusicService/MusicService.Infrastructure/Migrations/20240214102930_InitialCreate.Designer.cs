@@ -12,7 +12,7 @@ using MusicService.Infrastructure.Data;
 namespace MusicService.Infrastructure.Migrations
 {
     [DbContext(typeof(MusicDbContext))]
-    [Migration("20240212220450_InitialCreate")]
+    [Migration("20240214102930_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -92,7 +92,7 @@ namespace MusicService.Infrastructure.Migrations
                         {
                             Id = "e372c6da-4c4d-4cd5-a1ca-c8507cf2d326",
                             BrokenAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2024, 2, 13, 1, 4, 50, 639, DateTimeKind.Local).AddTicks(1092),
+                            CreatedAt = new DateTime(2024, 2, 14, 13, 29, 30, 216, DateTimeKind.Local).AddTicks(6427),
                             Description = "Linkin Park is an American rock band from Agoura Hills, California. The band's current lineup comprises vocalist/rhythm guitarist/keyboardist Mike Shinoda, lead guitarist Brad Delson, bassist Dave Farrell, DJ/turntables Joe Hahn and drummer Rob Bourdon, all of whom are founding members.",
                             IsBroken = false,
                             Name = "Linkin park"
@@ -101,7 +101,7 @@ namespace MusicService.Infrastructure.Migrations
                         {
                             Id = "7bfe40e0-f945-487b-ae93-a07cfbdc87db",
                             BrokenAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2024, 2, 13, 1, 4, 50, 639, DateTimeKind.Local).AddTicks(1114),
+                            CreatedAt = new DateTime(2024, 2, 14, 13, 29, 30, 216, DateTimeKind.Local).AddTicks(6445),
                             Description = "Dutch electronic music producer whose multi-platinum dance anthems topped charts around the globe.",
                             IsBroken = false,
                             Name = "Martin Garrix"
@@ -137,8 +137,10 @@ namespace MusicService.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<TimeSpan>("DurationMinutes")
-                        .HasColumnType("time");
+                    b.Property<string>("DurationMinutes")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -172,8 +174,8 @@ namespace MusicService.Infrastructure.Migrations
 
                     b.Property<string>("DurationMinutes")
                         .IsRequired()
-                        .HasMaxLength(8)
-                        .HasColumnType("nvarchar(8)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("ReleaseId")
                         .IsRequired()

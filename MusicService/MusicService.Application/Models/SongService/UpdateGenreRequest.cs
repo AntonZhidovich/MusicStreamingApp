@@ -1,6 +1,6 @@
 ﻿namespace MusicService.Application.Models.SongService
 {
-    public class ChangeGenreDescriptionRequest
+    public class UpdateGenreRequest
     {
         public string NewDescription { get; set; }
     }

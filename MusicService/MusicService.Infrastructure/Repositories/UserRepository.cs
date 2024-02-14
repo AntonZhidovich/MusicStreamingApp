@@ -14,13 +14,6 @@ namespace MusicService.Infrastructure.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<Author?> GetAuthorByUserNameAsync(string userName, CancellationToken cancellationToken = default)
-        {
-            var user = await GetByUserNameAsync(userName, cancellationToken);
-
-            return user?.Author;
-        }
-
         public async Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
         {
             return await _dbContext.Users

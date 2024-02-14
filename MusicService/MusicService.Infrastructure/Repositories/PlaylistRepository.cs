@@ -10,7 +10,7 @@ namespace MusicService.Infrastructure.Repositories
     {
         private readonly IMongoCollection<Playlist> _playlistCollection;
 
-        public PlaylistRepository(IOptions<PlaylistDbOptions>  dbOptions, IMongoClient mongoClient)
+        public PlaylistRepository(IOptions<MongoDbOptions>  dbOptions, IMongoClient mongoClient)
         {
             var database = mongoClient.GetDatabase(dbOptions.Value.DatabaseName);
             _playlistCollection = database.GetCollection<Playlist>(dbOptions.Value.PlaylistsCollectionName);

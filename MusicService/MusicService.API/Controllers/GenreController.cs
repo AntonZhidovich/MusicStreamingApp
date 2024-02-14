@@ -12,9 +12,9 @@ namespace MusicService.API.Controllers
     [Route("api/genres")]
     public class GenreController : ControllerBase
     {
-        private readonly ISongService _songService;
+        private readonly IGenreService _songService;
 
-        public GenreController(ISongService songService)
+        public GenreController(IGenreService songService)
         {
             _songService = songService;
         }
@@ -22,7 +22,7 @@ namespace MusicService.API.Controllers
         [HttpGet("")]
         public async Task<IActionResult> GetAllGenresAsync([FromQuery] GetPageRequest request)
         {
-            var genresPage = await _songService.GetAllGenresAsync(request, HttpContext.RequestAborted);
+            var genresPage = await _songService.GetAllAsync(request, HttpContext.RequestAborted);
 
             return Ok(genresPage);
         }
@@ -31,16 +31,16 @@ namespace MusicService.API.Controllers
         [Authorize(Roles = $"{UserRoles.admin},{UserRoles.creator}")]
         public async Task<IActionResult> ChangeGenreDescriptionAsync([FromRoute] string name)
         {
-            var genre = await _songService.GetGenreByNameAsync(name, HttpContext.RequestAborted);
+            var genre = await _songService.GetByNameAsync(name, HttpContext.RequestAborted);
 
             return Ok(genre);
         }
 
         [HttpPut("{name}")]
         [Authorize(Roles = $"{UserRoles.admin},{UserRoles.creator}")]
-        public async Task<IActionResult> ChangeGenreDescriptionAsync([FromRoute] string name, [FromBody] ChangeGenreDescriptionRequest request)
+        public async Task<IActionResult> ChangeGenreDescriptionAsync([FromRoute] string name, [FromBody] UpdateGenreRequest request)
         {
-            await _songService.ChangeGenreDescriptionAsync(name, request, HttpContext.RequestAborted);
+            await _songService.UpdateAsync(name, request, HttpContext.RequestAborted);
 
             return NoContent();
         }
@@ -49,7 +49,7 @@ namespace MusicService.API.Controllers
         [Authorize(Roles = $"{UserRoles.admin},{UserRoles.creator}")]
         public async Task<IActionResult> DeleteAsync([FromRoute] string name)
         {
-            await _songService.DeleteGenreAsync(name, HttpContext.RequestAborted);
+            await _songService.DeleteAsync(name, HttpContext.RequestAborted);
 
             return NoContent();
         }

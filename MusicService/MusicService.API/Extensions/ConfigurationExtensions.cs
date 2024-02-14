@@ -23,7 +23,7 @@ namespace MusicService.API.Extensions
     {
         public static IServiceCollection ApplyConfigurations(this IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<PlaylistDbOptions>(configuration.GetSection("PlaylistDbOptions"));
+            services.Configure<MongoDbOptions>(configuration.GetSection("MongoDbOptions"));
             services.Configure<MinioOptions>(configuration.GetSection("MinioOptions"));
 
             return services;
@@ -36,6 +36,7 @@ namespace MusicService.API.Extensions
             services.AddJwtAuthentication(configuration);
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IAuthorService, AuthorService>();
+            services.AddScoped<IGenreService, GenreService>();
             services.AddScoped<ISongService, SongService>();
             services.AddScoped<IReleaseService, ReleaseService>();
             services.AddScoped<IPlaylistService, PlaylistService>();

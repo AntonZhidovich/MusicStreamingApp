@@ -29,15 +29,27 @@ namespace MusicService.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<PageResponse<ReleaseDto>> GetAllAsync(GetPageRequest request, CancellationToken cancellationToken = default)
+        public async Task<PageResponse<ReleaseShortDto>> GetAllAsync(GetPageRequest request, CancellationToken cancellationToken = default)
         {
             var releases = await _unitOfWork.Releases.GetAllAsync(request.CurrentPage, request.PageSize);
             var allReleasesCount = await _unitOfWork.Releases.CountAsync(cancellationToken);
 
-            return releases.GetPageResponse<Release, ReleaseDto>(allReleasesCount, request, _mapper);
+            return releases.GetPageResponse<Release, ReleaseShortDto>(allReleasesCount, request, _mapper);
         }
 
-        public async Task<PageResponse<ReleaseDto>> GetAllFromAuthorAsync(GetPageRequest request, 
+        public async Task<ReleaseDto> GetByIdAsync(string id, CancellationToken cancellationToken = default)
+        {
+            var release = await _unitOfWork.Releases.GetByIdAsync(id, cancellationToken);
+
+            if (release == null)
+            {
+                throw new NotFoundException("No releases was found.");
+            }
+
+            return _mapper.Map<ReleaseDto>(release);
+        }
+
+        public async Task<PageResponse<ReleaseShortDto>> GetAllFromAuthorAsync(GetPageRequest request, 
             string artistName, 
             CancellationToken cancellationToken = default)
         {
@@ -45,7 +57,7 @@ namespace MusicService.Application.Services
             var authors = await _unitOfWork.Releases.ApplySpecificationAsync(specification, request.CurrentPage, request.PageSize, cancellationToken);
             var allSongsCount = await _unitOfWork.Releases.CountAsync(specification, cancellationToken);
 
-            return authors.GetPageResponse<Release, ReleaseDto>(allSongsCount, request, _mapper);
+            return authors.GetPageResponse<Release, ReleaseShortDto>(allSongsCount, request, _mapper);
         }
 
         public async Task AddSongToReleaseAsync(string releaseId, 
@@ -70,7 +82,7 @@ namespace MusicService.Application.Services
             var authors = await _unitOfWork.Authors.GetByNameAsync(request.AuthorNames, cancellationToken);
             release.Authors.AddRange(authors);
 
-            if (release.Authors.Count != authors.Count()) { throw new NotFoundException("Some authors could not be found."); }
+            if (request.AuthorNames.Count != authors.Count()) { throw new NotFoundException("Some authors could not be found."); }
 
             if (!user.IsInRole(UserRoles.admin)) { CheckIfUserIsMember(authors!, user); }
 

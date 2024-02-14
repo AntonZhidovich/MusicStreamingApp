@@ -7,8 +7,9 @@ namespace MusicService.Application.Interfaces
 {
     public interface IReleaseService
     {
-        Task<PageResponse<ReleaseDto>> GetAllAsync(GetPageRequest request, CancellationToken cancellationToken = default);
-        Task<PageResponse<ReleaseDto>> GetAllFromAuthorAsync(GetPageRequest request, string artistName, CancellationToken cancellationToken = default);
+        Task<PageResponse<ReleaseShortDto>> GetAllAsync(GetPageRequest request, CancellationToken cancellationToken = default);
+        Task<ReleaseDto> GetByIdAsync(string id, CancellationToken cancellationToken = default);
+        Task<PageResponse<ReleaseShortDto>> GetAllFromAuthorAsync(GetPageRequest request, string artistName, CancellationToken cancellationToken = default);
         Task CreateAsync(CreateReleaseRequest request, ClaimsPrincipal user, CancellationToken cancellationToken = default);
         Task DeleteAsync(string id, ClaimsPrincipal user, CancellationToken cancellationToken = default);
         Task UpdateAsync(string id, UpdateReleaseRequest request, ClaimsPrincipal user, CancellationToken cancellationToken = default);

@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace MusicService.Application.Specifications
 {
-    public class SongByNameSpecification : ISpecification<Song>
+    public class SongByTitleSpecification : ISpecification<Song>
     {
         public Expression<Func<Song, bool>> Criteria { get; }
 
@@ -14,7 +14,7 @@ namespace MusicService.Application.Specifications
 
         public List<string> Includes { get; }
 
-        public SongByNameSpecification(string name)
+        public SongByTitleSpecification(string title)
         {
             OrderByDescending = song => song.Release.ReleasedAt;
             Song song = new Song();
@@ -25,7 +25,7 @@ namespace MusicService.Application.Specifications
                 $"{nameof(song.Release)}.{nameof(song.Release.Authors)}"
             };
 
-            Criteria = song => song.SourceName.Trim().ToLower() == name.Trim().ToLower();
+            Criteria = song => song.Title.Trim().ToLower() == title.Trim().ToLower();
             OrderByDescending = song => song.Release.ReleasedAt;
         }
 

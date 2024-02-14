@@ -51,8 +51,7 @@ namespace MusicService.Infrastructure.Repositories
             
             observable.Subscribe(
                 item => sources.Add(item.Key),
-                exception => throw new BadRequestException("Error while loading song sources list."),
-                () => Console.WriteLine(""));
+                exception => throw new BadRequestException("Error while loading song sources list."));
             
             await observable;
 

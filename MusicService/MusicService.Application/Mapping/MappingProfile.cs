@@ -52,7 +52,12 @@ namespace MusicService.Application.Mapping
             CreateMap<Song, SongInReleaseDto>();
 
             CreateMap<Release, ReleaseDto>()
-                .ForMember(dest => dest.AuthorNames, options => options.MapFrom(src => src.Authors.Select(author => author.Name)));
+                .ForMember(dest => dest.AuthorNames, options => options.MapFrom(src => src.Authors.Select(author => author.Name)))
+                .ForMember(dest => dest.DurationMinutes, options => options.MapFrom(src => src.DurationMinutes.ToString()));
+
+            CreateMap<Release, ReleaseShortDto>()
+                .ForMember(dest => dest.AuthorNames, options => options.MapFrom(src => src.Authors.Select(author => author.Name)))
+                .ForMember(dest => dest.DurationMinutes, options => options.MapFrom(src => src.DurationMinutes.ToString()));
 
             CreateMap<UpdateReleaseRequest, Release>()
                 .ForAllMembers(options => options.Condition((source, dest, member) => member != null));

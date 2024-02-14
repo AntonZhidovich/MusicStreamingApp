@@ -7,6 +7,7 @@ using MusicService.Domain.Constants;
 
 namespace MusicService.API.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/songs")]
     public class SongController : ControllerBase
@@ -43,10 +44,10 @@ namespace MusicService.API.Controllers
             return Ok(songs);
         }
 
-        [HttpGet("name/{name}")]
-        public async Task<IActionResult> GetSongsByNameAsync([FromRoute] string name, [FromQuery] GetPageRequest request)
+        [HttpGet("title/{title}")]
+        public async Task<IActionResult> GetSongsByNameAsync([FromRoute] string title, [FromQuery] GetPageRequest request)
         {
-            var songs = await _songService.GetSongsByNameAsync(request, name, HttpContext.RequestAborted);
+            var songs = await _songService.GetSongsByTitleAsync(request, title, HttpContext.RequestAborted);
 
             return Ok(songs);
         }
@@ -60,7 +61,7 @@ namespace MusicService.API.Controllers
             return NoContent();
         }
 
-        [HttpPost("source")]
+        [HttpPost("sources")]
         [Authorize(Roles = $"{UserRoles.admin},{UserRoles.creator}")]
         public async Task<IActionResult> UploadSourceAsync([FromForm] UploadSongSourceRequest request)
         {
@@ -69,17 +70,26 @@ namespace MusicService.API.Controllers
             return NoContent();
         }
 
-        [HttpGet("source/{authorName}")]
+        [HttpGet("sources/")]
         [Authorize(Roles = $"{UserRoles.admin},{UserRoles.creator}")]
-        public async Task<IActionResult> RemoveSourceAsync([FromRoute] string authorName)
+        public async Task<IActionResult> GetSourcesAsync()
         {
-            var sources = await _songService.GetSourcesAsync(User, authorName, HttpContext.RequestAborted);
+            var sources = await _songService.GetSourcesAsync(User, HttpContext.RequestAborted);
 
             return Ok(sources);
         }
 
+        [HttpDelete("sources/{sourceName}")]
+        [Authorize(Roles = $"{UserRoles.admin},{UserRoles.creator}")]
+        public async Task<IActionResult> DeleteSourceAsync([FromRoute] string sourceName)
+        {
+            await _songService.RemoveSongSourceAsync(User, sourceName, HttpContext.RequestAborted);
+
+            return NoContent();
+        }
+
         [AllowAnonymous]
-        [HttpGet("source/{authorName}/{sourceName}")]
+        [HttpGet("sources/{authorName}/{sourceName}")]
         public async Task<IActionResult> GetSourceAsync([FromRoute] string authorName, [FromRoute] string sourceName)
         {
             var rangeHeader = Request.GetTypedHeaders().Range?.Ranges.First();

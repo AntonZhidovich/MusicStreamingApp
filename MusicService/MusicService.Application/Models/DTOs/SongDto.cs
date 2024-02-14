@@ -9,5 +9,6 @@ namespace MusicService.Application.Models.DTOs
         public List<string> Genres { get; set; }
         public ReleaseInSongDto Release { get; set; }
         public string DurationMinutes { get; set; }
+        public string SourceName { get; set; }
     }
 }

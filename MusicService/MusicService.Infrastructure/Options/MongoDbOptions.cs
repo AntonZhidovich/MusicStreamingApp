@@ -1,6 +1,6 @@
 ﻿namespace MusicService.Application.Options
 {
-    public class PlaylistDbOptions
+    public class MongoDbOptions
     {
         public string DatabaseName { get; set; }
         public string PlaylistsCollectionName { get; set; }

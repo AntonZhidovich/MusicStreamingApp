@@ -43,9 +43,9 @@ namespace MusicService.Infrastructure.Repositories
 
         public bool UserIsMember(Author author, string userName)
         {
-            var artistUserNames = author.Users.Select(user => user.UserName);
+            var artistUserNames = author.Users.Select(user => user.UserName.Trim().ToLower());
 
-            return artistUserNames.Contains(userName);
+            return artistUserNames.Contains(userName.Trim().ToLower());
         }
     }
 }

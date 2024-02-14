@@ -6,6 +6,5 @@ namespace MusicService.Domain.Interfaces
     {
         Task<User?> GetByUserNameAsync(string userName, CancellationToken cancellationToken = default);
         Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default);
-        Task<Author?> GetAuthorByUserNameAsync(string userName, CancellationToken cancellationToken = default);
     }
 }
