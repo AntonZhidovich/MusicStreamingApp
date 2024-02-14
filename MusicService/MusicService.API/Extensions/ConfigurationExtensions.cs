@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Minio;
 using MongoDB.Driver;
 using MusicService.API.ExceptionHandlers;
 using MusicService.Application.Interfaces;
@@ -12,6 +13,7 @@ using MusicService.Application.Services;
 using MusicService.Application.Validators;
 using MusicService.Domain.Interfaces;
 using MusicService.Infrastructure.Data;
+using MusicService.Infrastructure.Options;
 using MusicService.Infrastructure.Repositories;
 using System.Text;
 
@@ -22,6 +24,7 @@ namespace MusicService.API.Extensions
         public static IServiceCollection ApplyConfigurations(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<PlaylistDbOptions>(configuration.GetSection("PlaylistDbOptions"));
+            services.Configure<MinioOptions>(configuration.GetSection("MinioOptions"));
 
             return services;
         }
@@ -43,9 +46,19 @@ namespace MusicService.API.Extensions
         public static IServiceCollection AddDatabases(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<MusicDbContext>(options =>
+            
             options.UseSqlServer(configuration.GetConnectionString("sqlserver")));
             services.AddSingleton<IMongoClient>(provider => new MongoClient(
                 configuration["PlaylistDbOptions:ConnectionString"]));
+
+            var endpoint = configuration["MinioOptions:Endpoint"];
+            var accessKey = configuration["MinioOptions:AccessKey"];
+            var secretKey = configuration["MinioOptions:SecretKey"];
+            services.AddSingleton<IMinioClient>(provider => new MinioClient()
+            .WithEndpoint(endpoint)
+            .WithCredentials(accessKey, secretKey)
+            .WithSSL(false)
+            .Build());
 
             return services;
         }
@@ -59,6 +72,7 @@ namespace MusicService.API.Extensions
             services.AddScoped<IReleaseRepository, ReleaseRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IPlaylistRepository, PlaylistRepository>();
+            services.AddScoped<ISongSourceRepository, SongSourceRepository>();
 
             return services;
         }

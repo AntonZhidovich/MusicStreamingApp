@@ -36,7 +36,8 @@ namespace MusicService.Infrastructure.Repositories
 
         public async Task<IEnumerable<Playlist>> GetUserPlaylistsAsync(string userName, CancellationToken cancellationToken = default)
         {
-            var cursor = await _playlistCollection.FindAsync(filter: playlist => playlist.UserName == userName, cancellationToken: cancellationToken);
+            var cursor = await _playlistCollection.FindAsync(filter: playlist => playlist.UserName == userName, 
+                cancellationToken: cancellationToken);
 
             return await cursor.ToListAsync();
         }

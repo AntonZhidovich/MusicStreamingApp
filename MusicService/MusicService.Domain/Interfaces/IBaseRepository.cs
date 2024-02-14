@@ -8,6 +8,10 @@
         Task SaveChangesAsync(CancellationToken cancellationToken = default);
         Task<int> CountAsync(CancellationToken cancellationToken = default);
         Task<int> CountAsync(ISpecification<T> specification, CancellationToken cancellationToken = default);
-        Task<IEnumerable<T>> ApplySpecificationAsync(ISpecification<T> specification, int currentPage, int pageSize, CancellationToken cancellationToken = default);
+        
+        Task<IEnumerable<T>> ApplySpecificationAsync(ISpecification<T> specification, 
+            int currentPage, 
+            int pageSize, 
+            CancellationToken cancellationToken = default);
     }
 }

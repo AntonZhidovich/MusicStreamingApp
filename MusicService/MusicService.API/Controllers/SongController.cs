@@ -7,12 +7,12 @@ using MusicService.Domain.Constants;
 
 namespace MusicService.API.Controllers
 {
-    [Authorize]
     [ApiController]
     [Route("api/songs")]
     public class SongController : ControllerBase
     {
         private readonly ISongService _songService;
+        private const string contentType = "audio/mpeg";
 
         public SongController(ISongService songService)
         {
@@ -58,6 +58,34 @@ namespace MusicService.API.Controllers
             await _songService.UpdateAsync(id, request, HttpContext.RequestAborted);
 
             return NoContent();
+        }
+
+        [HttpPost("source")]
+        [Authorize(Roles = $"{UserRoles.admin},{UserRoles.creator}")]
+        public async Task<IActionResult> UploadSourceAsync([FromForm] UploadSongSourceRequest request)
+        {
+            await _songService.UploadSongSourceAsync(User, request, HttpContext.RequestAborted);
+
+            return NoContent();
+        }
+
+        [HttpGet("source/{authorName}")]
+        [Authorize(Roles = $"{UserRoles.admin},{UserRoles.creator}")]
+        public async Task<IActionResult> RemoveSourceAsync([FromRoute] string authorName)
+        {
+            var sources = await _songService.GetSourcesAsync(User, authorName, HttpContext.RequestAborted);
+
+            return Ok(sources);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("source/{authorName}/{sourceName}")]
+        public async Task<IActionResult> GetSourceAsync([FromRoute] string authorName, [FromRoute] string sourceName)
+        {
+            var rangeHeader = Request.GetTypedHeaders().Range?.Ranges.First();
+            var memoryStream = await _songService.GetSourceStreamAsync(User, authorName, sourceName, rangeHeader, HttpContext.RequestAborted);
+
+            return File(memoryStream, contentType, true);
         }
     }
 }

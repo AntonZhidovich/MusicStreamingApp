@@ -4,6 +4,7 @@ using MusicService.Application.Interfaces;
 using MusicService.Application.Models;
 using MusicService.Application.Models.ReleaseService;
 using MusicService.Domain.Constants;
+using MusicService.Domain.Interfaces;
 
 namespace MusicService.API.Controllers
 {
@@ -13,10 +14,12 @@ namespace MusicService.API.Controllers
     public class ReleaseController : ControllerBase
     {
         private readonly IReleaseService _releaseService;
+        private readonly ISongSourceRepository _repo;
 
-        public ReleaseController(IReleaseService releaseService)
+        public ReleaseController(IReleaseService releaseService, ISongSourceRepository repo)
         {
             _releaseService = releaseService;
+            _repo = repo;
         }
 
         [HttpGet]
@@ -70,7 +73,6 @@ namespace MusicService.API.Controllers
 
             return NoContent();
         }
-
 
         [HttpDelete("{releaseId}/songs/{songId}")]
         [Authorize(Roles = $"{UserRoles.creator},{UserRoles.admin}")]
