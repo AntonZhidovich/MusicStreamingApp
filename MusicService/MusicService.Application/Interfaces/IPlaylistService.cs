@@ -11,7 +11,7 @@ namespace MusicService.Application.Interfaces
         Task DeleteAsync(ClaimsPrincipal user, string id, CancellationToken cancellationToken = default);
         Task AddSongAsync(ClaimsPrincipal user, string playlistId, AddSongToPlaylistRequest request, CancellationToken cancellationToken = default);
         Task RemoveSongAsync(ClaimsPrincipal user, string playlistId, string songId, CancellationToken cancellationToken = default);
-        Task<IEnumerable<ShortPlaylistDto>> GetUserPlaylistsAsync(ClaimsPrincipal user, CancellationToken cancellationToken = default);
-        Task<FullPlaylistDto> GetFullPlaylistAsync(ClaimsPrincipal user, string id, CancellationToken cancellationToken = default);
+        Task<IEnumerable<PlaylistShortDto>> GetUserPlaylistsAsync(ClaimsPrincipal user, CancellationToken cancellationToken = default);
+        Task<PlaylistFullDto> GetFullPlaylistAsync(ClaimsPrincipal user, string id, CancellationToken cancellationToken = default);
     }
 }

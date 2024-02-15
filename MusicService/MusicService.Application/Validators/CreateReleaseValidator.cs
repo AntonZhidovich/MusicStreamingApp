@@ -1,22 +1,19 @@
 ﻿using FluentValidation;
 using MusicService.Application.Models.ReleaseService;
+using MusicService.Domain.Constants;
 
 namespace MusicService.Application.Validators
 {
     public class CreateReleaseValidator : AbstractValidator<CreateReleaseRequest>
     {
-        private const int nameMaxLength = 100;
-        private const int authorNameMaxLength = 50;
-        private readonly DateTime minimumDate = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-
         public CreateReleaseValidator()
         {
             RuleFor(request => request.Name)
                 .NotEmpty()
-                .MaximumLength(nameMaxLength);
+                .MaximumLength(Constraints.releaseNameMaxLength);
 
             RuleFor(request => request.ReleasedAt)
-                .GreaterThan(minimumDate)
+                .GreaterThan(Constraints.minimumDate)
                 .LessThan(DateTime.UtcNow);
 
             RuleFor(request => request.AuthorNames)
@@ -24,12 +21,11 @@ namespace MusicService.Application.Validators
 
             RuleForEach(request => request.AuthorNames)
                 .NotEmpty()
-                .MaximumLength(authorNameMaxLength);
+                .MaximumLength(Constraints.authorNameMaxLength);
 
             RuleFor(request => request.Songs)
                 .NotEmpty()
-                .ForEach(rule => rule.SetValidator(new AddSongToReleaseValidator()));
-                
+                .ForEach(rule => rule.SetValidator(new AddSongToReleaseValidator()));      
         }
     }
 }

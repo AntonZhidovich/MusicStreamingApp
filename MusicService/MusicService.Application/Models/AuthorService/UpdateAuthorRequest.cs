@@ -4,6 +4,6 @@
     {
         public string? Description { get; set; }
         public bool? IsBroken { get; set; }
-        public DateTime? BrokenAt { get; set; } = DateTime.UtcNow;
+        public DateTime? BrokenAt { get; set; }
     }
 }

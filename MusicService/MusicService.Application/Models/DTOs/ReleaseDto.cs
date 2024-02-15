@@ -1,6 +1,4 @@
-﻿using MusicService.Application.Models.ReleaseService;
-
-namespace MusicService.Application.Models.DTOs
+﻿namespace MusicService.Application.Models.DTOs
 {
     public class ReleaseDto
     {
@@ -9,7 +7,7 @@ namespace MusicService.Application.Models.DTOs
         public string Type { get; set; }
         public DateTime ReleasedAt { get; set; }
         public List<string> AuthorNames { get; set; }
-        public List<SongInReleaseDto> Songs { get; set; }
+        public List<SongShortDto> Songs { get; set; }
         public int SongsCount { get; set; }
         public string DurationMinutes { get; set; }
     }

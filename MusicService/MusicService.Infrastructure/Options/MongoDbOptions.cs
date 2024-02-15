@@ -4,6 +4,7 @@
     {
         public string DatabaseName { get; set; }
         public string PlaylistsCollectionName { get; set; }
+        public string UserTariffCollectionName { get; set; }
         public string ConnectionString { get; set; }
     }
 }

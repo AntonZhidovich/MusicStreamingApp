@@ -15,15 +15,16 @@ namespace MusicService.Infrastructure.Repositories
             var authors = await _dbContext.Authors
                 .Include(author => author.Users)
                 .OrderByDescending(author => author.Name)
+                .AsNoTracking()
                 .GetPage(currentPage, pageSize)
                 .ToListAsync(cancellationToken);
 
             return authors;
         }
 
-        public Task<Author?> GetByNameAsync(string name, CancellationToken cancellationToken = default)
+        public async Task<Author?> GetByNameAsync(string name, CancellationToken cancellationToken = default)
         {
-            var author = _dbContext.Authors
+            var author = await _dbContext.Authors
                 .Include(author => author.Users)
                 .Where(author => author.Name.Trim().ToLower() == name.Trim().ToLower())
                 .FirstOrDefaultAsync(cancellationToken);

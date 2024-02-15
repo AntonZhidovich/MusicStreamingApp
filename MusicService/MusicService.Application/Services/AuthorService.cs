@@ -25,18 +25,18 @@ namespace MusicService.Application.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task AddArtistToAuthorAsync(AuthorArtistRequest request, ClaimsPrincipal currentUser, CancellationToken cancellationToken = default)
+        public async Task AddUserToAuthorAsync(AuthorUserRequest request, ClaimsPrincipal currentUser, CancellationToken cancellationToken = default)
         {
-            var user = await GetDomainUserAsync(request.ArtistUserName, cancellationToken);
+            var user = await GetDomainUserAsync(request.UserName, cancellationToken);
 
             if (!user.Roles.Contains(UserRoles.creator))
             {
-                throw new BadRequestException("User does not have a creator role.");
+                throw new BadRequestException(ExceptionMessages.UserIsNotCreator);
             }
 
             if (user.Author != null)
             {
-                throw new BadRequestException("User is already in author group.");
+                throw new BadRequestException(ExceptionMessages.UserAlreadyInAuthor);
             }
 
             var author = await GetDomainAuthorAsync(request.AuthorName, cancellationToken);
@@ -44,11 +44,17 @@ namespace MusicService.Application.Services
             if (!currentUser.IsInRole(UserRoles.admin)) { CheckIfUserIsMember(author, currentUser); }
 
             author.Users.Add(user);
+            _unitOfWork.Authors.Update(author);
             await _unitOfWork.CommitAsync(cancellationToken);
         }
 
-        public async Task CreateAsync(CreateAuthorRequest request, CancellationToken cancellationToken = default)
+        public async Task<AuthorDto> CreateAsync(CreateAuthorRequest request, CancellationToken cancellationToken = default)
         {
+            if (await _unitOfWork.Authors.GetByNameAsync(request.Name, cancellationToken) != null)
+            {
+                throw new BadRequestException(ExceptionMessages.AuthorAlreadyExists);
+            }
+
             List<User> artists = new List<User>();
 
             foreach (var username in request.UserNames)
@@ -57,12 +63,12 @@ namespace MusicService.Application.Services
 
                 if (!user.Roles.Contains(UserRoles.creator))
                 {
-                    throw new BadRequestException($"{username} does not have a {UserRoles.creator} role.");
+                    throw new BadRequestException(ExceptionMessages.UserIsNotCreator);
                 }
 
                 if (user.Author != null)
                 {
-                    throw new BadRequestException($"{username} is already in {user.Author.Name}");
+                    throw new BadRequestException(ExceptionMessages.UserAlreadyInAuthor);
                 }
 
                 artists.Add(user);
@@ -73,6 +79,8 @@ namespace MusicService.Application.Services
             author.Users = artists;
             await _unitOfWork.Authors.CreateAsync(author, cancellationToken);
             await _unitOfWork.CommitAsync(cancellationToken);
+
+            return _mapper.Map<AuthorDto>(author);
         }
 
         public async Task DeleteAsync(string name, ClaimsPrincipal currentUser, CancellationToken cancellationToken = default)
@@ -100,7 +108,7 @@ namespace MusicService.Application.Services
             return _mapper.Map<AuthorDto>(author);
         }
 
-        public async Task RemoveArtistFromAuthorAsync(AuthorArtistRequest request, 
+        public async Task RemoveUserFromAuthorAsync(AuthorUserRequest request, 
             ClaimsPrincipal currentUser, 
             CancellationToken cancellationToken = default)
         {
@@ -108,23 +116,23 @@ namespace MusicService.Application.Services
 
             if (!currentUser.IsInRole(UserRoles.admin)) { CheckIfUserIsMember(author, currentUser); }
 
-            var user = await GetDomainUserAsync(request.ArtistUserName, cancellationToken);
+            var user = await GetDomainUserAsync(request.UserName, cancellationToken);
 
             if (user == null)
             {
-                throw new NotFoundException("No artist with such UserName was found.");
+                throw new NotFoundException(ExceptionMessages.UserNotFound);
             }
 
             if (user.Author != author)
             {
-                throw new NotFoundException("No user was found in the specified author group.");
+                throw new NotFoundException(ExceptionMessages.UserNotFound);
             }
 
             author.Users.Remove(user);
             await _unitOfWork.CommitAsync(cancellationToken);
         }
 
-        public async Task UpdateAsync(string name, 
+        public async Task<AuthorDto> UpdateAsync(string name, 
             UpdateAuthorRequest request, 
             ClaimsPrincipal currentUser, 
             CancellationToken cancellationToken = default)
@@ -134,7 +142,10 @@ namespace MusicService.Application.Services
             if (!currentUser.IsInRole(UserRoles.admin)) { CheckIfUserIsMember(author, currentUser); }
 
             _mapper.Map(request, author);
+            _unitOfWork.Authors.Update(author);
             await _unitOfWork.CommitAsync(cancellationToken);
+
+            return _mapper.Map<AuthorDto>(author);
         }
 
         private async Task<Author> GetDomainAuthorAsync(string name, CancellationToken cancellationToken = default)
@@ -143,7 +154,7 @@ namespace MusicService.Application.Services
 
             if (author == null)
             {
-                throw new NotFoundException("No author was found.");
+                throw new NotFoundException(ExceptionMessages.AuthorNotFound);
             }
 
             return author;
@@ -155,7 +166,7 @@ namespace MusicService.Application.Services
 
             if (user == null)
             {
-                throw new NotFoundException("No user was found");
+                throw new NotFoundException(ExceptionMessages.UserNotFound);
             }
 
             return user;
@@ -167,7 +178,7 @@ namespace MusicService.Application.Services
 
             if (!_unitOfWork.Authors.UserIsMember(author, currentUserName))
             {
-                throw new AuthorizationException("Only author members can do this action.");
+                throw new AuthorizationException(ExceptionMessages.NotAuthorMember);
             }
         }
     }

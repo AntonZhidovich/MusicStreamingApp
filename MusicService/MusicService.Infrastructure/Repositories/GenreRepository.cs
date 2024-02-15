@@ -15,6 +15,7 @@ namespace MusicService.Infrastructure.Repositories
             return await _dbContext.Genres
                 .Include(genre => genre.Songs)
                 .OrderBy(genre => genre.Name)
+                .AsNoTracking()
                 .GetPage(currentPage, pageSize)
                 .ToListAsync(cancellationToken);
         }

@@ -16,6 +16,7 @@ namespace MusicService.Infrastructure.Repositories
                 .Include(release => release.Authors)
                 .Include(release => release.Songs)
                 .OrderBy(release => release.Name)
+                .AsNoTracking()
                 .GetPage(currentPage, pageSize)
                 .ToListAsync(cancellationToken);
         }
@@ -24,6 +25,7 @@ namespace MusicService.Infrastructure.Repositories
         {
             return await _dbContext.Releases
                 .Include(release => release.Authors)
+                .ThenInclude(author => author.Users)
                 .Include(release => release.Songs)
                 .FirstOrDefaultAsync(release => release.Id == id, cancellationToken);
         }

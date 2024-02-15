@@ -1,17 +1,16 @@
 ﻿using FluentValidation;
 using MusicService.Application.Models.PlaylistService;
+using MusicService.Domain.Constants;
 
 namespace MusicService.Application.Validators
 {
     public class UpdatePlaylistvalidator : AbstractValidator<UpdatePlaylistRequest>
     {
-        private const int nameMaxLength = 50;
-
         public UpdatePlaylistvalidator()
         {
             RuleFor(request => request.Name)
                 .NotEmpty()
-                .MaximumLength(nameMaxLength);
+                .MaximumLength(Constraints.playlistNameMaxLength);
         }
     }
 }

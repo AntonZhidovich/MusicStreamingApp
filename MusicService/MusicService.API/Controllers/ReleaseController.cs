@@ -14,12 +14,10 @@ namespace MusicService.API.Controllers
     public class ReleaseController : ControllerBase
     {
         private readonly IReleaseService _releaseService;
-        private readonly ISongSourceRepository _repo;
 
         public ReleaseController(IReleaseService releaseService, ISongSourceRepository repo)
         {
             _releaseService = releaseService;
-            _repo = repo;
         }
 
         [HttpGet]
@@ -50,18 +48,18 @@ namespace MusicService.API.Controllers
         [Authorize(Roles = $"{UserRoles.creator},{UserRoles.admin}")]
         public async Task<IActionResult> CreateAsync([FromBody] CreateReleaseRequest request)
         {
-            await _releaseService.CreateAsync(request, HttpContext.User, HttpContext.RequestAborted);
+            var release = await _releaseService.CreateAsync(request, HttpContext.User, HttpContext.RequestAborted);
 
-            return NoContent();
+            return Ok(release);
         }
 
         [HttpPut("{releaseId}")]
         [Authorize(Roles = $"{UserRoles.creator},{UserRoles.admin}")]
         public async Task<IActionResult> UpdateAsync([FromRoute] string releaseId, [FromBody] UpdateReleaseRequest request)
         {
-            await _releaseService.UpdateAsync(releaseId, request, HttpContext.User, HttpContext.RequestAborted);
+            var release = await _releaseService.UpdateAsync(releaseId, request, HttpContext.User, HttpContext.RequestAborted);
 
-            return NoContent();
+            return Ok(release);
         }
 
         [HttpDelete("{releaseId}")]
@@ -77,9 +75,9 @@ namespace MusicService.API.Controllers
         [Authorize(Roles = $"{UserRoles.creator},{UserRoles.admin}")]
         public async Task<IActionResult> AddSongAsync([FromRoute] string releaseId, [FromBody] AddSongToReleaseRequest request)
         {
-            await _releaseService.AddSongToReleaseAsync(releaseId, request, HttpContext.User, HttpContext.RequestAborted);
+            var song = await _releaseService.AddSongToReleaseAsync(releaseId, request, HttpContext.User, HttpContext.RequestAborted);
 
-            return NoContent();
+            return Ok(song);
         }
 
         [HttpDelete("{releaseId}/songs/{songId}")]

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using MusicService.Domain.Constants;
 using MusicService.Domain.Entities;
 using System.Globalization;
 
@@ -8,11 +9,6 @@ namespace MusicService.Infrastructure.Data.Configurations
 {
     internal class SongConfiguration : IEntityTypeConfiguration<Song>
     {
-        private const int titleMaxLength = 50;
-        private const int idMaxLength = 50;
-        private const int sourceMaxLength = 100;
-        private const string timeSpanFormat = "hh\\:mm\\:ss";
-
         public void Configure(EntityTypeBuilder<Song> builder)
         {
             builder.HasKey(song => song.Id);
@@ -26,20 +22,20 @@ namespace MusicService.Infrastructure.Data.Configurations
 
             builder.Property(song => song.Id)
                 .IsRequired()
-                .HasMaxLength(idMaxLength);
+                .HasMaxLength(Constraints.idMaxLength);
 
             builder.Property(song => song.Title)
                 .IsRequired()
-                .HasMaxLength(titleMaxLength);
+                .HasMaxLength(Constraints.songTitleMaxLength);
 
             builder.Property(song => song.DurationMinutes)
-                .HasConversion(src => src.ToString(), dest => TimeSpan.ParseExact(dest, timeSpanFormat, CultureInfo.InvariantCulture))
+                .HasConversion(src => src.ToString(), dest => TimeSpan.ParseExact(dest, Constraints.timeSpanFormat, CultureInfo.InvariantCulture))
                 .IsRequired()
-                .HasMaxLength(timeSpanFormat.Length);
+                .HasMaxLength(Constraints.timeSpanFormat.Length);
 
             builder.Property(song => song.SourceName)
                 .IsRequired()
-                .HasMaxLength(sourceMaxLength);
+                .HasMaxLength(Constraints.songSourceMaxLength);
         }
     }
 }

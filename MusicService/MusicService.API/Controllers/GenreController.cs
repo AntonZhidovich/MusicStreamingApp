@@ -28,7 +28,6 @@ namespace MusicService.API.Controllers
         }
 
         [HttpGet("{name}")]
-        [Authorize(Roles = $"{UserRoles.admin},{UserRoles.creator}")]
         public async Task<IActionResult> ChangeGenreDescriptionAsync([FromRoute] string name)
         {
             var genre = await _songService.GetByNameAsync(name, HttpContext.RequestAborted);
@@ -40,9 +39,9 @@ namespace MusicService.API.Controllers
         [Authorize(Roles = $"{UserRoles.admin},{UserRoles.creator}")]
         public async Task<IActionResult> ChangeGenreDescriptionAsync([FromRoute] string name, [FromBody] UpdateGenreRequest request)
         {
-            await _songService.UpdateAsync(name, request, HttpContext.RequestAborted);
+            var genre = await _songService.UpdateAsync(name, request, HttpContext.RequestAborted);
 
-            return NoContent();
+            return Ok(genre);
         }
 
         [HttpDelete("{name}")]

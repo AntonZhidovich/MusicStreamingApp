@@ -1,6 +1,6 @@
 ﻿namespace MusicService.Application.Models.DTOs
 {
-    public class FullPlaylistDto
+    public class PlaylistFullDto
     {
         public string Id { get; set; }
         public string Name { get; set; }

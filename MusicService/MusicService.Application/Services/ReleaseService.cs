@@ -39,12 +39,7 @@ namespace MusicService.Application.Services
 
         public async Task<ReleaseDto> GetByIdAsync(string id, CancellationToken cancellationToken = default)
         {
-            var release = await _unitOfWork.Releases.GetByIdAsync(id, cancellationToken);
-
-            if (release == null)
-            {
-                throw new NotFoundException("No releases was found.");
-            }
+            var release = await GetDomainReleaseAsync(id, cancellationToken);
 
             return _mapper.Map<ReleaseDto>(release);
         }
@@ -60,7 +55,7 @@ namespace MusicService.Application.Services
             return authors.GetPageResponse<Release, ReleaseShortDto>(allSongsCount, request, _mapper);
         }
 
-        public async Task AddSongToReleaseAsync(string releaseId, 
+        public async Task<SongDto> AddSongToReleaseAsync(string releaseId, 
             AddSongToReleaseRequest request, 
             ClaimsPrincipal user, 
             CancellationToken cancellationToken = default)
@@ -69,12 +64,15 @@ namespace MusicService.Application.Services
 
             if (!user.IsInRole(UserRoles.admin)) { CheckIfUserIsMember(release.Authors, user); }
 
-            await AddSongToGivenReleaseAsync(release, request, cancellationToken);
+            var song = await AddSongToGivenReleaseAsync(release, request, cancellationToken);
             SetReleaseType(release);
+            _unitOfWork.Releases.Update(release);
             await _unitOfWork.CommitAsync(cancellationToken);
+
+            return _mapper.Map<SongDto>(song);
         }
 
-        public async Task CreateAsync(CreateReleaseRequest request, ClaimsPrincipal user, CancellationToken cancellationToken = default)
+        public async Task<ReleaseDto> CreateAsync(CreateReleaseRequest request, ClaimsPrincipal user, CancellationToken cancellationToken = default)
         {
             var release = _mapper.Map<Release>(request);
             release.Id = Guid.NewGuid().ToString();
@@ -82,7 +80,7 @@ namespace MusicService.Application.Services
             var authors = await _unitOfWork.Authors.GetByNameAsync(request.AuthorNames, cancellationToken);
             release.Authors.AddRange(authors);
 
-            if (request.AuthorNames.Count != authors.Count()) { throw new NotFoundException("Some authors could not be found."); }
+            if (request.AuthorNames.Count != authors.Count()) { throw new NotFoundException(ExceptionMessages.AuthorNotFound); }
 
             if (!user.IsInRole(UserRoles.admin)) { CheckIfUserIsMember(authors!, user); }
 
@@ -93,6 +91,8 @@ namespace MusicService.Application.Services
 
             SetReleaseType(release);
             await _unitOfWork.CommitAsync(cancellationToken);
+
+            return _mapper.Map<ReleaseDto>(release);
         }
 
         public async Task DeleteAsync(string id, ClaimsPrincipal user, CancellationToken cancellationToken = default)
@@ -116,27 +116,31 @@ namespace MusicService.Application.Services
 
             if (song == null)
             {
-                throw new NotFoundException("No song was found.");
+                throw new NotFoundException(ExceptionMessages.SongNotFound);
             }
 
             release.Songs.Remove(song);
             release.DurationMinutes -= song.DurationMinutes;
             release.SongsCount--;
             _unitOfWork.Songs.Delete(song);
+            _unitOfWork.Releases.Update(release);
             await _unitOfWork.CommitAsync(cancellationToken);
         }
 
-        public async Task UpdateAsync(string id, UpdateReleaseRequest request, ClaimsPrincipal user, CancellationToken cancellationToken = default)
+        public async Task<ReleaseShortDto> UpdateAsync(string id, UpdateReleaseRequest request, ClaimsPrincipal user, CancellationToken cancellationToken = default)
         {
             var release = await GetDomainReleaseAsync(id, cancellationToken);
 
             if (!user.IsInRole(UserRoles.admin)) { CheckIfUserIsMember(release.Authors, user); }
 
             _mapper.Map(request, release);
+            _unitOfWork.Releases.Update(release);
             await _unitOfWork.CommitAsync(cancellationToken);
+
+            return _mapper.Map<ReleaseShortDto>(release);
         }
 
-        private async Task AddSongToGivenReleaseAsync(Release release, AddSongToReleaseRequest request, CancellationToken cancellationToken = default)
+        private async Task<Song> AddSongToGivenReleaseAsync(Release release, AddSongToReleaseRequest request, CancellationToken cancellationToken = default)
         {
             var song = _mapper.Map<Song>(request);
             await _songService.CheckIfSourceExistsAsync(song.SourceName, cancellationToken);
@@ -152,6 +156,8 @@ namespace MusicService.Application.Services
             release.SongsCount++;
             release.DurationMinutes += song.DurationMinutes;
             await _unitOfWork.Songs.CreateAsync(song, cancellationToken);
+
+            return song;
         }
 
         private async Task<Release> GetDomainReleaseAsync(string id, CancellationToken cancellationToken = default)
@@ -160,7 +166,7 @@ namespace MusicService.Application.Services
 
             if (release == null)
             {
-                throw new NotFoundException("No release was found.");
+                throw new NotFoundException(ExceptionMessages.ReleaseNotFound);
             }
 
             return release;
@@ -191,7 +197,7 @@ namespace MusicService.Application.Services
                 if (_unitOfWork.Authors.UserIsMember(author, currentUserName)) { return; }
             }
 
-            throw new AuthorizationException("Only author members can do this action.");
+            throw new AuthorizationException(ExceptionMessages.NotAuthorMember);
         }
     }
 }

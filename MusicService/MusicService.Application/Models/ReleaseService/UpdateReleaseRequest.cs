@@ -2,7 +2,7 @@
 {
     public class UpdateReleaseRequest
     {
-        public string? Name { get; set; }
-        public DateTime? ReleasedAt { get; set; }
+        public string Name { get; set; }
+        public DateTime ReleasedAt { get; set; }
     }
 }

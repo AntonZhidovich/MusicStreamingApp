@@ -1,6 +1,6 @@
-﻿namespace MusicService.Application.Models.ReleaseService
+﻿namespace MusicService.Application.Models.DTOs
 {
-    public class SongInReleaseDto
+    public class SongShortDto
     {
         public string Id { get; set; }
         public string Title { get; set; }

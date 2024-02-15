@@ -53,12 +53,12 @@ namespace MusicService.API.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = $"{UserRoles.admin}")]
+        [Authorize(Roles = $"{UserRoles.admin},{UserRoles.creator}")]
         public async Task<IActionResult> UpdateByIdASync([FromRoute] string id, [FromBody] UpdateSongRequest request)
         {
-            await _songService.UpdateAsync(id, request, HttpContext.RequestAborted);
+            var updatedSong = await _songService.UpdateAsync(id, request, HttpContext.RequestAborted);
 
-            return NoContent();
+            return Ok(updatedSong);
         }
 
         [HttpPost("sources")]

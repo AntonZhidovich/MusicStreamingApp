@@ -2,6 +2,7 @@
 using MusicService.Application.Interfaces;
 using MusicService.Application.Models.DTOs;
 using MusicService.Application.Models.PlaylistService;
+using MusicService.Domain.Constants;
 using MusicService.Domain.Entities;
 using MusicService.Domain.Exceptions;
 using MusicService.Domain.Interfaces;
@@ -31,21 +32,17 @@ namespace MusicService.Application.Services
 
             if (song == null)
             {
-                throw new NotFoundException("No song was found.");
+                throw new NotFoundException(ExceptionMessages.SongNotFound);
             }
 
             var playlist = await GetDomainPlaylistAsync(playlistId, cancellationToken);
 
             if (playlist.SongIds.Contains(song.Id)) 
             { 
-                throw new BadRequestException("Song is already in the playlist.");  
+                throw new BadRequestException(ExceptionMessages.SongAlreadyInPlaylist);  
             }
 
-            if (playlist.UserName != user.Identity!.Name!)
-            {
-                throw new AuthorizationException("Authorized user doesn't have acces to this playlist.");
-            }
-
+            CheckIfUserIsOwnerAsync(playlist, user.Identity!.Name!);
             playlist.SongIds.Add(song.Id);
             await _playlistRepository.UpdateAsync(playlist, cancellationToken);
         }
@@ -53,15 +50,11 @@ namespace MusicService.Application.Services
         public async Task RemoveSongAsync(ClaimsPrincipal user, string playlistId, string songId, CancellationToken cancellationToken = default)
         {
             var playlist = await GetDomainPlaylistAsync(playlistId, cancellationToken);
-
-            if (playlist.UserName != user.Identity!.Name!)
-            {
-                throw new AuthorizationException("Authorized user doesn's acces to this playlist.");
-            }
+            CheckIfUserIsOwnerAsync(playlist, user.Identity!.Name!);
 
             if (!playlist.SongIds.Contains(songId))
             {
-                throw new NotFoundException("No song was found in the playlist.");
+                throw new NotFoundException(ExceptionMessages.SongNotFound);
             }
 
             playlist.SongIds.Remove(songId);
@@ -70,7 +63,16 @@ namespace MusicService.Application.Services
 
         public async Task CreateAsync(ClaimsPrincipal user, CreatePlaylistRequest request, CancellationToken cancellationToken = default)
         {
-            var playlist = new Playlist { UserName = user.Identity!.Name! };
+            var userName = user.Identity!.Name!;
+            var maxPlaylistCount = await GetUserMaxPlaylistCountAsync(userName, cancellationToken);
+            var currentPlaylistCount = await _playlistRepository.CountAsync(userName, cancellationToken);
+
+            if (currentPlaylistCount >= maxPlaylistCount) 
+            {
+                throw new BadRequestException(ExceptionMessages.PlanDoesntAllow);
+            }
+
+            var playlist = new Playlist { UserName = userName };
             _mapper.Map(request, playlist);
             await _playlistRepository.CreateAsync(playlist, cancellationToken);
         }
@@ -78,27 +80,19 @@ namespace MusicService.Application.Services
         public async Task DeleteAsync(ClaimsPrincipal user, string id, CancellationToken cancellationToken = default)
         {
             var playlist = await GetDomainPlaylistAsync(id, cancellationToken);
-
-            if (playlist.UserName != user.Identity!.Name!)
-            {
-                throw new AuthorizationException("Authorized user doesn's acces to this playlist.");
-            }
+            CheckIfUserIsOwnerAsync(playlist, user.Identity!.Name!);
 
             await _playlistRepository.DeleteAsync(id, cancellationToken);
         }
 
-        public async Task<FullPlaylistDto> GetFullPlaylistAsync(ClaimsPrincipal user, string id, CancellationToken cancellationToken = default)
+        public async Task<PlaylistFullDto> GetFullPlaylistAsync(ClaimsPrincipal user, string id, CancellationToken cancellationToken = default)
         {
             var playlist = await GetDomainPlaylistAsync(id, cancellationToken);
-
-            if (playlist.UserName != user.Identity!.Name!)
-            {
-                throw new AuthorizationException("Authorized user doesn's acces to this playlist.");
-            }
+            CheckIfUserIsOwnerAsync(playlist, user.Identity!.Name!);
 
             var songs = await _unitOfWork.Songs.GetByIdAsync(playlist.SongIds, cancellationToken);
 
-            var playlistDto = _mapper.Map<FullPlaylistDto>(playlist);
+            var playlistDto = _mapper.Map<PlaylistFullDto>(playlist);
             playlistDto.Songs = _mapper.Map<List<SongDto>>(songs);
 
             if (playlistDto.Songs.Count != playlist.SongIds.Count)
@@ -111,11 +105,13 @@ namespace MusicService.Application.Services
             return playlistDto;
         }
 
-        public async Task<IEnumerable<ShortPlaylistDto>> GetUserPlaylistsAsync(ClaimsPrincipal user, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<PlaylistShortDto>> GetUserPlaylistsAsync(ClaimsPrincipal user, CancellationToken cancellationToken = default)
         {
-            var playlists = await _playlistRepository.GetUserPlaylistsAsync(user.Identity!.Name!, cancellationToken);
+            var userName = user.Identity!.Name!;
+            var maxPlaylistCount = await GetUserMaxPlaylistCountAsync(userName, cancellationToken);
+            var playlists = await _playlistRepository.GetUserPlaylistsAsync(userName, maxPlaylistCount, cancellationToken);
 
-            return _mapper.Map<IEnumerable<ShortPlaylistDto>>(playlists);
+            return _mapper.Map<IEnumerable<PlaylistShortDto>>(playlists);
         }
 
         public async Task UpdateAsync(ClaimsPrincipal user, string id, UpdatePlaylistRequest request, CancellationToken cancellationToken = default)
@@ -125,13 +121,33 @@ namespace MusicService.Application.Services
             await _playlistRepository.UpdateAsync(playlist);
         }
 
+        private void CheckIfUserIsOwnerAsync(Playlist playlist, string userName)
+        {
+            if (playlist.UserName != userName)
+            {
+                throw new AuthorizationException(ExceptionMessages.NoAccessToPlaylist);
+            }
+        }
+
+        private async Task<int> GetUserMaxPlaylistCountAsync(string userName, CancellationToken cancellationToken = default)
+        {
+            var count = await _playlistRepository.GetUserMaxPlaylistCountAsync(userName, cancellationToken);
+
+            if (count == null)
+            {
+                throw new BadRequestException(ExceptionMessages.PlanNotFound);
+            }
+
+            return count.Value;
+        }
+
         private async Task<Playlist> GetDomainPlaylistAsync(string id, CancellationToken cancellationToken = default)
         {
             var playlist = await _playlistRepository.GetAsync(id, cancellationToken);
 
             if (playlist == null)
             {
-                throw new NotFoundException("No playlits was found.");
+                throw new NotFoundException(ExceptionMessages.PlaylistNotFound);
             }
 
             return playlist;

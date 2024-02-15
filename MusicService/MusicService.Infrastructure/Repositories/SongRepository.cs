@@ -17,6 +17,7 @@ namespace MusicService.Infrastructure.Repositories
                 .Include(song => song.Release)
                 .ThenInclude(release => release.Authors)
                 .OrderByDescending(song => song.Release.ReleasedAt)
+                .AsNoTracking()
                 .GetPage(currentPage, pageSize)
                 .ToListAsync(cancellationToken);
         }

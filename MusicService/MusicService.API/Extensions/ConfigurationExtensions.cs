@@ -47,10 +47,10 @@ namespace MusicService.API.Extensions
         public static IServiceCollection AddDatabases(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<MusicDbContext>(options =>
-            
             options.UseSqlServer(configuration.GetConnectionString("sqlserver")));
+
             services.AddSingleton<IMongoClient>(provider => new MongoClient(
-                configuration["PlaylistDbOptions:ConnectionString"]));
+                configuration["MongoDbOptions:ConnectionString"]));
 
             var endpoint = configuration["MinioOptions:Endpoint"];
             var accessKey = configuration["MinioOptions:AccessKey"];

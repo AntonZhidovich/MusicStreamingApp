@@ -10,7 +10,7 @@ namespace MusicService.Application.Interfaces
     {
         Task<PageResponse<SongDto>> GetAllAsync(GetPageRequest request, CancellationToken cancellationToken = default);
         Task<SongDto> GetByIdAsync(string id, CancellationToken cancellationToken = default);
-        Task UpdateAsync(string id, UpdateSongRequest request, CancellationToken cancellationToken = default);
+        Task<SongDto> UpdateAsync(string id, UpdateSongRequest request, CancellationToken cancellationToken = default);
         Task<PageResponse<SongDto>> GetSongsByTitleAsync(GetPageRequest request, string title, CancellationToken cancellationToken = default);
         Task<PageResponse<SongDto>> GetSongsFromGenreAsync(GetPageRequest request, string genreName, CancellationToken cancellationToken = default);
 

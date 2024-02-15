@@ -1,6 +1,6 @@
 ﻿namespace MusicService.Application.Models.DTOs
 {
-    public class ShortPlaylistDto
+    public class PlaylistShortDto
     {
         public string Id { get; set; }
         public string Name { get; set; }

@@ -3,11 +3,8 @@
     public interface ISongSourceRepository
     {
         Task UploadAsync(string prefix, string sourceName, Stream sourceStream, CancellationToken cancellationToken = default);
-        
         Task RemoveAsync(string prefix, string sourceName, CancellationToken cancellationToken = default);
-        
         Task<IEnumerable<string>> GetFromPrefixAsync(string  prefix, CancellationToken cancellationToken = default);
-        
         Task<bool> SourceExistsAsync(string fullSourceName);
         
         Task<MemoryStream> GetSourceStream(string prefix, 

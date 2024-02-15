@@ -7,6 +7,7 @@ using MusicService.Infrastructure.Extensions;
 using MusicService.Domain.Exceptions;
 using MusicService.Application.Models.SongService;
 using MusicService.Application.Interfaces;
+using MusicService.Domain.Constants;
 
 namespace MusicService.Application.Services
 {
@@ -36,13 +37,16 @@ namespace MusicService.Application.Services
             return _mapper.Map<GenreDto>(genre);
         }
 
-        public async Task UpdateAsync(string name,
+        public async Task<GenreDto> UpdateAsync(string name,
             UpdateGenreRequest request,
             CancellationToken cancellationToken = default)
         {
             var genre = await GetDomainGenreAsync(name, cancellationToken);
             genre.Description = request.NewDescription;
+            _unitOfWork.Genres.Update(genre);
             await _unitOfWork.CommitAsync(cancellationToken);
+
+            return _mapper.Map<GenreDto>(genre);
         }
 
         public async Task DeleteAsync(string name, CancellationToken cancellationToken = default)
@@ -58,7 +62,7 @@ namespace MusicService.Application.Services
 
             if (genre == null)
             {
-                throw new NotFoundException("No genre was found.");
+                throw new NotFoundException(ExceptionMessages.GenreNotFound);
             }
 
             return genre;

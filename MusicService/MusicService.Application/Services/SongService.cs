@@ -31,9 +31,9 @@ namespace MusicService.Application.Services
             _sourceRepository = sourceRepository;
         }
 
-        public async Task CheckIfSourceExistsAsync(string source, CancellationToken cancellationToken = default)
+        public async Task CheckIfSourceExistsAsync(string fullSourceName, CancellationToken cancellationToken = default)
         {
-            await _sourceRepository.SourceExistsAsync(source);
+            await _sourceRepository.SourceExistsAsync(fullSourceName);
         }
 
         public async Task<PageResponse<SongDto>> GetAllAsync(GetPageRequest request, CancellationToken cancellationToken = default)
@@ -71,7 +71,7 @@ namespace MusicService.Application.Services
             return _mapper.Map<SongDto>(song);
         }
 
-        public async Task UpdateAsync(string id, UpdateSongRequest request, CancellationToken cancellationToken = default)
+        public async Task<SongDto> UpdateAsync(string id, UpdateSongRequest request, CancellationToken cancellationToken = default)
         {
             var song = await GetDomainSongAsync(id, cancellationToken);
             _mapper.Map(request, song);
@@ -79,7 +79,10 @@ namespace MusicService.Application.Services
 
             if (request.Genres != null) { await UpdateSongGenresAsync(song, request.Genres, cancellationToken); }
 
+            _unitOfWork.Songs.Update(song);
             await _unitOfWork.CommitAsync(cancellationToken);
+
+            return _mapper.Map<SongDto>(song);
         }
 
         public async Task UploadSongSourceAsync(ClaimsPrincipal user, 
@@ -135,12 +138,12 @@ namespace MusicService.Application.Services
 
             if (user == null)
             {
-                throw new BadRequestException("Authorized user not found.");
+                throw new NotFoundException(ExceptionMessages.UserNotFound);
             }
 
             if (user.Author == null)
             {
-                throw new BadRequestException("No authors registered for current user was found");
+                throw new NotFoundException(ExceptionMessages.AuthorNotFound);
             }
 
             return user.Author!.Name;
@@ -152,7 +155,7 @@ namespace MusicService.Application.Services
 
             if (song == null)
             {
-                throw new NotFoundException("No song with such id was found.");
+                throw new NotFoundException(ExceptionMessages.SongNotFound);
             }
 
             return song;
@@ -177,12 +180,12 @@ namespace MusicService.Application.Services
 
             if (author == null)
             {
-                throw new NotFoundException("No author was found.");
+                throw new NotFoundException(ExceptionMessages.AuthorNotFound);
             }
 
             if (!_unitOfWork.Authors.UserIsMember(author, userName))
             {
-                throw new AuthorizationException("Only author members can do this action.");
+                throw new AuthorizationException(ExceptionMessages.NotAuthorMember);
             }
         }
     }
