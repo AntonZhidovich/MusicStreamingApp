@@ -49,6 +49,7 @@ namespace MusicService.Application.Services
             CancellationToken cancellationToken = default)
         {
             var specification = new ReleasesFromAuthorSpecification(artistName);
+            
             var authors = await _unitOfWork.Releases.ApplySpecificationAsync(specification, request.CurrentPage, request.PageSize, cancellationToken);
             var allSongsCount = await _unitOfWork.Releases.CountAsync(specification, cancellationToken);
 
@@ -65,8 +66,10 @@ namespace MusicService.Application.Services
             if (!user.IsInRole(UserRoles.admin)) { CheckIfUserIsMember(release.Authors, user); }
 
             var song = await AddSongToGivenReleaseAsync(release, request, cancellationToken);
+            
             SetReleaseType(release);
             _unitOfWork.Releases.Update(release);
+            
             await _unitOfWork.CommitAsync(cancellationToken);
 
             return _mapper.Map<SongDto>(song);
@@ -78,6 +81,7 @@ namespace MusicService.Application.Services
             release.Id = Guid.NewGuid().ToString();
 
             var authors = await _unitOfWork.Authors.GetByNameAsync(request.AuthorNames, cancellationToken);
+            
             release.Authors.AddRange(authors);
 
             if (request.AuthorNames.Count != authors.Count()) { throw new NotFoundException(ExceptionMessages.AuthorNotFound); }
@@ -90,6 +94,7 @@ namespace MusicService.Application.Services
             }
 
             SetReleaseType(release);
+            
             await _unitOfWork.CommitAsync(cancellationToken);
 
             return _mapper.Map<ReleaseDto>(release);
@@ -103,6 +108,7 @@ namespace MusicService.Application.Services
             if (!user.IsInRole(UserRoles.admin)) { CheckIfUserIsMember(authors!, user); }
 
             _unitOfWork.Releases.Delete(release);
+            
             await _unitOfWork.CommitAsync(cancellationToken);
         }
 
@@ -124,6 +130,7 @@ namespace MusicService.Application.Services
             release.SongsCount--;
             _unitOfWork.Songs.Delete(song);
             _unitOfWork.Releases.Update(release);
+            
             await _unitOfWork.CommitAsync(cancellationToken);
         }
 
@@ -135,6 +142,7 @@ namespace MusicService.Application.Services
 
             _mapper.Map(request, release);
             _unitOfWork.Releases.Update(release);
+            
             await _unitOfWork.CommitAsync(cancellationToken);
 
             return _mapper.Map<ReleaseShortDto>(release);
@@ -143,11 +151,13 @@ namespace MusicService.Application.Services
         private async Task<Song> AddSongToGivenReleaseAsync(Release release, AddSongToReleaseRequest request, CancellationToken cancellationToken = default)
         {
             var song = _mapper.Map<Song>(request);
+            
             await _songService.CheckIfSourceExistsAsync(song.SourceName, cancellationToken);
 
             foreach (var genreName in request.Genres)
             {
                 var genre = await _unitOfWork.Genres.GetOrCreateAsync(genreName, cancellationToken);
+                
                 song.Genres.Add(genre);
             }
 
@@ -155,6 +165,7 @@ namespace MusicService.Application.Services
             song.Release = release;
             release.SongsCount++;
             release.DurationMinutes += song.DurationMinutes;
+            
             await _unitOfWork.Songs.CreateAsync(song, cancellationToken);
 
             return song;

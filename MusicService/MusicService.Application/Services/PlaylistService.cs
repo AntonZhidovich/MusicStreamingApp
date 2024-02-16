@@ -44,12 +44,14 @@ namespace MusicService.Application.Services
 
             CheckIfUserIsOwnerAsync(playlist, user.Identity!.Name!);
             playlist.SongIds.Add(song.Id);
+            
             await _playlistRepository.UpdateAsync(playlist, cancellationToken);
         }
 
         public async Task RemoveSongAsync(ClaimsPrincipal user, string playlistId, string songId, CancellationToken cancellationToken = default)
         {
             var playlist = await GetDomainPlaylistAsync(playlistId, cancellationToken);
+            
             CheckIfUserIsOwnerAsync(playlist, user.Identity!.Name!);
 
             if (!playlist.SongIds.Contains(songId))
@@ -58,12 +60,14 @@ namespace MusicService.Application.Services
             }
 
             playlist.SongIds.Remove(songId);
+            
             await _playlistRepository.UpdateAsync(playlist, cancellationToken);
         }
 
         public async Task CreateAsync(ClaimsPrincipal user, CreatePlaylistRequest request, CancellationToken cancellationToken = default)
         {
             var userName = user.Identity!.Name!;
+            
             var maxPlaylistCount = await GetUserMaxPlaylistCountAsync(userName, cancellationToken);
             var currentPlaylistCount = await _playlistRepository.CountAsync(userName, cancellationToken);
 
@@ -74,6 +78,7 @@ namespace MusicService.Application.Services
 
             var playlist = new Playlist { UserName = userName };
             _mapper.Map(request, playlist);
+            
             await _playlistRepository.CreateAsync(playlist, cancellationToken);
         }
 
@@ -88,6 +93,7 @@ namespace MusicService.Application.Services
         public async Task<PlaylistFullDto> GetFullPlaylistAsync(ClaimsPrincipal user, string id, CancellationToken cancellationToken = default)
         {
             var playlist = await GetDomainPlaylistAsync(id, cancellationToken);
+            
             CheckIfUserIsOwnerAsync(playlist, user.Identity!.Name!);
 
             var songs = await _unitOfWork.Songs.GetByIdAsync(playlist.SongIds, cancellationToken);
@@ -108,6 +114,7 @@ namespace MusicService.Application.Services
         public async Task<IEnumerable<PlaylistShortDto>> GetUserPlaylistsAsync(ClaimsPrincipal user, CancellationToken cancellationToken = default)
         {
             var userName = user.Identity!.Name!;
+            
             var maxPlaylistCount = await GetUserMaxPlaylistCountAsync(userName, cancellationToken);
             var playlists = await _playlistRepository.GetUserPlaylistsAsync(userName, maxPlaylistCount, cancellationToken);
 
@@ -118,6 +125,7 @@ namespace MusicService.Application.Services
         {
             var playlist = await GetDomainPlaylistAsync(id, cancellationToken);
             playlist.Name = request.Name;
+            
             await _playlistRepository.UpdateAsync(playlist);
         }
 

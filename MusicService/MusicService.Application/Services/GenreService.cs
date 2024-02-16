@@ -44,6 +44,7 @@ namespace MusicService.Application.Services
             var genre = await GetDomainGenreAsync(name, cancellationToken);
             genre.Description = request.NewDescription;
             _unitOfWork.Genres.Update(genre);
+            
             await _unitOfWork.CommitAsync(cancellationToken);
 
             return _mapper.Map<GenreDto>(genre);
@@ -53,6 +54,7 @@ namespace MusicService.Application.Services
         {
             var genre = await GetDomainGenreAsync(name);
             _unitOfWork.Genres.Delete(genre);
+            
             await _unitOfWork.CommitAsync(cancellationToken);
         }
 

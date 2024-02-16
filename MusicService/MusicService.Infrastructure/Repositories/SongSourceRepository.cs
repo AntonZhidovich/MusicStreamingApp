@@ -24,6 +24,7 @@ namespace MusicService.Infrastructure.Repositories
             var args = new RemoveObjectArgs()
                 .WithBucket(_options.BucketName)
                 .WithObject($"{Normalize(prefix)}/{Normalize(sourceName)}");
+            
             await _minioClient.RemoveObjectAsync(args, cancellationToken);
         }
 
@@ -69,28 +70,28 @@ namespace MusicService.Infrastructure.Repositories
             return true;
         }
 
-        public async Task<MemoryStream> GetSourceStream(string prefix, 
+        public async Task<Stream> GetSourceStream(string prefix, 
             string sourceName,
+            Stream outputStream,
             long offset = 0,
             long length = 0,
             CancellationToken cancellationToken = default)
         {
-            var memoryStream = new MemoryStream();
-
             var args = new GetObjectArgs()
                 .WithBucket(_options.BucketName)
                 .WithObject($"{Normalize(prefix)}/{Normalize(sourceName)}")
-                .WithCallbackStream(stream => stream.CopyTo(memoryStream));
+                .WithCallbackStream(stream => stream.CopyTo(outputStream));
 
-            if (length > 0 && offset >=0)
+            if (length > 0 && offset >= 0)
             {
                 args.WithOffsetAndLength(offset, length);
             }
 
             await _minioClient.GetObjectAsync(args, cancellationToken);
-            memoryStream.Position = 0;
+            
+            outputStream.Position = 0;
 
-            return memoryStream;
+            return outputStream;
         }
 
         private string Normalize(string source)

@@ -45,6 +45,7 @@ namespace MusicService.Application.Services
 
             author.Users.Add(user);
             _unitOfWork.Authors.Update(author);
+            
             await _unitOfWork.CommitAsync(cancellationToken);
         }
 
@@ -77,6 +78,7 @@ namespace MusicService.Application.Services
             var author = _mapper.Map<Author>(request);
             author.Id = Guid.NewGuid().ToString();
             author.Users = artists;
+            
             await _unitOfWork.Authors.CreateAsync(author, cancellationToken);
             await _unitOfWork.CommitAsync(cancellationToken);
 
@@ -90,6 +92,7 @@ namespace MusicService.Application.Services
             if (!currentUser.IsInRole(UserRoles.admin)) { CheckIfUserIsMember(author, currentUser); }
 
             _unitOfWork.Authors.Delete(author);
+           
             await _unitOfWork.CommitAsync(cancellationToken);
         }
 
@@ -129,6 +132,7 @@ namespace MusicService.Application.Services
             }
 
             author.Users.Remove(user);
+            
             await _unitOfWork.CommitAsync(cancellationToken);
         }
 
@@ -143,6 +147,7 @@ namespace MusicService.Application.Services
 
             _mapper.Map(request, author);
             _unitOfWork.Authors.Update(author);
+           
             await _unitOfWork.CommitAsync(cancellationToken);
 
             return _mapper.Map<AuthorDto>(author);

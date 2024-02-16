@@ -93,7 +93,9 @@ namespace MusicService.API.Controllers
         public async Task<IActionResult> GetSourceAsync([FromRoute] string authorName, [FromRoute] string sourceName)
         {
             var rangeHeader = Request.GetTypedHeaders().Range?.Ranges.First();
-            var memoryStream = await _songService.GetSourceStreamAsync(User, authorName, sourceName, rangeHeader, HttpContext.RequestAborted);
+            var memoryStream = new MemoryStream();
+
+            await _songService.GetSourceStreamAsync(User, authorName, sourceName, memoryStream, rangeHeader, HttpContext.RequestAborted);
 
             return File(memoryStream, contentType, true);
         }

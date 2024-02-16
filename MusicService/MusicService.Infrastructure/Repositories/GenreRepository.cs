@@ -41,6 +41,7 @@ namespace MusicService.Infrastructure.Repositories
                 if (genre == null)
                 {
                     genre = new Genre { Id = Guid.NewGuid().ToString(), Name = name, Description = string.Empty };
+                    
                     await CreateAsync(genre, cancellationToken);
                 }
             }

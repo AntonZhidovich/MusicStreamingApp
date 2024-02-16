@@ -19,9 +19,10 @@ namespace MusicService.Application.Interfaces
         Task RemoveSongSourceAsync(ClaimsPrincipal user, string sourceName, CancellationToken cancellationToken = default);
         Task<IEnumerable<string>> GetSourcesAsync(ClaimsPrincipal user, CancellationToken cancellationToken = default);
 
-        Task<MemoryStream> GetSourceStreamAsync(ClaimsPrincipal user, 
+        Task<Stream> GetSourceStreamAsync(ClaimsPrincipal user, 
             string authorName,
-            string sourceName, 
+            string sourceName,
+            Stream outputStream,
             RangeItemHeaderValue? range = null,
             CancellationToken cancellationToken = default);
     }

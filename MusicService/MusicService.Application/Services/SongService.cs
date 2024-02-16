@@ -47,6 +47,7 @@ namespace MusicService.Application.Services
         public async Task<PageResponse<SongDto>> GetSongsByTitleAsync(GetPageRequest request, string title, CancellationToken cancellationToken = default)
         {
             var specification = new SongByTitleSpecification(title);
+            
             var songs = await _unitOfWork.Songs.ApplySpecificationAsync(specification, request.CurrentPage, request.PageSize, cancellationToken);
             var allSongsCount = await _unitOfWork.Songs.CountAsync(specification, cancellationToken);
 
@@ -58,6 +59,7 @@ namespace MusicService.Application.Services
             CancellationToken cancellationToken = default)
         {
             var specification = new SongFromGenreSpecification(genreName);
+            
             var songs = await _unitOfWork.Songs.ApplySpecificationAsync(specification, request.CurrentPage, request.PageSize, cancellationToken);
             var allSongsCount = await _unitOfWork.Songs.CountAsync(specification, cancellationToken);
 
@@ -75,34 +77,41 @@ namespace MusicService.Application.Services
         {
             var song = await GetDomainSongAsync(id, cancellationToken);
             _mapper.Map(request, song);
+            
             await _sourceRepository.SourceExistsAsync(song.SourceName);
 
             if (request.Genres != null) { await UpdateSongGenresAsync(song, request.Genres, cancellationToken); }
 
             _unitOfWork.Songs.Update(song);
+            
             await _unitOfWork.CommitAsync(cancellationToken);
 
             return _mapper.Map<SongDto>(song);
         }
 
-        public async Task UploadSongSourceAsync(ClaimsPrincipal user, 
-            UploadSongSourceRequest request, 
+        public async Task UploadSongSourceAsync(ClaimsPrincipal user,
+            UploadSongSourceRequest request,
             CancellationToken cancellationToken = default)
         {
             var userName = user.Identity!.Name!;
+
             var authorName = await GetAuthorNameAsync(userName);
 
             if (!user.IsInRole(UserRoles.admin)) { await CheckIfUserIsMemberAsync(authorName, userName, cancellationToken); }
-            
+
             using var stream = new MemoryStream();
+            
             await request.sourceFile.CopyToAsync(stream, cancellationToken);
+            
             stream.Position = 0;
+            
             await _sourceRepository.UploadAsync(authorName, request.sourceFile.FileName, stream, cancellationToken);
         }
 
         public async Task RemoveSongSourceAsync(ClaimsPrincipal user, string sourceName, CancellationToken cancellationToken = default)
         {
             var userName = user.Identity!.Name!;
+            
             var authorName = await GetAuthorNameAsync(userName);
 
             if (!user.IsInRole(UserRoles.admin)) { await CheckIfUserIsMemberAsync(authorName, user.Identity!.Name!, cancellationToken); }
@@ -113,6 +122,7 @@ namespace MusicService.Application.Services
         public async Task<IEnumerable<string>> GetSourcesAsync(ClaimsPrincipal user, CancellationToken cancellationToken = default)
         {
             var userName = user.Identity!.Name!;
+            
             var authorName = await GetAuthorNameAsync(userName);
 
             if (!user.IsInRole(UserRoles.admin)) { await CheckIfUserIsMemberAsync(authorName, user.Identity!.Name!, cancellationToken); }
@@ -120,16 +130,17 @@ namespace MusicService.Application.Services
             return await _sourceRepository.GetFromPrefixAsync(authorName, cancellationToken);
         }
 
-        public async Task<MemoryStream> GetSourceStreamAsync(ClaimsPrincipal user, 
+        public async Task<Stream> GetSourceStreamAsync(ClaimsPrincipal user, 
             string authorName,
             string sourceName,
+            Stream outputStream,
             RangeItemHeaderValue? range = null,
             CancellationToken cancellationToken = default)
         {
             long offset = range?.From ?? 0;
             long length = range?.To - offset + 1 ?? 0;
 
-            return await _sourceRepository.GetSourceStream(authorName, sourceName, offset, length, cancellationToken);
+            return await _sourceRepository.GetSourceStream(authorName, sourceName, outputStream, offset, length, cancellationToken);
         }
 
         private async Task<string> GetAuthorNameAsync(string userName)
@@ -168,6 +179,7 @@ namespace MusicService.Application.Services
             foreach (var genreName in genreNames)
             {
                 var genre = await _unitOfWork.Genres.GetOrCreateAsync(genreName, cancellationToken);
+                
                 genres.Add(genre);
             }
 

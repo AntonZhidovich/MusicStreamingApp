@@ -26,6 +26,7 @@ namespace MusicService.Infrastructure.Repositories
         public async Task DeleteAsync(string id, CancellationToken cancellationToken = default)
         {
             var filter = Builders<Playlist>.Filter.Eq(playlist => playlist.Id, id);
+            
             await _playlistCollection.DeleteOneAsync(filter, cancellationToken);
         }
 

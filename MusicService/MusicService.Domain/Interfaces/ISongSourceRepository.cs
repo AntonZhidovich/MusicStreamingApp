@@ -7,8 +7,9 @@
         Task<IEnumerable<string>> GetFromPrefixAsync(string  prefix, CancellationToken cancellationToken = default);
         Task<bool> SourceExistsAsync(string fullSourceName);
         
-        Task<MemoryStream> GetSourceStream(string prefix, 
-            string sourceName, 
+        Task<Stream> GetSourceStream(string prefix, 
+            string sourceName,
+            Stream outputStream,
             long offset = 0,
             long length = 0,
             CancellationToken cancellationToken = default);
