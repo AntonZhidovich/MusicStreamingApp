@@ -17,6 +17,7 @@ namespace MusicService.API.ExceptionHandlers
             };
 
             httpContext.Response.StatusCode = statusCode;
+            
             await httpContext.Response.WriteAsJsonAsync(problemDetails);
 
             return true;

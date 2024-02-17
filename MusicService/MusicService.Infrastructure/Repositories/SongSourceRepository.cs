@@ -82,14 +82,15 @@ namespace MusicService.Infrastructure.Repositories
                 .WithObject($"{Normalize(prefix)}/{Normalize(sourceName)}")
                 .WithCallbackStream(stream => stream.CopyTo(outputStream));
 
-            if (length > 0 && offset >= 0)
+            if (length > 0 || offset > 0)
             {
                 args.WithOffsetAndLength(offset, length);
+                outputStream.Position = offset;
             }
 
             await _minioClient.GetObjectAsync(args, cancellationToken);
-            
-            outputStream.Position = 0;
+
+            outputStream.Position = offset;
 
             return outputStream;
         }

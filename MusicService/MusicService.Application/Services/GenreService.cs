@@ -42,6 +42,7 @@ namespace MusicService.Application.Services
             CancellationToken cancellationToken = default)
         {
             var genre = await GetDomainGenreAsync(name, cancellationToken);
+            
             genre.Description = request.NewDescription;
             _unitOfWork.Genres.Update(genre);
             
@@ -53,6 +54,7 @@ namespace MusicService.Application.Services
         public async Task DeleteAsync(string name, CancellationToken cancellationToken = default)
         {
             var genre = await GetDomainGenreAsync(name);
+            
             _unitOfWork.Genres.Delete(genre);
             
             await _unitOfWork.CommitAsync(cancellationToken);

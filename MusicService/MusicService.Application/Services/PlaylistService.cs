@@ -42,7 +42,7 @@ namespace MusicService.Application.Services
                 throw new BadRequestException(ExceptionMessages.SongAlreadyInPlaylist);  
             }
 
-            CheckIfUserIsOwnerAsync(playlist, user.Identity!.Name!);
+            CheckIfUserIsOwner(playlist, user.Identity!.Name!);
             playlist.SongIds.Add(song.Id);
             
             await _playlistRepository.UpdateAsync(playlist, cancellationToken);
@@ -52,7 +52,7 @@ namespace MusicService.Application.Services
         {
             var playlist = await GetDomainPlaylistAsync(playlistId, cancellationToken);
             
-            CheckIfUserIsOwnerAsync(playlist, user.Identity!.Name!);
+            CheckIfUserIsOwner(playlist, user.Identity!.Name!);
 
             if (!playlist.SongIds.Contains(songId))
             {
@@ -85,7 +85,8 @@ namespace MusicService.Application.Services
         public async Task DeleteAsync(ClaimsPrincipal user, string id, CancellationToken cancellationToken = default)
         {
             var playlist = await GetDomainPlaylistAsync(id, cancellationToken);
-            CheckIfUserIsOwnerAsync(playlist, user.Identity!.Name!);
+            
+            CheckIfUserIsOwner(playlist, user.Identity!.Name!);
 
             await _playlistRepository.DeleteAsync(id, cancellationToken);
         }
@@ -94,7 +95,7 @@ namespace MusicService.Application.Services
         {
             var playlist = await GetDomainPlaylistAsync(id, cancellationToken);
             
-            CheckIfUserIsOwnerAsync(playlist, user.Identity!.Name!);
+            CheckIfUserIsOwner(playlist, user.Identity!.Name!);
 
             var songs = await _unitOfWork.Songs.GetByIdAsync(playlist.SongIds, cancellationToken);
 
@@ -124,12 +125,13 @@ namespace MusicService.Application.Services
         public async Task UpdateAsync(ClaimsPrincipal user, string id, UpdatePlaylistRequest request, CancellationToken cancellationToken = default)
         {
             var playlist = await GetDomainPlaylistAsync(id, cancellationToken);
+            
             playlist.Name = request.Name;
             
             await _playlistRepository.UpdateAsync(playlist);
         }
 
-        private void CheckIfUserIsOwnerAsync(Playlist playlist, string userName)
+        private void CheckIfUserIsOwner(Playlist playlist, string userName)
         {
             if (playlist.UserName != userName)
             {

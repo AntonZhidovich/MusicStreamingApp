@@ -13,7 +13,6 @@ namespace MusicService.API.Controllers
     public class SongController : ControllerBase
     {
         private readonly ISongService _songService;
-        private const string contentType = "audio/mpeg";
 
         public SongController(ISongService songService)
         {
@@ -97,7 +96,7 @@ namespace MusicService.API.Controllers
 
             await _songService.GetSourceStreamAsync(User, authorName, sourceName, memoryStream, rangeHeader, HttpContext.RequestAborted);
 
-            return File(memoryStream, contentType, true);
+            return File(memoryStream, Constraints.sourceContentType, true);
         }
     }
 }

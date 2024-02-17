@@ -13,5 +13,6 @@
         public const int songSourceMaxLength = 200;
         public const int playlistNameMaxLength = 50;
         public static readonly DateTime minimumDate = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        public const string sourceContentType = "audio/mpeg";
     }
 }

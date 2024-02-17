@@ -58,6 +58,7 @@ namespace MusicService.API.Controllers
         public async Task<IActionResult> RemoveUserFromAuthorAsync([FromRoute] string authorName, [FromRoute] string artistName)
         {
             var request = new AuthorUserRequest { AuthorName = authorName, UserName = artistName };
+            
             await _authorService.RemoveUserFromAuthorAsync(request , HttpContext.User, HttpContext.RequestAborted);
 
             return NoContent();
@@ -68,6 +69,7 @@ namespace MusicService.API.Controllers
         public async Task<IActionResult> AddUserToAuthorAsync([FromRoute] string authorName, [FromRoute] string artistName)
         {
             var request = new AuthorUserRequest { AuthorName = authorName, UserName = artistName };
+            
             await _authorService.AddUserToAuthorAsync(request, HttpContext.User, HttpContext.RequestAborted);
 
             return NoContent();

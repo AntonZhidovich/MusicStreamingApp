@@ -59,6 +59,7 @@ namespace MusicService.Infrastructure.Repositories
         public async Task UpdateAsync(Playlist playlist, CancellationToken cancellationToken = default)
         {
             var filter = Builders<Playlist>.Filter.Eq(playlist => playlist.Id, playlist.Id);
+            
             await _playlistCollection.ReplaceOneAsync(filter: filter, replacement: playlist, cancellationToken: cancellationToken);
         }
 
@@ -66,6 +67,7 @@ namespace MusicService.Infrastructure.Repositories
         {
             var cursor = await _userTariffCollection.FindAsync(filter: tariff => tariff.UserName == userName,
                 cancellationToken: cancellationToken);
+            
             var tariff = cursor?.FirstOrDefault();
 
             return tariff?.MaxPlaylistCount;
@@ -74,6 +76,7 @@ namespace MusicService.Infrastructure.Repositories
         public async Task DeleteUserPlaylistsAsync(string userName, CancellationToken cancellationToken = default)
         {
             var filter = Builders<Playlist>.Filter.Eq(tariff => tariff.UserName, userName);
+            
             await _playlistCollection.DeleteManyAsync(filter, cancellationToken);
         }
 
@@ -81,12 +84,14 @@ namespace MusicService.Infrastructure.Repositories
         {
             var options = new ReplaceOptions { IsUpsert = true };
             var filter = Builders<UserPlaylistTariff>.Filter.Eq(tariff => tariff.UserName, tariff.UserName);
+            
             await _userTariffCollection.ReplaceOneAsync(filter, tariff, options, cancellationToken);
         }
 
         public async Task DeleteUserPlaylistTariffAsync(string userName, CancellationToken cancellationToken = default)
         {
             var filter = Builders<UserPlaylistTariff>.Filter.Eq(tariff => tariff.UserName, userName);
+            
             await _userTariffCollection.DeleteOneAsync(filter, cancellationToken);
         }
     }
