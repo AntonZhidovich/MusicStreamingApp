@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Identity.BusinessLogic.Constants;
 using Identity.BusinessLogic.Exceptions;
 using Identity.BusinessLogic.Models;
 using Identity.BusinessLogic.Models.TokenService;
@@ -23,27 +24,30 @@ namespace Identity.BusinessLogic.Services.Implementations
             _mapper = mapper;
         }
 
-        public async Task<Tokens> SignInAsync(CheckPasswordRequest request)
+        public async Task<Tokens> SignInAsync(CheckPasswordRequest request, CancellationToken cancellationToken = default)
         {
             bool isAuthenticated = await _userService.CheckPasswordAsync(request);
 
             if (!isAuthenticated)
             {
-                throw new InvalidAuthorizationException("Invalid password.");
+                throw new InvalidAuthorizationException(ExceptionMessages.InvalidPassword);
             }
 
-            var user = await _userService.GetByEmailAsync(new GetUserByEmailRequest { Email = request.Email });
+            var user = await _userService.GetByEmailAsync(request.Email);
+            
             var roles = await _userService.GetRolesAsync(new GetUserRolesRequest { Email = user.Email });
+            
             var tokensRequest = _mapper.Map<GetTokensRequest>(user);
             tokensRequest.Roles = roles;
-            var tokens = await _tokenService.GetTokensAsync(tokensRequest);
+            
+            var tokens = await _tokenService.GetTokensAsync(tokensRequest, cancellationToken);
 
             return tokens;
         }
 
-        public async Task<Tokens> SignInWithRefreshAsync(Tokens tokens)
+        public async Task<Tokens> SignInWithRefreshAsync(Tokens tokens, CancellationToken cancellationToken = default)
         {
-            var newTokens = await _tokenService.UseRefreshTokenAsync(tokens);
+            var newTokens = await _tokenService.UseRefreshTokenAsync(tokens, cancellationToken);
 
             return newTokens;
         }

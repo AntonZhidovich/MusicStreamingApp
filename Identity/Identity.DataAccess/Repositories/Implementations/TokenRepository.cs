@@ -14,41 +14,41 @@ namespace Identity.DataAccess.Repositories.Implementations
             _dbContext = dbContext;
         }
 
-        public async Task AddTokenAsync(RefreshToken token)
+        public async Task AddTokenAsync(RefreshToken token, CancellationToken cancellationToken = default)
         {
             await _dbContext.AddAsync(token);
-            await SaveChangesAsync();
+            
+            await SaveChangesAsync(cancellationToken);
         }
 
-        public async Task DeleteTokenByUserIdAsync(string userId)
+        public async Task DeleteTokenAsync(RefreshToken token, CancellationToken cancellationToken = default)
         {
-            var token = await GetTokenByUserIdAsync(userId);
+            _dbContext.Remove(token);
 
-            if (token != null)
-            {
-                _dbContext.Remove(token);
-            }
-
-            await SaveChangesAsync();
+            await SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<RefreshToken?> GetByTokenString(string tokenString)
+        public async Task<RefreshToken?> GetByTokenString(string tokenString, CancellationToken cancellationToken = default)
         {
-            var token = await _dbContext.RefreshTokens.FirstOrDefaultAsync(t => t.Token == tokenString);
+            var token = await _dbContext.RefreshTokens
+                .AsNoTracking()
+                .FirstOrDefaultAsync(t => t.Token == tokenString, cancellationToken);
 
             return token;
         }
 
-        private async Task<RefreshToken?> GetTokenByUserIdAsync(string userId)
+        public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            var token = await _dbContext.RefreshTokens.FirstOrDefaultAsync(t => t.UserId == userId);
-
-            return token;
+            await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task SaveChangesAsync()
+        public async Task<RefreshToken?> GetTokenByUserIdAsync(string userId, CancellationToken cancellationToken = default)
         {
-            await _dbContext.SaveChangesAsync();
+            var token = await _dbContext.RefreshTokens
+                .AsNoTracking()
+                .FirstOrDefaultAsync(t => t.UserId == userId, cancellationToken);
+
+            return token;
         }
     }
 }

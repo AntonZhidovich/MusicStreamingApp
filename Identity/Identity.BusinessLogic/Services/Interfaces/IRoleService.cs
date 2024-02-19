@@ -5,7 +5,7 @@ namespace Identity.BusinessLogic.Services.Interfaces
     public interface IRoleService
     {
         Task<IEnumerable<RoleDto>> GetAllAsync();
-        Task AddAsync(RoleDto role);
+        Task<RoleDto> AddAsync(RoleDto roleDto);
         Task RemoveAsync(RoleDto role);
     }
 }

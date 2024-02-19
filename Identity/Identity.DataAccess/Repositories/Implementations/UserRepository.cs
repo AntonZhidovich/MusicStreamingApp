@@ -41,12 +41,12 @@ namespace Identity.DataAccess.Repositories.Implementations
             return await _userManager.CreateAsync(user, password);
         }
 
-        public async Task<int> Count()
+        public async Task<int> CountAsync()
         {
             return await _userManager.Users.CountAsync();
         }
 
-        public async Task<int> Count(ISpecification<User> specification)
+        public async Task<int> CountAsync(ISpecification<User> specification)
         {
             return await _userManager.Users.ApplySpecification(specification).CountAsync();
         }

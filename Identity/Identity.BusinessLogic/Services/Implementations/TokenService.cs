@@ -1,4 +1,5 @@
-﻿using Identity.BusinessLogic.Exceptions;
+﻿using Identity.BusinessLogic.Constants;
+using Identity.BusinessLogic.Exceptions;
 using Identity.BusinessLogic.Models;
 using Identity.BusinessLogic.Models.TokenService;
 using Identity.BusinessLogic.Options;
@@ -27,22 +28,25 @@ namespace Identity.BusinessLogic.Services.Implementations
             _tokenRepository = tokenRepository;
         }
 
-        public async Task<Tokens> GetTokensAsync(GetTokensRequest request)
+        public async Task<Tokens> GetTokensAsync(GetTokensRequest request, CancellationToken cancellationToken = default)
         {
             var identity = GetClaimsIdentity(request);
             var tokens = new Tokens
             {
                 AccessToken = GenerateAccessToken(identity),
-                RefreshToken = await CreateRefreshTokenAsync(request.Id)
+                
+                RefreshToken = await CreateRefreshTokenAsync(request.Id, cancellationToken)
             };
 
             return tokens;
         }
 
-        public async Task<Tokens> UseRefreshTokenAsync(Tokens tokens)
+        public async Task<Tokens> UseRefreshTokenAsync(Tokens tokens, CancellationToken cancellationToken = default)
         {
-            await ValidateRefreshToken(tokens.RefreshToken);
-            var identity = await GetIdentityFromTokenAsync(tokens.AccessToken);
+            await ValidateRefreshTokenAsync(tokens.RefreshToken, cancellationToken);
+            
+            var identity = await GetIdentityFromTokenAsync(tokens.AccessToken, cancellationToken);
+            
             var userId = identity.Claims
                 .Where(claim => claim.Type == ClaimTypes.NameIdentifier)
                 .Select(claim => claim.Value)
@@ -51,13 +55,14 @@ namespace Identity.BusinessLogic.Services.Implementations
             var newTokens = new Tokens
             {
                 AccessToken = GenerateAccessToken(identity),
-                RefreshToken = await CreateRefreshTokenAsync(userId)
+                
+                RefreshToken = await CreateRefreshTokenAsync(userId, cancellationToken)
             };
 
             return newTokens;
         }
 
-        public async Task<ClaimsIdentity> GetIdentityFromTokenAsync(string token)
+        public async Task<ClaimsIdentity> GetIdentityFromTokenAsync(string token, CancellationToken cancellationToken = default)
         {
             var handler = new JwtSecurityTokenHandler();
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Key));
@@ -68,12 +73,12 @@ namespace Identity.BusinessLogic.Services.Implementations
                 ValidateLifetime = false,
                 IssuerSigningKey = key
             };
-
+    
             var validationResult = await handler.ValidateTokenAsync(token, parameters);
 
             if (!validationResult.IsValid)
             {
-                throw new InvalidAuthorizationException("Invalid access token.");
+                throw new InvalidAuthorizationException(ExceptionMessages.InvalidAccessToken);
             }
 
             return validationResult.ClaimsIdentity;
@@ -96,7 +101,7 @@ namespace Identity.BusinessLogic.Services.Implementations
             return tokenHandler.WriteToken(jwtToken);
         }
 
-        private async Task<string> CreateRefreshTokenAsync(string userId)
+        private async Task<string> CreateRefreshTokenAsync(string userId, CancellationToken cancellationToken = default)
         {
             using var generator = RandomNumberGenerator.Create();
             var number = new byte[256];
@@ -110,8 +115,16 @@ namespace Identity.BusinessLogic.Services.Implementations
                 ExpiresAt = DateTime.UtcNow.AddHours(_jwtOptions.RefreshExpiresHours),
             };
 
-            await _tokenRepository.DeleteTokenByUserIdAsync(token.UserId);
-            await _tokenRepository.AddTokenAsync(token);
+            var oldToken = await _tokenRepository.GetTokenByUserIdAsync(userId, cancellationToken);
+
+            if (oldToken == null)
+            {
+                throw new NotFoundException(ExceptionMessages.TokenNotFound);
+            }
+
+            await _tokenRepository.DeleteTokenAsync(oldToken, cancellationToken);
+            
+            await _tokenRepository.AddTokenAsync(token, cancellationToken);
 
             return tokenString;
         }
@@ -126,26 +139,23 @@ namespace Identity.BusinessLogic.Services.Implementations
                 new Claim(ClaimTypes.NameIdentifier, request.Id)
             };
 
-            foreach (var role in request.Roles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role));
-            }
+            claims.AddRange(request.Roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
             return new ClaimsIdentity(claims);
         }
 
-        private async Task<bool> ValidateRefreshToken(string refreshToken)
+        private async Task<bool> ValidateRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken = default)
         {
-            var token = await _tokenRepository.GetByTokenString(refreshToken);
+            var token = await _tokenRepository.GetByTokenString(refreshToken, cancellationToken);
 
             if (token == null)
             {
-                throw new NotFoundException("Invalid refresh token.");
+                throw new NotFoundException(ExceptionMessages.InvalidRefreshToken);
             }
 
             if (DateTime.UtcNow > token.ExpiresAt)
             {
-                throw new InvalidAuthorizationException("Refresh token expired.");
+                throw new InvalidAuthorizationException(ExceptionMessages.TokenExpired);
             }
 
             return true;

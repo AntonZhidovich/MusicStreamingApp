@@ -13,6 +13,7 @@ namespace Identity.API
             builder.Services.AddDataBase(builder.Configuration);
             builder.Services.AddRepositories();
             builder.Services.AddControllers();
+            builder.Services.AddJwtAuthentication(builder.Configuration);
             builder.Services.AddServices();
 
             var app = builder.Build();
@@ -25,6 +26,7 @@ namespace Identity.API
             }
 
             app.UseHttpsRedirection();
+            app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
             app.Run();

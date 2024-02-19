@@ -10,8 +10,12 @@ using Identity.DataAccess.Data;
 using Identity.DataAccess.Entities;
 using Identity.DataAccess.Repositories.Implementations;
 using Identity.DataAccess.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace Identity.API.Extensions
 {
@@ -52,6 +56,27 @@ namespace Identity.API.Extensions
         {
             services.AddDbContext<UserDBContext>(
                 options => options.UseSqlServer(configuration.GetConnectionString("SQLServer")));
+
+            return services;
+        }
+
+        public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            {
+                var key = configuration["JwtOptions:Key"];
+                var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key!));
+
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidIssuer = configuration["JwtOptions:Issuer"],
+                    ValidateLifetime = true,
+                    IssuerSigningKey = securityKey,
+                    ValidateIssuerSigningKey = true,
+                    ValidateAudience = false
+                };
+            });
 
             return services;
         }

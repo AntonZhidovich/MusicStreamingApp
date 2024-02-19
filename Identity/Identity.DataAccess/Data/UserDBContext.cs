@@ -13,7 +13,7 @@ namespace Identity.DataAccess.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            builder.ApplyConfiguration(new RefresTokenConfigureation());
+            builder.ApplyConfiguration(new RefreshTokenConfiguration());
             builder.Seed();
         }
     }

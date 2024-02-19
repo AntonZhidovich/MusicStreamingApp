@@ -3,6 +3,7 @@ using Identity.BusinessLogic.Models;
 using Identity.BusinessLogic.Models.TokenService;
 using Identity.BusinessLogic.Models.UserService;
 using Identity.DataAccess.Entities;
+using Microsoft.AspNetCore.Identity;
 
 namespace Identity.BusinessLogic.Mapping
 {
@@ -14,6 +15,7 @@ namespace Identity.BusinessLogic.Mapping
             CreateMap<User, UserDto>();
             CreateMap<UpdateUserRequest, User>();
             CreateMap<UserDto, GetTokensRequest>().ForMember(s => s.Roles, opt => opt.Ignore());
+            CreateMap<IdentityRole, RoleDto>();
         }
     }
 }

@@ -1,4 +1,8 @@
-﻿namespace Identity.BusinessLogic.Options
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
+namespace Identity.BusinessLogic.Options
 {
     public class JwtOptions
     {

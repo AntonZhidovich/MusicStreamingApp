@@ -5,7 +5,7 @@ namespace Identity.BusinessLogic.Services.Interfaces
 {
     public interface ISignInService
     {
-        Task<Tokens> SignInAsync(CheckPasswordRequest request);
-        Task<Tokens> SignInWithRefreshAsync(Tokens tokens);
+        Task<Tokens> SignInAsync(CheckPasswordRequest request, CancellationToken cancellationToken = default);
+        Task<Tokens> SignInWithRefreshAsync(Tokens tokens, CancellationToken cancellationToken = default);
     }
 }

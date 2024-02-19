@@ -1,17 +1,17 @@
 ﻿using FluentValidation;
+using Identity.BusinessLogic.Constants;
 using Identity.BusinessLogic.Models;
+using System.Data;
 
 namespace Identity.BusinessLogic.Validators
 {
     public class RoleValidator : AbstractValidator<RoleDto>
     {
-        private const int maximumLength = 20;
-
         public RoleValidator()
         {
-            RuleFor(role => role.RoleName)
+            RuleFor(role => role.Name)
                 .NotEmpty()
-                .MaximumLength(maximumLength);
+                .MaximumLength(Constraints.maxRoleNameLength);
         }
     }
 }

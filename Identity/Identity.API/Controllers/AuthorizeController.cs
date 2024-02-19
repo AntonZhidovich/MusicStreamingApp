@@ -12,23 +12,23 @@ namespace Identity.API.Controllers
         private readonly ISignInService _signInService;
 
         public AuthorizeController(
-            ISignInService signInService, ITokenService tokenService)
+            ISignInService signInService)
         {      
             _signInService = signInService;
         }
 
-        [HttpPost("")]
-        public async Task<IActionResult> SignInAsync([FromBody] CheckPasswordRequest request, CancellationToken cancellationToken)
+        [HttpPost]
+        public async Task<IActionResult> SignInAsync([FromBody] CheckPasswordRequest request, CancellationToken cancellationToken = default)
         {
-            var tokens = await _signInService.SignInAsync(request);
+            var tokens = await _signInService.SignInAsync(request, cancellationToken);
 
             return Ok(tokens);
         }
 
         [HttpPost("refresh")]
-        public async Task<IActionResult> SignInWithRefreshAsync([FromBody] Tokens tokens, CancellationToken cancellationToken)
+        public async Task<IActionResult> SignInWithRefreshAsync([FromBody] Tokens tokens, CancellationToken cancellationToken = default)
         {
-            var newTokens = await _signInService.SignInWithRefreshAsync(tokens);
+            var newTokens = await _signInService.SignInWithRefreshAsync(tokens, cancellationToken);
 
             return Ok(newTokens);
         }

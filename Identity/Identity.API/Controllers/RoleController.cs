@@ -1,11 +1,14 @@
 ﻿using Identity.BusinessLogic.Models;
 using Identity.BusinessLogic.Services.Interfaces;
+using Identity.DataAccess.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Identity.API.Controllers
 {
     [Route("api/roles")]
     [ApiController]
+    [Authorize(Roles = UserRoles.admin)]
     public class RoleController : ControllerBase
     {
         private readonly IRoleService _roleService;
@@ -15,26 +18,26 @@ namespace Identity.API.Controllers
             _roleService = roleService;
         }
 
-        [HttpGet("")]
-        public async Task<IActionResult> GetAllRolesAsync(CancellationToken cancellationToken)
+        [HttpGet]
+        public async Task<IActionResult> GetAllRolesAsync()
         {
             var roles = await _roleService.GetAllAsync();
 
             return Ok(roles);
         }
 
-        [HttpPost("")]
-        public async Task<IActionResult> AddRoleAsync([FromBody] RoleDto role, CancellationToken cancellationToken)
+        [HttpPost]
+        public async Task<IActionResult> AddRoleAsync([FromBody] RoleDto roleDto)
         {
-            await _roleService.AddAsync(role);
+            var role = await _roleService.AddAsync(roleDto);
 
-            return NoContent();
+            return Ok(role);
         }
 
         [HttpDelete("{roleName}")]
-        public async Task<IActionResult> RemoveRoleAsync([FromRoute] string roleName, CancellationToken cancellationToken)
+        public async Task<IActionResult> RemoveRoleAsync([FromRoute] string roleName)
         {
-            await _roleService.RemoveAsync(new RoleDto { RoleName = roleName });
+            await _roleService.RemoveAsync(new RoleDto { Name = roleName });
 
             return NoContent();
         }
