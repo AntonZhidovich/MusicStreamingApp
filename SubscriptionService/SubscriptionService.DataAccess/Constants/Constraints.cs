@@ -1,6 +1,6 @@
 ﻿namespace SubscriptionService.DataAccess.Constants
 {
-    public class Constraints
+    public static class Constraints
     {
         public const int idMaxLength = 50;
         public const int descpriptionMaxLength = 300;
