@@ -16,6 +16,7 @@ namespace SubscriptionService.API
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
+            app.UseExceptionHandler(options => { });
 
             if (app.Environment.IsDevelopment())
             {

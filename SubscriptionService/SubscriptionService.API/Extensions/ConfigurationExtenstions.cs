@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SubscriptionService.API.ExceptionHandlers;
 using SubscriptionService.BusinessLogic.Mapping;
 using SubscriptionService.BusinessLogic.Queries.GetAllTariffPlans;
 using SubscriptionService.DataAccess.Data;
@@ -13,6 +14,7 @@ namespace SubscriptionService.API.Extensions
         {
             services.AddAutoMapper(typeof(MappingProfile));
             services.AddMediatR(config => config.RegisterServicesFromAssemblyContaining(typeof(GetAllTariffPlansQuery)));
+            services.AddExceptionHandler<GlobalExceptionHandler>();
 
             return services;
         }
