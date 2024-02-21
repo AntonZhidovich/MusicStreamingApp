@@ -2,6 +2,9 @@
 {
     public interface IUnitOfWork
     {
-        public Task CommitChangesAsync(CancellationToken cancellationToken = default);
+        public ISubscriptionRepository Subscriptions { get; }
+        public ITariffPlanRepository TariffPlans { get; }
+
+        public Task CommitAsync(CancellationToken cancellationToken = default);
     }
 }

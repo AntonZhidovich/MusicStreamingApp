@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SubscriptionService.DataAccess.Data;
 using SubscriptionService.DataAccess.Entities;
+using SubscriptionService.DataAccess.Extensions;
 using SubscriptionService.DataAccess.Repositories.Interfaces;
-using System.Threading;
 
 namespace SubscriptionService.DataAccess.Repositories.Implementations
 {
@@ -10,10 +10,12 @@ namespace SubscriptionService.DataAccess.Repositories.Implementations
     {
         public TariffPlanRepository(SubscriptionDbContext dbContext) : base(dbContext) { }
 
-        public async Task<IEnumerable<TariffPlan>> GetAllAsync(CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<TariffPlan>> GetAllAsync(int currentPage, int pageSize, CancellationToken cancellationToken = default)
         {
             return await _dbContext.TariffPlans
                 .AsNoTracking()
+                .OrderByDescending(plan => plan.AnnualFee)
+                .GetPage(currentPage, pageSize)
                 .ToListAsync(cancellationToken);
         }
 
@@ -27,7 +29,7 @@ namespace SubscriptionService.DataAccess.Repositories.Implementations
         {
             return await _dbContext.TariffPlans
                 .AsNoTracking()
-                .Where(p => p.Name == name)
+                .Where(p => p.Name.Trim().ToLower() == name.Trim().ToLower())
                 .FirstOrDefaultAsync(cancellationToken);
         }
     }

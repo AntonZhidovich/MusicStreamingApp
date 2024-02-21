@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SubscriptionService.DataAccess.Entities;
+using SubscriptionService.DataAccess.Extensions;
 using System.Reflection;
 
 namespace SubscriptionService.DataAccess.Data
@@ -15,6 +16,7 @@ namespace SubscriptionService.DataAccess.Data
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            modelBuilder.Seed();
         }
     }
 }

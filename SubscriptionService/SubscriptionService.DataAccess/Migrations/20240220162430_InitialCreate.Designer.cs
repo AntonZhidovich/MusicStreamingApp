@@ -12,7 +12,7 @@ using SubscriptionService.DataAccess.Data;
 namespace SubscriptionService.DataAccess.Migrations
 {
     [DbContext(typeof(SubscriptionDbContext))]
-    [Migration("20240220100923_InitialCreate")]
+    [Migration("20240220162430_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -95,6 +95,35 @@ namespace SubscriptionService.DataAccess.Migrations
                         .IsUnique();
 
                     b.ToTable("TariffPlans");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "7dad33ee-b174-4c27-972e-ddd969145d52",
+                            AnnualFee = 29.989999999999998,
+                            Description = "A minimal plan for those who simply enjoy music.",
+                            MaxPlaylistsCount = 3,
+                            MonthFee = 2.9900000000000002,
+                            Name = "Base"
+                        },
+                        new
+                        {
+                            Id = "83e7cb90-520c-45c2-b1f2-222974cb74c5",
+                            AnnualFee = 35.990000000000002,
+                            Description = "Tariff plan for multifaceted personality who sets the mood of the day with personal playlists.",
+                            MaxPlaylistsCount = 7,
+                            MonthFee = 3.9900000000000002,
+                            Name = "Enhanced"
+                        },
+                        new
+                        {
+                            Id = "1ece6d0a-a08b-4839-a1c5-efe06496df64",
+                            AnnualFee = 59.990000000000002,
+                            Description = "Set playlists for every important moment of your life to share it with you favorite artists.",
+                            MaxPlaylistsCount = 25,
+                            MonthFee = 6.9900000000000002,
+                            Name = "Push the boundaries"
+                        });
                 });
 
             modelBuilder.Entity("SubscriptionService.DataAccess.Entities.Subscription", b =>

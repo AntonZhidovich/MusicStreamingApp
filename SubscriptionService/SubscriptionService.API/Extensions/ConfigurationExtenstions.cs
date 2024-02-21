@@ -1,5 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SubscriptionService.BusinessLogic.Mapping;
+using SubscriptionService.BusinessLogic.Queries.GetAllTariffPlans;
 using SubscriptionService.DataAccess.Data;
+using SubscriptionService.DataAccess.Repositories.Implementations;
+using SubscriptionService.DataAccess.Repositories.Interfaces;
 
 namespace SubscriptionService.API.Extensions
 {
@@ -7,6 +11,9 @@ namespace SubscriptionService.API.Extensions
     {
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
+            services.AddAutoMapper(typeof(MappingProfile));
+            services.AddMediatR(config => config.RegisterServicesFromAssemblyContaining(typeof(GetAllTariffPlansQuery)));
+
             return services;
         }
 
@@ -15,6 +22,15 @@ namespace SubscriptionService.API.Extensions
             services.AddDbContext<SubscriptionDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("sqlserver")));
             
+            return services;
+        }
+
+        public static IServiceCollection AddRepositories(this IServiceCollection services)
+        {
+            services.AddScoped<ITariffPlanRepository, TariffPlanRepository>();
+            services.AddScoped<SubscriptionRepository, SubscriptionRepository>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
             return services;
         }
     }
