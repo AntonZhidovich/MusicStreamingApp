@@ -9,12 +9,12 @@ namespace Identity.API
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.ApplyConfigurations(builder.Configuration);
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddJwtAuthentication(builder.Configuration);
             builder.Services.AddDataBase(builder.Configuration);
             builder.Services.AddRepositories();
             builder.Services.AddControllers();
-            builder.Services.AddJwtAuthentication(builder.Configuration);
             builder.Services.AddServices();
+            builder.Services.ConfigureSwagger();
 
             var app = builder.Build();
             app.UseMiddleware();

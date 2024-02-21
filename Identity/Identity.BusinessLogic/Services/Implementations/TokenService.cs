@@ -6,6 +6,7 @@ using Identity.BusinessLogic.Options;
 using Identity.BusinessLogic.Services.Interfaces;
 using Identity.DataAccess.Entities;
 using Identity.DataAccess.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -65,14 +66,7 @@ namespace Identity.BusinessLogic.Services.Implementations
         public async Task<ClaimsIdentity> GetIdentityFromTokenAsync(string token, CancellationToken cancellationToken = default)
         {
             var handler = new JwtSecurityTokenHandler();
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Key));
-            var parameters = new TokenValidationParameters
-            {
-                ValidateIssuer = false,
-                ValidateAudience = false,
-                ValidateLifetime = false,
-                IssuerSigningKey = key
-            };
+            var parameters = GetTokenValidationParameters();
     
             var validationResult = await handler.ValidateTokenAsync(token, parameters);
 
@@ -117,12 +111,10 @@ namespace Identity.BusinessLogic.Services.Implementations
 
             var oldToken = await _tokenRepository.GetTokenByUserIdAsync(userId, cancellationToken);
 
-            if (oldToken == null)
+            if (oldToken != null)
             {
-                throw new NotFoundException(ExceptionMessages.TokenNotFound);
+                await _tokenRepository.DeleteTokenAsync(oldToken, cancellationToken);
             }
-
-            await _tokenRepository.DeleteTokenAsync(oldToken, cancellationToken);
             
             await _tokenRepository.AddTokenAsync(token, cancellationToken);
 
@@ -159,6 +151,19 @@ namespace Identity.BusinessLogic.Services.Implementations
             }
 
             return true;
+        }
+
+        private TokenValidationParameters GetTokenValidationParameters()
+        {
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Key));
+
+            return new TokenValidationParameters
+            {
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ValidateLifetime = false,
+                IssuerSigningKey = key
+            };
         }
     }
 }

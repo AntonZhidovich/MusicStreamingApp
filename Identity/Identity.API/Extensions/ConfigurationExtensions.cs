@@ -13,8 +13,8 @@ using Identity.DataAccess.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
 
 namespace Identity.API.Extensions
@@ -27,7 +27,11 @@ namespace Identity.API.Extensions
             services.AddValidatorsFromAssemblyContaining<RegisterUserValidator>();
             services.AddExceptionHandler<GlobalExceptionHandler>();
             services.AddAutoMapper(typeof(UserMappingProfile));
-            services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<UserDBContext>();
+            
+            services.AddIdentityCore<User>()
+                .AddRoles<IdentityRole>()
+                .AddEntityFrameworkStores<UserDBContext>();
+            
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<ISignInService, SignInService>();
@@ -62,7 +66,8 @@ namespace Identity.API.Extensions
 
         public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            services.AddAuthentication(options =>
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {
                 var key = configuration["JwtOptions:Key"];
                 var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key!));
@@ -86,6 +91,31 @@ namespace Identity.API.Extensions
             app.UseExceptionHandler(options => { });
 
             return app;
+        }
+
+        public static IServiceCollection ConfigureSwagger(this IServiceCollection services)
+        {
+            services.AddSwaggerGen(options =>
+            {
+                options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
+                {
+                    Scheme = JwtBearerDefaults.AuthenticationScheme,
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http
+                });
+
+                var securityRequirement = new OpenApiSecurityRequirement();
+                var jwtScheme = new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference { Id = JwtBearerDefaults.AuthenticationScheme, Type = ReferenceType.SecurityScheme }
+                };
+                securityRequirement.Add(jwtScheme, new List<string>());
+                options.AddSecurityRequirement(securityRequirement);
+            });
+
+            return services;
         }
     }
 }
