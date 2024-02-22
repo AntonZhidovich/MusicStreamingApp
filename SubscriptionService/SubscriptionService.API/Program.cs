@@ -11,9 +11,10 @@ namespace SubscriptionService.API
             builder.Services.AddDatabase(builder.Configuration);
             builder.Services.AddRepositories();
             builder.Services.AddServices();
+            builder.Services.AddJwtAuthentication(builder.Configuration);
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwagger();
 
             var app = builder.Build();
             app.UseExceptionHandler(options => { });

@@ -1,9 +1,11 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SubscriptionService.BusinessLogic.Commands.CancelSubscription;
 using SubscriptionService.BusinessLogic.Commands.MakeSubscription;
 using SubscriptionService.BusinessLogic.Commands.MakeSubscriptionPayment;
 using SubscriptionService.BusinessLogic.Commands.UpdateSubscription;
+using SubscriptionService.BusinessLogic.Constants;
 using SubscriptionService.BusinessLogic.Models;
 using SubscriptionService.BusinessLogic.Models.Subscription;
 using SubscriptionService.BusinessLogic.Queries.GetAllSubscriptions;
@@ -14,6 +16,7 @@ namespace SubscriptionService.API.Controllers
 {
     [Route("api/subscriptions")]
     [ApiController]
+    [Authorize]
     public class SubscriptionController : ControllerBase
     {
         private readonly ISender _sender;
@@ -24,6 +27,7 @@ namespace SubscriptionService.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = UserRoles.admin)]
         public async Task<IActionResult> GetAllAsync([FromQuery] GetPageRequest pageRequest)
         {
             var subscriptions = await _sender.Send(new GetAllSubscriptionsQuery(pageRequest), HttpContext.RequestAborted);
@@ -32,7 +36,8 @@ namespace SubscriptionService.API.Controllers
         }
 
         [HttpGet("plan/name/{name}")]
-        public async Task<IActionResult> GetAllAsync([FromRoute] string name, [FromQuery] GetPageRequest pageRequest)
+        [Authorize(Roles = UserRoles.admin)]
+        public async Task<IActionResult> GetWithPlanAsync([FromRoute] string name, [FromQuery] GetPageRequest pageRequest)
         {
             var subscriptions = await _sender.Send(
                 new GetSubscriptionWithPlanQuery(pageRequest, name), 

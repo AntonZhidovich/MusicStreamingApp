@@ -1,8 +1,10 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SubscriptionService.BusinessLogic.Commands.CreateTariffPlan;
 using SubscriptionService.BusinessLogic.Commands.DeleteTariffPlan;
 using SubscriptionService.BusinessLogic.Commands.UpdateTariffPlan;
+using SubscriptionService.BusinessLogic.Constants;
 using SubscriptionService.BusinessLogic.Models;
 using SubscriptionService.BusinessLogic.Models.TariffPlan;
 using SubscriptionService.BusinessLogic.Queries.GetAllTariffPlans;
@@ -12,6 +14,7 @@ namespace SubscriptionService.API.Controllers
 {
     [Route("api/plans")]
     [ApiController]
+    [Authorize(Roles = UserRoles.admin)]
     public class TariffPlanController : ControllerBase
     {
         private readonly ISender _sender;
