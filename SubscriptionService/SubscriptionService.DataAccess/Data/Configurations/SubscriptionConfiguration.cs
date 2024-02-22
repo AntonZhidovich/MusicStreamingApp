@@ -23,7 +23,7 @@ namespace SubscriptionService.DataAccess.Data.Configurations
 
             builder.Property(sub => sub.UserName)
                 .IsRequired()
-                .HasMaxLength(Constraints.maxUsernameLength);
+                .HasMaxLength(Constraints.usernameMaxLength);
 
             builder.Property(sub => sub.Type)
                 .IsRequired()

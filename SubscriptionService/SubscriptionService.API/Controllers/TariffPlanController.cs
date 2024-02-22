@@ -29,7 +29,7 @@ namespace SubscriptionService.API.Controllers
             return Ok(tariffPlans);
         }
 
-        [HttpGet("{name}")]
+        [HttpGet("name/{name}")]
         public async Task<IActionResult> GetAsync([FromRoute] string name)
         {
             var tariffPlan = await _sender.Send(new GetTariffPlanByNameQuery(name), HttpContext.RequestAborted);

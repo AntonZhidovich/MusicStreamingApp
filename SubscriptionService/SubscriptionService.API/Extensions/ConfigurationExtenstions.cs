@@ -1,7 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FluentValidation;
+using FluentValidation.AspNetCore;
+using Microsoft.EntityFrameworkCore;
 using SubscriptionService.API.ExceptionHandlers;
 using SubscriptionService.BusinessLogic.Mapping;
 using SubscriptionService.BusinessLogic.Queries.GetAllTariffPlans;
+using SubscriptionService.BusinessLogic.Validators;
 using SubscriptionService.DataAccess.Data;
 using SubscriptionService.DataAccess.Repositories.Implementations;
 using SubscriptionService.DataAccess.Repositories.Interfaces;
@@ -12,6 +15,7 @@ namespace SubscriptionService.API.Extensions
     {
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
+            services.AddAutoValidation();
             services.AddAutoMapper(typeof(MappingProfile));
             services.AddMediatR(config => config.RegisterServicesFromAssemblyContaining(typeof(GetAllTariffPlansQuery)));
             services.AddExceptionHandler<GlobalExceptionHandler>();
@@ -32,6 +36,14 @@ namespace SubscriptionService.API.Extensions
             services.AddScoped<ITariffPlanRepository, TariffPlanRepository>();
             services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddAutoValidation(this IServiceCollection services)
+        {
+            services.AddValidatorsFromAssemblyContaining(typeof(CreateTariffPlanValidator));
+            services.AddFluentValidationAutoValidation();
 
             return services;
         }
