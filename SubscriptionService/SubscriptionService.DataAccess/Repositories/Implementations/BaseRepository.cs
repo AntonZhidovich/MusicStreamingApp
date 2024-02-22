@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MusicService.Domain.Interfaces;
 using SubscriptionService.DataAccess.Data;
+using SubscriptionService.DataAccess.Extensions;
+using SubscriptionService.DataAccess.Specifications;
 
 namespace SubscriptionService.DataAccess.Repositories.Implementations
 {
@@ -13,9 +15,28 @@ namespace SubscriptionService.DataAccess.Repositories.Implementations
             _dbContext = dbContext;
         }
 
+        public async Task<IEnumerable<T>> ApplySpecificationAsync(
+            ISpecification<T> specification,
+            int currentPage, 
+            int pageSize,
+            CancellationToken cancellationToken = default)
+        {
+            return await _dbContext.Set<T>()
+                .ApplySpecification(specification)
+                .GetPage(currentPage, pageSize)
+                .ToListAsync(cancellationToken);
+        }
+
         public async Task<int> CountAsync(CancellationToken cancellationToken = default)
         {
             return await _dbContext.Set<T>().CountAsync(cancellationToken);
+        }
+
+        public async Task<int> CountAsync(ISpecification<T> specification, CancellationToken cancellationToken = default)
+        {
+            return await _dbContext.Set<T>()
+                .ApplySpecification(specification)
+                .CountAsync(cancellationToken);
         }
 
         public async Task CreateAsync(T entity, CancellationToken cancellationToken = default)

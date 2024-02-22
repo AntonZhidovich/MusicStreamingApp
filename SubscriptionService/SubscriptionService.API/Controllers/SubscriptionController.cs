@@ -7,6 +7,7 @@ using SubscriptionService.BusinessLogic.Commands.UpdateSubscription;
 using SubscriptionService.BusinessLogic.Models;
 using SubscriptionService.BusinessLogic.Models.Subscription;
 using SubscriptionService.BusinessLogic.Queries.GetAllSubscriptions;
+using SubscriptionService.BusinessLogic.Queries.GetSubscriptionWithPlan;
 using SubscriptionService.BusinessLogic.Queries.GetUserSubscription;
 
 namespace SubscriptionService.API.Controllers
@@ -26,6 +27,16 @@ namespace SubscriptionService.API.Controllers
         public async Task<IActionResult> GetAllAsync([FromQuery] GetPageRequest pageRequest)
         {
             var subscriptions = await _sender.Send(new GetAllSubscriptionsQuery(pageRequest), HttpContext.RequestAborted);
+
+            return Ok(subscriptions);
+        }
+
+        [HttpGet("plan/name/{name}")]
+        public async Task<IActionResult> GetAllAsync([FromRoute] string name, [FromQuery] GetPageRequest pageRequest)
+        {
+            var subscriptions = await _sender.Send(
+                new GetSubscriptionWithPlanQuery(pageRequest, name), 
+                HttpContext.RequestAborted);
 
             return Ok(subscriptions);
         }
