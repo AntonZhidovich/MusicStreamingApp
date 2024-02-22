@@ -30,7 +30,7 @@ namespace SubscriptionService.API.Extensions
         public static IServiceCollection AddRepositories(this IServiceCollection services)
         {
             services.AddScoped<ITariffPlanRepository, TariffPlanRepository>();
-            services.AddScoped<SubscriptionRepository, SubscriptionRepository>();
+            services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;

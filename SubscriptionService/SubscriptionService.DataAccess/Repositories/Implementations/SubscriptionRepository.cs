@@ -14,6 +14,7 @@ namespace SubscriptionService.DataAccess.Repositories.Implementations
         {
             return await _dbContext.Subscriptions
                 .AsNoTracking()
+                .Include(subscription => subscription.TariffPlan)
                 .OrderByDescending(subscription => subscription.SubscribedAt)
                 .GetPage(currentPage, pageSize)
                 .ToListAsync(cancellationToken);
@@ -22,12 +23,14 @@ namespace SubscriptionService.DataAccess.Repositories.Implementations
         public async Task<Subscription?> GetByIdAsync(string id, CancellationToken cancellationToken = default)
         {
             return await _dbContext.Subscriptions
+                .Include(subscription => subscription.TariffPlan)
                 .FirstOrDefaultAsync(subscription => subscription.Id == id, cancellationToken);
         }
 
         public async Task<Subscription?> GetByUserNameAsync(string userName, CancellationToken cancellationToken = default)
         {
             return await _dbContext.Subscriptions
+                .Include(subscription => subscription.TariffPlan)
                 .FirstOrDefaultAsync(subscription => subscription.UserName.Trim().ToLower() == userName.Trim().ToLower(),
                 cancellationToken);
         }

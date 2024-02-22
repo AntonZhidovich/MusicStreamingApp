@@ -4,7 +4,8 @@ namespace SubscriptionService.BusinessLogic.Extensions
 {
     internal static class AutoMapperExtensions
     {
-        public static void IgnoreDefaultValues<TSource, TDestination>(this IMemberConfigurationExpression<TSource, TDestination, object> opt)
+        public static void IgnoreDefaultValues<TSource, TDestination>(
+            this IMemberConfigurationExpression<TSource, TDestination, object> opt)
         {
             opt.Condition((src, dest, member) =>
             {
