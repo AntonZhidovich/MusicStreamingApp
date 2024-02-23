@@ -1,16 +1,16 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SubscriptionService.BusinessLogic.Commands.CancelSubscription;
-using SubscriptionService.BusinessLogic.Commands.MakeSubscription;
-using SubscriptionService.BusinessLogic.Commands.MakeSubscriptionPayment;
-using SubscriptionService.BusinessLogic.Commands.UpdateSubscription;
 using SubscriptionService.BusinessLogic.Constants;
+using SubscriptionService.BusinessLogic.Features.Commands.CancelSubscription;
+using SubscriptionService.BusinessLogic.Features.Commands.MakeSubscription;
+using SubscriptionService.BusinessLogic.Features.Commands.MakeSubscriptionPayment;
+using SubscriptionService.BusinessLogic.Features.Commands.UpdateSubscription;
+using SubscriptionService.BusinessLogic.Features.Queries.GetAllSubscriptions;
+using SubscriptionService.BusinessLogic.Features.Queries.GetSubscriptionWithPlan;
+using SubscriptionService.BusinessLogic.Features.Queries.GetUserSubscription;
 using SubscriptionService.BusinessLogic.Models;
 using SubscriptionService.BusinessLogic.Models.Subscription;
-using SubscriptionService.BusinessLogic.Queries.GetAllSubscriptions;
-using SubscriptionService.BusinessLogic.Queries.GetSubscriptionWithPlan;
-using SubscriptionService.BusinessLogic.Queries.GetUserSubscription;
 
 namespace SubscriptionService.API.Controllers
 {

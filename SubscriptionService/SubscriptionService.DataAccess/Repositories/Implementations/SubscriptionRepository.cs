@@ -24,6 +24,7 @@ namespace SubscriptionService.DataAccess.Repositories.Implementations
         {
             return await _dbContext.Subscriptions
                 .Include(subscription => subscription.TariffPlan)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(subscription => subscription.Id == id, cancellationToken);
         }
 
@@ -31,6 +32,7 @@ namespace SubscriptionService.DataAccess.Repositories.Implementations
         {
             return await _dbContext.Subscriptions
                 .Include(subscription => subscription.TariffPlan)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(subscription => subscription.UserName.Trim().ToLower() == userName.Trim().ToLower(),
                 cancellationToken);
         }

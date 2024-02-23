@@ -1,14 +1,14 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SubscriptionService.BusinessLogic.Commands.CreateTariffPlan;
-using SubscriptionService.BusinessLogic.Commands.DeleteTariffPlan;
-using SubscriptionService.BusinessLogic.Commands.UpdateTariffPlan;
 using SubscriptionService.BusinessLogic.Constants;
+using SubscriptionService.BusinessLogic.Features.Commands.CreateTariffPlan;
+using SubscriptionService.BusinessLogic.Features.Commands.DeleteTariffPlan;
+using SubscriptionService.BusinessLogic.Features.Commands.UpdateTariffPlan;
+using SubscriptionService.BusinessLogic.Features.Queries.GetAllTariffPlans;
+using SubscriptionService.BusinessLogic.Features.Queries.GetTariffPlanByName;
 using SubscriptionService.BusinessLogic.Models;
 using SubscriptionService.BusinessLogic.Models.TariffPlan;
-using SubscriptionService.BusinessLogic.Queries.GetAllTariffPlans;
-using SubscriptionService.BusinessLogic.Queries.GetTariffPlanByName;
 
 namespace SubscriptionService.API.Controllers
 {

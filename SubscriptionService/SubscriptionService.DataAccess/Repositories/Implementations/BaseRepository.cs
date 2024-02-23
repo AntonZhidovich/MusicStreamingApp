@@ -35,6 +35,7 @@ namespace SubscriptionService.DataAccess.Repositories.Implementations
         public async Task<int> CountAsync(ISpecification<T> specification, CancellationToken cancellationToken = default)
         {
             return await _dbContext.Set<T>()
+                .AsNoTracking()
                 .ApplySpecification(specification)
                 .CountAsync(cancellationToken);
         }

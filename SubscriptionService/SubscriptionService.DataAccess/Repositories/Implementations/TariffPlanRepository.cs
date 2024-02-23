@@ -28,7 +28,6 @@ namespace SubscriptionService.DataAccess.Repositories.Implementations
         public async Task<TariffPlan?> GetByNameAsync(string name, CancellationToken cancellationToken = default)
         {
             return await _dbContext.TariffPlans
-                .AsNoTracking()
                 .Where(p => p.Name.Trim().ToLower() == name.Trim().ToLower())
                 .FirstOrDefaultAsync(cancellationToken);
         }
