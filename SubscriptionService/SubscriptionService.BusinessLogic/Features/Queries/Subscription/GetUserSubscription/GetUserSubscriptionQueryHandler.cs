@@ -21,7 +21,7 @@ namespace SubscriptionService.BusinessLogic.Features.Queries.GetUserSubscription
 
         public async Task<GetSubscriptionDto> Handle(GetUserSubscriptionQuery request, CancellationToken cancellationToken)
         {
-            var subscription = await _unitOfWork.Subscriptions.GetByUserNameAsync(request.UserName);
+            var subscription = await _unitOfWork.Subscriptions.GetByUserNameAsync(request.UserName, cancellationToken);
 
             if (subscription == null)
             {

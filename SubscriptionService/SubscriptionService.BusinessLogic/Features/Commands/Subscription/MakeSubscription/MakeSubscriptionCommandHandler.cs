@@ -23,7 +23,9 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.MakeSubscription
 
         public async Task<GetSubscriptionDto> Handle(MakeSubscriptionCommand request, CancellationToken cancellationToken)
         {
-            var tariffPlan = await _unitOfWork.TariffPlans.GetByIdAsync(request.Dto.TariffPlanId);
+            var tariffPlan = await _unitOfWork.TariffPlans.GetByIdAsync(
+                request.Dto.TariffPlanId,
+                cancellationToken);
 
             if (tariffPlan == null)
             {

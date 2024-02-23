@@ -20,7 +20,7 @@ namespace SubscriptionService.API.Extensions
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
             services.AddAutoValidation();
-            services.AddAutoMapper(typeof(MappingProfile));
+            services.AddAutoMapper(typeof(SubscriptionMappingProfile));
             services.AddMediatR(config => config.RegisterServicesFromAssemblyContaining(typeof(GetAllTariffPlansQuery)));
             services.AddExceptionHandler<GlobalExceptionHandler>();
 

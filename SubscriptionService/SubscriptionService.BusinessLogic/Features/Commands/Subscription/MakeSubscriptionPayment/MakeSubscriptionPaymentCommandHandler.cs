@@ -23,8 +23,9 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.MakeSubscriptionPa
         public async Task<GetSubscriptionDto> Handle(MakeSubscriptionPaymentCommand request,
             CancellationToken cancellationToken)
         {
-            var subscription = await _unitOfWork.Subscriptions.GetByIdAsync(request.Id,
-                           cancellationToken);
+            var subscription = await _unitOfWork.Subscriptions.GetByIdAsync(
+                request.Id,
+                cancellationToken);
 
             if (subscription == null)
             {

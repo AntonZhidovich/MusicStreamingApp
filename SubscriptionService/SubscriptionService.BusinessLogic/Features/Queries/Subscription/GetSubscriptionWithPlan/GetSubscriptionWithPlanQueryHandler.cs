@@ -31,7 +31,7 @@ namespace SubscriptionService.BusinessLogic.Features.Queries.GetSubscriptionWith
                 request.PageRequest.PageSize,
                 cancellationToken);
 
-            var count = await _unitOfWork.Subscriptions.CountAsync(specification);
+            var count = await _unitOfWork.Subscriptions.CountAsync(specification, cancellationToken);
 
             return subscriptions.GetPageResponse<Subscription, GetSubscriptionDto>(count, request.PageRequest, _mapper);
         }

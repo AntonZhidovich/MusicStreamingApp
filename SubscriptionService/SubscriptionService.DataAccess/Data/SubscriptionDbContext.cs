@@ -17,6 +17,7 @@ namespace SubscriptionService.DataAccess.Data
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
             modelBuilder.Seed();
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

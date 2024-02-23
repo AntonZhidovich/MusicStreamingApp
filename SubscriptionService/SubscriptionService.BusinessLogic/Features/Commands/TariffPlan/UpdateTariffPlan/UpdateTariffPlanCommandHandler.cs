@@ -21,7 +21,7 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.UpdateTariffPlan
 
         public async Task<GetTariffPlanDto> Handle(UpdateTariffPlanCommand request, CancellationToken cancellationToken)
         {
-            var tariffPlan = await _unitOfWork.TariffPlans.GetByIdAsync(request.Id);
+            var tariffPlan = await _unitOfWork.TariffPlans.GetByIdAsync(request.Id, cancellationToken);
 
             if (tariffPlan == null)
             {

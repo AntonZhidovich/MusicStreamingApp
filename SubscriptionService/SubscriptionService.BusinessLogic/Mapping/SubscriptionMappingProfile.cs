@@ -6,17 +6,10 @@ using SubscriptionService.DataAccess.Entities;
 
 namespace SubscriptionService.BusinessLogic.Mapping
 {
-    public class MappingProfile : Profile
+    public class SubscriptionMappingProfile : Profile
     {
-        public MappingProfile()
+        public SubscriptionMappingProfile()
         {
-            CreateMap<TariffPlan, GetTariffPlanDto>();
-            
-            CreateMap<CreateTariffPlanDto, TariffPlan>();
-
-            CreateMap<UpdateTariffPlanDto, TariffPlan>()
-                .ForAllMembers(options => options.IgnoreDefaultValues());
-
             CreateMap<Subscription, GetSubscriptionDto>()
                 .ForMember(dest => dest.TariffPlanName, options => options.MapFrom(src => src.TariffPlan.Name));
 

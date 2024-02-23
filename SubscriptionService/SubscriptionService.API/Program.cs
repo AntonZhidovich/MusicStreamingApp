@@ -1,5 +1,6 @@
 
 using SubscriptionService.API.Extensions;
+using SubscriptionService.DataAccess.Data;
 
 namespace SubscriptionService.API
 {
@@ -17,6 +18,7 @@ namespace SubscriptionService.API
             builder.Services.AddSwagger();
 
             var app = builder.Build();
+            app.Services.MigrateDatabase<SubscriptionDbContext>();
             app.UseExceptionHandler(options => { });
 
             if (app.Environment.IsDevelopment())
