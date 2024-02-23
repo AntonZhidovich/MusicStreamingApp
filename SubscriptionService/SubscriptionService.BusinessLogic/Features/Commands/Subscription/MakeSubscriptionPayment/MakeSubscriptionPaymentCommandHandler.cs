@@ -29,7 +29,7 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.MakeSubscriptionPa
 
             if (subscription == null)
             {
-                throw new NotFoundException(ExceptionMessages.SubscriptionNotFound);
+                throw new NotFoundException(ExceptionMessages.subscriptionNotFound);
             }
 
             switch (subscription.Type)
@@ -41,7 +41,7 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.MakeSubscriptionPa
                     subscription.NextFeeDate.AddYears(1);
                     break;
                 default:
-                    throw new BadRequestException(ExceptionMessages.IncorrctSubscriptionType);
+                    throw new BadRequestException(ExceptionMessages.incorrctSubscriptionType);
             }
 
             _unitOfWork.Subscriptions.Update(subscription);

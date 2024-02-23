@@ -27,7 +27,7 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.UpdateSubscription
 
             if (subscription == null)
             {
-                throw new NotFoundException(ExceptionMessages.SubscriptionNotFound);
+                throw new NotFoundException(ExceptionMessages.subscriptionNotFound);
             }
 
             _mapper.Map(request.Dto, subscription);

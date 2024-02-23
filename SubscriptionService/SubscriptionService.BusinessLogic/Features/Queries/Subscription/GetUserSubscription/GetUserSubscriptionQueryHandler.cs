@@ -25,7 +25,7 @@ namespace SubscriptionService.BusinessLogic.Features.Queries.GetUserSubscription
 
             if (subscription == null)
             {
-                throw new NotFoundException(ExceptionMessages.SubscriptionNotFound);
+                throw new NotFoundException(ExceptionMessages.subscriptionNotFound);
             }
 
             return _mapper.Map<GetSubscriptionDto>(subscription);

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
 using SubscriptionService.BusinessLogic.Exceptions;
+using SubscriptionService.BusinessLogic.Models;
 using System.Net;
 
 namespace SubscriptionService.API.ExceptionHandlers
@@ -10,10 +10,11 @@ namespace SubscriptionService.API.ExceptionHandlers
         public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
         {
             int statusCode = GetErrorCode(exception);
-            var problemDetails = new ProblemDetails
+            var problemDetails = new 
             {
                 Status = statusCode,
                 Title = exception.Message,
+                Details = GetErrorDetails(exception)
             };
 
             httpContext.Response.StatusCode = statusCode;
@@ -38,6 +39,20 @@ namespace SubscriptionService.API.ExceptionHandlers
                 default:
                     return (int)HttpStatusCode.BadRequest;
             }
+        }
+
+        private static IEnumerable<ErrorDetail>? GetErrorDetails(Exception exception)
+        {
+            IEnumerable<ErrorDetail>? detail = null;
+
+            switch (exception)
+            {
+                case ValidationPipelineException validationException:
+                    detail = validationException.ValidationErrors;
+                    break;
+            }
+
+            return detail;
         }
     }
 }

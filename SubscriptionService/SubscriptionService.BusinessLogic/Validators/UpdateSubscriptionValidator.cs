@@ -1,13 +1,13 @@
 ﻿using FluentValidation;
-using SubscriptionService.BusinessLogic.Models.Subscription;
+using SubscriptionService.BusinessLogic.Features.Commands.UpdateSubscription;
 
 namespace SubscriptionService.BusinessLogic.Validators
 {
-    public class UpdateSubscriptionValidator : AbstractValidator<UpdateSubscriptionDto>
+    public class UpdateSubscriptionValidator : AbstractValidator<UpdateSubscriptionCommand>
     {
         public UpdateSubscriptionValidator()
         {
-            RuleFor(subscription => subscription.NextFeeDate)
+            RuleFor(command => command.Dto.NextFeeDate)
                 .GreaterThan(DateTime.UtcNow);
         }
     }

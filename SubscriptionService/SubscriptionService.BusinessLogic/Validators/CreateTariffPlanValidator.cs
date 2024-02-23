@@ -1,29 +1,29 @@
 ﻿using FluentValidation;
-using SubscriptionService.BusinessLogic.Models.TariffPlan;
+using SubscriptionService.BusinessLogic.Features.Commands.CreateTariffPlan;
 using SubscriptionService.DataAccess.Constants;
 
 namespace SubscriptionService.BusinessLogic.Validators
 {
-    public class CreateTariffPlanValidator : AbstractValidator<CreateTariffPlanDto>
+    public class CreateTariffPlanValidator : AbstractValidator<CreateTariffPlanCommand>
     {
         public CreateTariffPlanValidator()
         {
-            RuleFor(plan => plan.Name)
+            RuleFor(command => command.Dto.Name)
                 .NotEmpty()
                 .MaximumLength(Constraints.tariffPlanNameMaxLength);
 
-            RuleFor(plan => plan.Description)
+            RuleFor(command => command.Dto.Description)
                 .MaximumLength(Constraints.descpriptionMaxLength);
 
-            RuleFor(plan => plan.MaxPlaylistsCount)
+            RuleFor(command => command.Dto.MaxPlaylistsCount)
                 .GreaterThan(0)
                 .NotEmpty();
 
-            RuleFor(plan => plan.MonthFee)
+            RuleFor(command => command.Dto.MonthFee)
                 .GreaterThan(0)
                 .NotEmpty();
 
-            RuleFor(plan => plan.AnnualFee)
+            RuleFor(command => command.Dto.AnnualFee)
                 .GreaterThan(0)
                 .NotEmpty();
         }

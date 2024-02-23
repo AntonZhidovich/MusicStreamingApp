@@ -1,17 +1,17 @@
 ﻿using FluentValidation;
-using SubscriptionService.BusinessLogic.Models.TariffPlan;
+using SubscriptionService.BusinessLogic.Features.Commands.UpdateTariffPlan;
 using SubscriptionService.DataAccess.Constants;
 
 namespace SubscriptionService.BusinessLogic.Validators
 {
-    public class UpdateTariffPlanValidator : AbstractValidator<UpdateTariffPlanDto>
+    public class UpdateTariffPlanValidator : AbstractValidator<UpdateTariffPlanCommand>
     {
         public UpdateTariffPlanValidator()
         {
-            RuleFor(plan => plan.Name)
+            RuleFor(command => command.Dto.Name)
                 .MaximumLength(Constraints.tariffPlanNameMaxLength);
 
-            RuleFor(plan => plan.Description)
+            RuleFor(command => command.Dto.Description)
                 .MaximumLength(Constraints.descpriptionMaxLength);
         }
     }

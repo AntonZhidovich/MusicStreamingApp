@@ -1,4 +1,3 @@
-
 using SubscriptionService.API.Extensions;
 using SubscriptionService.DataAccess.Data;
 

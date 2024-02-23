@@ -22,7 +22,7 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.DeleteTariffPlan
 
             if (tariffPlan == null)
             {
-                throw new NotFoundException(ExceptionMessages.TariffPlanNotFound);
+                throw new NotFoundException(ExceptionMessages.tariffPlanNotFound);
             }
 
             _unitOfWork.TariffPlans.Delete(tariffPlan);

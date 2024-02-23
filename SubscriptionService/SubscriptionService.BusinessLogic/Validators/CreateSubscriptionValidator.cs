@@ -1,22 +1,22 @@
 ﻿using FluentValidation;
-using SubscriptionService.BusinessLogic.Models.Subscription;
+using SubscriptionService.BusinessLogic.Features.Commands.MakeSubscription;
 using SubscriptionService.DataAccess.Constants;
 
 namespace SubscriptionService.BusinessLogic.Validators
 {
-    public class CreateSubscriptionValidator : AbstractValidator<CreateSubscriptionDto>
+    public class CreateSubscriptionValidator : AbstractValidator<MakeSubscriptionCommand>
     {
         public CreateSubscriptionValidator()
         {
-            RuleFor(subscription => subscription.UserName)
+            RuleFor(command => command.Dto.UserName)
                 .NotEmpty()
                 .MaximumLength(Constraints.usernameMaxLength);
 
-            RuleFor(subscription => subscription.TariffPlanId)
+            RuleFor(command => command.Dto.TariffPlanId)
                 .NotEmpty()
                 .MaximumLength(Constraints.idMaxLength);
 
-            RuleFor(subscription => subscription.Type)
+            RuleFor(command => command.Dto.Type)
                 .NotEmpty()
                 .MaximumLength(Constraints.subscriptionTypeMaxLength);
         }

@@ -25,7 +25,7 @@ namespace SubscriptionService.BusinessLogic.Features.Queries.GetTariffPlanByName
 
             if (tariffPlan == null)
             {
-                throw new NotFoundException(ExceptionMessages.TariffPlanNotFound);
+                throw new NotFoundException(ExceptionMessages.tariffPlanNotFound);
             }
 
             return _mapper.Map<GetTariffPlanDto>(tariffPlan);

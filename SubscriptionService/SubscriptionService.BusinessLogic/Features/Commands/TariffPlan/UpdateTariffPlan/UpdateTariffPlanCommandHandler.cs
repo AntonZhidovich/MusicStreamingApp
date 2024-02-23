@@ -25,7 +25,7 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.UpdateTariffPlan
 
             if (tariffPlan == null)
             {
-                throw new NotFoundException(ExceptionMessages.TariffPlanNotFound);
+                throw new NotFoundException(ExceptionMessages.tariffPlanNotFound);
             }
 
             _mapper.Map(request.Dto, tariffPlan);

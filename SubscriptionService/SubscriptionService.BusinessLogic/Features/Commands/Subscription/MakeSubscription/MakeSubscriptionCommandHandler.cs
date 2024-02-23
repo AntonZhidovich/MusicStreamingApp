@@ -29,7 +29,7 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.MakeSubscription
 
             if (tariffPlan == null)
             {
-                throw new NotFoundException(ExceptionMessages.TariffPlanNotFound);
+                throw new NotFoundException(ExceptionMessages.tariffPlanNotFound);
             }
 
             var currentSubscription = await _unitOfWork.Subscriptions.GetByUserNameAsync(
@@ -38,7 +38,7 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.MakeSubscription
 
             if (currentSubscription != null)
             {
-                throw new BadRequestException(ExceptionMessages.SubscriptionExists);
+                throw new BadRequestException(ExceptionMessages.subscriptionExists);
             }
 
             var subscription = _mapper.Map<Subscription>(request.Dto);
@@ -57,7 +57,7 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.MakeSubscription
                     subscription.Fee = tariffPlan.AnnualFee;
                     break;
                 default:
-                    throw new UnprocessableEntityException(ExceptionMessages.IncorrctSubscriptionType);
+                    throw new UnprocessableEntityException(ExceptionMessages.incorrctSubscriptionType);
             }
 
             await _unitOfWork.Subscriptions.CreateAsync(subscription, cancellationToken);

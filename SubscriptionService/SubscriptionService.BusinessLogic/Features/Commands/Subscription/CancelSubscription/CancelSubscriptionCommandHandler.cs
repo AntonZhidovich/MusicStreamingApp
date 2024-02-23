@@ -23,7 +23,7 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.CancelSubscription
 
             if (subscription == null)
             {
-                throw new NotFoundException(ExceptionMessages.SubscriptionNotFound);
+                throw new NotFoundException(ExceptionMessages.subscriptionNotFound);
             }
 
             _unitOfWork.Subscriptions.Delete(subscription);

@@ -1,10 +1,12 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SubscriptionService.API.ExceptionHandlers;
+using SubscriptionService.BusinessLogic.Features.Behaviors;
 using SubscriptionService.BusinessLogic.Features.Queries.GetAllTariffPlans;
 using SubscriptionService.BusinessLogic.Mapping;
 using SubscriptionService.BusinessLogic.Validators;
@@ -46,8 +48,9 @@ namespace SubscriptionService.API.Extensions
 
         public static IServiceCollection AddAutoValidation(this IServiceCollection services)
         {
+            ValidatorOptions.Global.LanguageManager.Enabled = false;
             services.AddValidatorsFromAssemblyContaining(typeof(CreateTariffPlanValidator));
-            services.AddFluentValidationAutoValidation();
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
             return services;
         }
