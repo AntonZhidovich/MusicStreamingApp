@@ -12,7 +12,7 @@ namespace MusicService.Infrastructure.Extensions
             IMapper mapper)
         {
             var pagesCount = (int)Math.Ceiling((double)entityCount / request.PageSize);
-            var usersPage = new PageResponse<TDto>
+            var pageResponse = new PageResponse<TDto>
             {
                 PagesCount = pagesCount,
                 CurrentPage = request.CurrentPage,
@@ -20,7 +20,7 @@ namespace MusicService.Infrastructure.Extensions
                 Items = mapper.Map<IEnumerable<TDto>>(source)
             };
 
-            return usersPage;
+            return pageResponse;
         }  
     }
 }

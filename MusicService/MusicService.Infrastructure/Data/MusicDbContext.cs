@@ -19,11 +19,7 @@ namespace MusicService.Infrastructure.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.ApplyConfiguration(new AuthorConfiguration());
-            modelBuilder.ApplyConfiguration(new ReleaseConfiguration());
-            modelBuilder.ApplyConfiguration(new SongConfiguration());
-            modelBuilder.ApplyConfiguration(new GenreConfiguration());
-            modelBuilder.ApplyConfiguration(new UserConfiguration());
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(AuthorConfiguration).Assembly);
             modelBuilder.Seed();
         }
     }

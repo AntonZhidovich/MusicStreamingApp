@@ -12,7 +12,7 @@ namespace MusicService.API
             builder.Services.AddDatabases(builder.Configuration);
             builder.Services.AddRepositories();
             builder.Services.AddServices(builder.Configuration);
-            builder.Services.AddAutoMapper(typeof(MappingProfile));
+            builder.Services.AddAutoMapper(typeof(AuthorMappingProfile).Assembly);
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.ConfigureSwagger();
@@ -25,11 +25,11 @@ namespace MusicService.API
                 app.UseSwaggerUI();
             }
 
+            app.UseExceptionHandler(options => { });
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
-            app.UseExceptionHandler(options => { });
             app.Run();
         }
     }

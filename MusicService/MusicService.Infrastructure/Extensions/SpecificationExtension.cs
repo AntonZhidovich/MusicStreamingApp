@@ -10,8 +10,18 @@ namespace MusicService.Infrastructure.Extensions
         {
             query = specification.Includes.Aggregate(query, (current, navigation)  => current.Include(navigation));
 
-            return query.Where(specification.Criteria)
-                .OrderBy((specification.OrderBy ?? specification.OrderByDescending)!);
+            query = query.Where(specification.Criteria);
+
+            if (specification.OrderBy != null)
+            {
+                query = query.OrderBy(specification.OrderBy);
+            }
+            else if (specification.OrderByDescending != null)
+            {
+                query = query.OrderByDescending(specification.OrderByDescending);
+            }
+
+            return query;
         }
     }
 }
