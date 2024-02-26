@@ -19,8 +19,6 @@ namespace SubscriptionService.BusinessLogic.Specifications
         {
             Criteria = subscription => subscription.TariffPlan.Name.Trim().ToLower() == tariffPlanName.Trim().ToLower();
 
-            //Criteria = subscription => true;
-
             Includes = new List<Expression<Func<Subscription, object>>>
             {
                 subscription => subscription.TariffPlan

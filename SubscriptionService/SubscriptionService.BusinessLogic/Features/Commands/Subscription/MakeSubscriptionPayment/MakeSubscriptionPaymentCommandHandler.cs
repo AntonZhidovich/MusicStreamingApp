@@ -35,10 +35,10 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.MakeSubscriptionPa
             switch (subscription.Type)
             {
                 case SubscriptionTypes.month:
-                    subscription.NextFeeDate.AddMonths(1);
+                    subscription.NextFeeDate = subscription.NextFeeDate.AddMonths(1);
                     break;
                 case SubscriptionTypes.annual:
-                    subscription.NextFeeDate.AddYears(1);
+                    subscription.NextFeeDate = subscription.NextFeeDate.AddYears(1);
                     break;
                 default:
                     throw new BadRequestException(ExceptionMessages.incorrctSubscriptionType);
