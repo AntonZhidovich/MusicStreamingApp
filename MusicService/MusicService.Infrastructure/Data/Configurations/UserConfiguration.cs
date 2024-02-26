@@ -12,9 +12,6 @@ namespace MusicService.Infrastructure.Data.Configurations
 
             builder.HasIndex(user => user.UserName)
                 .IsUnique();
-
-            builder.HasIndex(user => user.Email)
-                .IsUnique();
         }
     }
 }

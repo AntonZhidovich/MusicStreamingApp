@@ -14,14 +14,6 @@ namespace MusicService.Infrastructure.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
-        {
-            return await _dbContext.Users
-                .Include(user => user.Author)
-                .Where(user => user.Email.Trim().ToLower() == email.Trim().ToLower())
-                .FirstOrDefaultAsync(cancellationToken);
-        }
-
         public async Task<User?> GetByUserNameAsync(string userName, CancellationToken cancellationToken = default)
         {
             return await _dbContext.Users
