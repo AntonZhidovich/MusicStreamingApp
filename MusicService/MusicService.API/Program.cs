@@ -1,5 +1,6 @@
 using MusicService.API.Extensions;
 using MusicService.Application.Mapping;
+using MusicService.Infrastructure.Data;
 
 namespace MusicService.API
 {
@@ -18,6 +19,7 @@ namespace MusicService.API
             builder.Services.ConfigureSwagger();
 
             var app = builder.Build();
+            app.Services.MigrateDatabase<MusicDbContext>();
 
             if (app.Environment.IsDevelopment())
             {
