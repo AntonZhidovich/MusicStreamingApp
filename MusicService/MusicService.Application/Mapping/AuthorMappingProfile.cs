@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using MusicService.Application.Models.AuthorService;
 using MusicService.Application.Models.DTOs;
+using MusicService.Application.Models.Messages;
 using MusicService.Domain.Entities;
 
 namespace MusicService.Application.Mapping
@@ -19,6 +20,9 @@ namespace MusicService.Application.Mapping
             CreateMap<UpdateAuthorRequest, Author>()
                 .ForMember(dest => dest.BrokenAt, options => options.MapFrom(src => src.BrokenAt ?? DateTime.Now))
                 .ForAllMembers(options => options.Condition((source, dest, member) => member != null));
+
+            CreateMap<UserUpdatedMessage, User>()
+                .ForMember(dest => dest.UserName, options => options.MapFrom(src => src.NewUserName));
         }
     }
 }

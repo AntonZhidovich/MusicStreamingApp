@@ -5,13 +5,16 @@ using MusicService.Infrastructure.Data;
 
 namespace MusicService.Infrastructure.Repositories
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository : BaseRepository<User>, IUserRepository
     {
-        private readonly MusicDbContext _dbContext;
+        public UserRepository(MusicDbContext dbContext) : base(dbContext) { }
 
-        public UserRepository(MusicDbContext dbContext)
+        public async Task<User?> GetByIdAsync(string id, CancellationToken cancellationToken = default)
         {
-            _dbContext = dbContext;
+            return await _dbContext.Users
+                .Include(user => user.Author)
+                .Where(user => user.Id == id)
+                .FirstOrDefaultAsync(cancellationToken);
         }
 
         public async Task<User?> GetByUserNameAsync(string userName, CancellationToken cancellationToken = default)

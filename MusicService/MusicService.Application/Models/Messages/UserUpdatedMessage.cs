@@ -1,4 +1,4 @@
-﻿namespace Identity.BusinessLogic.Models.Messages
+﻿namespace MusicService.Application.Models.Messages
 {
     public class UserUpdatedMessage
     {

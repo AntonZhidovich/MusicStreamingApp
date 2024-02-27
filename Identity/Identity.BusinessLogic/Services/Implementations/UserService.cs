@@ -85,7 +85,7 @@ namespace Identity.BusinessLogic.Services.Implementations
 
             var updatedDto = _mapper.Map<UserDto>(user);
 
-            await _producerService.ProduceUserUpdatedAsync(new UserUpdatedMessage { User = updatedDto });
+            await _producerService.ProduceUserUpdatedAsync(new UserUpdatedMessage { Id = updatedDto.Id, NewUserName = updatedDto.UserName });
 
             return updatedDto;
         }

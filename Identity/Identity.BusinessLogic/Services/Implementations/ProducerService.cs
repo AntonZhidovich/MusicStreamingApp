@@ -26,7 +26,7 @@ namespace Identity.BusinessLogic.Services.Implementations
 
         public async Task ProduceUserUpdatedAsync(UserUpdatedMessage message, CancellationToken cancellationToken = default)
         {
-            await ProduceAsync(_topics.UserUpdated, message.User.Id, message, cancellationToken);
+            await ProduceAsync(_topics.UserUpdated, message.Id, message, cancellationToken);
         }
 
         public async Task ProduceAsync<TValue>(string topic, 

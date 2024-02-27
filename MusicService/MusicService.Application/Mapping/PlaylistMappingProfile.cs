@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MusicService.Application.Models.DTOs;
+using MusicService.Application.Models.Messages;
 using MusicService.Application.Models.PlaylistService;
 using MusicService.Domain.Entities;
 
@@ -14,6 +15,7 @@ namespace MusicService.Application.Mapping
 
             CreateMap<CreatePlaylistRequest, Playlist>();
             CreateMap<Playlist, PlaylistFullDto>();
+            CreateMap<SubscriptionMadeMessage, UserPlaylistTariff>();
         }
     }
 }
