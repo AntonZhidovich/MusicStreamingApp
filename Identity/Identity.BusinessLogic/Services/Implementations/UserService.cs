@@ -2,6 +2,7 @@
 using Identity.BusinessLogic.Constants;
 using Identity.BusinessLogic.Exceptions;
 using Identity.BusinessLogic.Models;
+using Identity.BusinessLogic.Models.Messages;
 using Identity.BusinessLogic.Models.UserService;
 using Identity.BusinessLogic.Services.Interfaces;
 using Identity.BusinessLogic.Specifications;
@@ -15,13 +16,16 @@ namespace Identity.BusinessLogic.Services.Implementations
     {
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
+        private readonly IProducerService _producerService;
 
         public UserService(
             IUserRepository userRepository,
-            IMapper mapper)
+            IMapper mapper,
+            IProducerService producerService)
         {
             _userRepository = userRepository;
             _mapper = mapper;
+            _producerService = producerService;
         }
 
         public async Task<UsersPageResponse> GetAllAsync(GetUsersRequest request)
@@ -79,13 +83,20 @@ namespace Identity.BusinessLogic.Services.Implementations
                 throw new UnprocessableEntityException(ExceptionMessages.InvalidInput, result.Errors);
             }
 
-            return _mapper.Map<UserDto>(user);
+            var updatedDto = _mapper.Map<UserDto>(user);
+
+            await _producerService.ProduceUserUpdatedAsync(new UserUpdatedMessage { User = updatedDto });
+
+            return updatedDto;
         }
 
         public async Task DeleteAsync(DeleteUserRequest request)
         {
             var user = await GetDomainUserByEmailAsync(request.Email);
+            
             await _userRepository.DeleteUserAsync(user);
+
+            await _producerService.ProduceUserDeletedAsync(new UserDeletedMessage { Id = user.Id });
         }
 
         public async Task<IEnumerable<string>> GetRolesAsync(GetUserRolesRequest request)
