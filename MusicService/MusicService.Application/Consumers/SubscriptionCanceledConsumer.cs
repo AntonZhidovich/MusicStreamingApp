@@ -23,7 +23,17 @@ namespace MusicService.Application.Consumers
                 using var scope = _serviceProvider.CreateScope();
                 var playlistRepository = scope.ServiceProvider.GetService<IPlaylistRepository>()!;
 
-                await playlistRepository.DeleteUserPlaylistTariffAsync(message.UserName, cancellationToken);
+                var unitOfWork = scope.ServiceProvider.GetService<IUnitOfWork>()!;
+
+                var user = await unitOfWork.Users.GetByIdAsync(message.UserId);
+
+                if (user == null)
+                {
+                    _consumer.Commit();
+                    return;
+                }
+
+                await playlistRepository.DeleteUserPlaylistTariffAsync(user.UserName, cancellationToken);
             };
         }
     }

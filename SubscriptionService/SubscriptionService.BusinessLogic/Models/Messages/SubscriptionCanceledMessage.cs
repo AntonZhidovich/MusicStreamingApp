@@ -1,4 +1,4 @@
-﻿namespace MusicService.Application.Models.Messages
+﻿namespace SubscriptionService.BusinessLogic.Models.Messages
 {
     public class SubscriptionCanceledMessage
     {

@@ -8,6 +8,7 @@ namespace SubscriptionService.API
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            builder.Services.ApplyConfigurations(builder.Configuration);
             builder.Services.AddDatabase(builder.Configuration);
             builder.Services.AddRepositories();
             builder.Services.AddServices();
