@@ -37,20 +37,20 @@ namespace MusicService.Infrastructure.Repositories
             return await cursor.FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<Playlist>> GetUserPlaylistsAsync(string userName, 
+        public async Task<IEnumerable<Playlist>> GetUserPlaylistsAsync(string userId, 
             int? maxCount = null, 
             CancellationToken cancellationToken = default)
         {
-            var cursor = _playlistCollection.Find(filter: playlist => playlist.UserName == userName)
+            var cursor = _playlistCollection.Find(filter: playlist => playlist.UserId == userId)
                 .SortBy(playlist => playlist.CreatedAt)
                 .Limit(maxCount);
 
             return await cursor.ToListAsync();
         }
 
-        public async Task<int> CountAsync(string userName, CancellationToken cancellationToken = default)
+        public async Task<int> CountAsync(string userId, CancellationToken cancellationToken = default)
         {
-            var longCount = await _playlistCollection.CountDocumentsAsync(playlist => playlist.UserName == userName,
+            var longCount = await _playlistCollection.CountDocumentsAsync(playlist => playlist.UserId == userId,
                 cancellationToken: cancellationToken);
 
             return (int)longCount;
@@ -63,9 +63,9 @@ namespace MusicService.Infrastructure.Repositories
             await _playlistCollection.ReplaceOneAsync(filter: filter, replacement: playlist, cancellationToken: cancellationToken);
         }
 
-        public async Task<int?> GetUserMaxPlaylistCountAsync(string userName, CancellationToken cancellationToken = default)
+        public async Task<int?> GetUserMaxPlaylistCountAsync(string userId, CancellationToken cancellationToken = default)
         {
-            var cursor = await _userTariffCollection.FindAsync(filter: tariff => tariff.UserName == userName,
+            var cursor = await _userTariffCollection.FindAsync(filter: tariff => tariff.UserId == userId,
                 cancellationToken: cancellationToken);
             
             var tariff = cursor?.FirstOrDefault();
@@ -73,9 +73,9 @@ namespace MusicService.Infrastructure.Repositories
             return tariff?.MaxPlaylistCount;
         }
 
-        public async Task DeleteUserPlaylistsAsync(string userName, CancellationToken cancellationToken = default)
+        public async Task DeleteUserPlaylistsAsync(string userId, CancellationToken cancellationToken = default)
         {
-            var filter = Builders<Playlist>.Filter.Eq(tariff => tariff.UserName, userName);
+            var filter = Builders<Playlist>.Filter.Eq(tariff => tariff.UserId, userId);
             
             await _playlistCollection.DeleteManyAsync(filter, cancellationToken);
         }
@@ -83,14 +83,14 @@ namespace MusicService.Infrastructure.Repositories
         public async Task UpsertUserPlaylistTariffAsync(UserPlaylistTariff tariff, CancellationToken cancellationToken = default)
         {
             var options = new ReplaceOptions { IsUpsert = true };
-            var filter = Builders<UserPlaylistTariff>.Filter.Eq(tariff => tariff.UserName, tariff.UserName);
+            var filter = Builders<UserPlaylistTariff>.Filter.Eq(tariff => tariff.Id, tariff.Id);
             
             await _userTariffCollection.ReplaceOneAsync(filter, tariff, options, cancellationToken);
         }
 
-        public async Task DeleteUserPlaylistTariffAsync(string userName, CancellationToken cancellationToken = default)
+        public async Task DeleteUserPlaylistTariffAsync(string userId, CancellationToken cancellationToken = default)
         {
-            var filter = Builders<UserPlaylistTariff>.Filter.Eq(tariff => tariff.UserName, userName);
+            var filter = Builders<UserPlaylistTariff>.Filter.Eq(tariff => tariff.UserId, userId);
             
             await _userTariffCollection.DeleteOneAsync(filter, cancellationToken);
         }
