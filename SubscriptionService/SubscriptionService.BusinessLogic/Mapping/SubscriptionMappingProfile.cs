@@ -20,7 +20,7 @@ namespace SubscriptionService.BusinessLogic.Mapping
                 .ForAllMembers(options => options.IgnoreDefaultValues());
 
             CreateMap<Subscription, SubscriptionMadeMessage>()
-                .ForMember(dest => dest.MaxPlaylistsCount, options => options.MapFrom(src => src.TariffPlan.MaxPlaylistsCount));
+                .ForMember(dest => dest.MaxPlaylistCount, options => options.MapFrom(src => src.TariffPlan.MaxPlaylistsCount));
 
             CreateMap<Subscription, SubscriptionCanceledMessage>();
         }

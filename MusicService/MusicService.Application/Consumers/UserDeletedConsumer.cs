@@ -37,9 +37,9 @@ namespace MusicService.Application.Consumers
 
                 var playlistRepository = scope.ServiceProvider.GetService<IPlaylistRepository>()!;
 
-                await playlistRepository.DeleteUserPlaylistsAsync(user.UserName, cancellationToken);
+                await playlistRepository.DeleteUserPlaylistsAsync(user.Id, cancellationToken);
 
-                await playlistRepository.DeleteUserPlaylistTariffAsync(user.UserName, cancellationToken);
+                await playlistRepository.DeleteUserPlaylistTariffAsync(user.Id, cancellationToken);
 
                 _consumer.Commit();
             };

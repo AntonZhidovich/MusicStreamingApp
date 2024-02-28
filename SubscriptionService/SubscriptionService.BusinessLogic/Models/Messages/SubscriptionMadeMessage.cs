@@ -3,6 +3,6 @@
     public class SubscriptionMadeMessage
     {
         public string UserId { get; set; }
-        public int MaxPlaylistsCount { get; set; }
+        public int MaxPlaylistCount { get; set; }
     }
 }
