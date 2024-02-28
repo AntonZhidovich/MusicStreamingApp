@@ -32,8 +32,8 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.MakeSubscription
                 throw new NotFoundException(ExceptionMessages.tariffPlanNotFound);
             }
 
-            var currentSubscription = await _unitOfWork.Subscriptions.GetByUserNameAsync(
-                request.Dto.UserName,
+            var currentSubscription = await _unitOfWork.Subscriptions.GetByUserIdAsync(
+                request.Dto.UserId,
                 cancellationToken);
 
             if (currentSubscription != null)

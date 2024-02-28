@@ -12,7 +12,7 @@ using SubscriptionService.DataAccess.Data;
 namespace SubscriptionService.DataAccess.Migrations
 {
     [DbContext(typeof(SubscriptionDbContext))]
-    [Migration("20240220162430_InitialCreate")]
+    [Migration("20240228072053_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -49,16 +49,16 @@ namespace SubscriptionService.DataAccess.Migrations
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)");
 
-                    b.Property<string>("UserName")
+                    b.Property<string>("UserId")
                         .IsRequired()
-                        .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("TariffPlanId");
 
-                    b.HasIndex("UserName")
+                    b.HasIndex("UserId")
                         .IsUnique();
 
                     b.ToTable("Subscriptions");

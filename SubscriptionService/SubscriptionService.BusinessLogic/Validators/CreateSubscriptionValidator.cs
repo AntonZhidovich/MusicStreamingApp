@@ -8,9 +8,9 @@ namespace SubscriptionService.BusinessLogic.Validators
     {
         public CreateSubscriptionValidator()
         {
-            RuleFor(command => command.Dto.UserName)
+            RuleFor(command => command.Dto.UserId)
                 .NotEmpty()
-                .MaximumLength(Constraints.usernameMaxLength);
+                .MaximumLength(Constraints.idMaxLength);
 
             RuleFor(command => command.Dto.TariffPlanId)
                 .NotEmpty()

@@ -5,11 +5,11 @@ namespace SubscriptionService.BusinessLogic.Features.Queries.GetUserSubscription
 {
     public class GetUserSubscriptionQuery : IRequest<GetSubscriptionDto>
     {
-        public string UserName { get; set; }
+        public string UserId { get; set; }
 
-        public GetUserSubscriptionQuery(string userName)
+        public GetUserSubscriptionQuery(string userId)
         {
-            UserName = userName;
+            UserId = userId;
         }
     }
 }

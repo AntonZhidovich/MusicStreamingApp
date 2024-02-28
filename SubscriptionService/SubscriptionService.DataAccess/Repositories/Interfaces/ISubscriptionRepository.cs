@@ -7,6 +7,6 @@ namespace SubscriptionService.DataAccess.Repositories.Interfaces
     {
         Task<IEnumerable<Subscription>> GetAllAsync(int currentPage, int pageSize, CancellationToken cancellationToken = default);
         Task<Subscription?> GetByIdAsync(string id, CancellationToken cancellationToken = default);
-        Task<Subscription?> GetByUserNameAsync(string userName, CancellationToken cancellationToken = default);
+        Task<Subscription?> GetByUserIdAsync(string userId, CancellationToken cancellationToken = default);
     }
 }

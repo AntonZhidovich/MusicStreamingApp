@@ -28,12 +28,12 @@ namespace SubscriptionService.DataAccess.Repositories.Implementations
                 .FirstOrDefaultAsync(subscription => subscription.Id == id, cancellationToken);
         }
 
-        public async Task<Subscription?> GetByUserNameAsync(string userName, CancellationToken cancellationToken = default)
+        public async Task<Subscription?> GetByUserIdAsync(string userId, CancellationToken cancellationToken = default)
         {
             return await _dbContext.Subscriptions
                 .Include(subscription => subscription.TariffPlan)
                 .AsNoTracking()
-                .FirstOrDefaultAsync(subscription => subscription.UserName.Trim().ToLower() == userName.Trim().ToLower(),
+                .FirstOrDefaultAsync(subscription => subscription.UserId == userId,
                 cancellationToken);
         }
     }

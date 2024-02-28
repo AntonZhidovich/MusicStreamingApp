@@ -11,7 +11,7 @@ namespace SubscriptionService.DataAccess.Data.Configurations
         {
             builder.HasKey(sub => sub.Id);
 
-            builder.HasIndex(sub => sub.UserName)
+            builder.HasIndex(sub => sub.UserId)
                 .IsUnique();
 
             builder.HasOne(sub => sub.TariffPlan)
@@ -21,9 +21,9 @@ namespace SubscriptionService.DataAccess.Data.Configurations
             builder.Property(sub => sub.Id)
                 .HasMaxLength(Constraints.idMaxLength);
 
-            builder.Property(sub => sub.UserName)
+            builder.Property(sub => sub.UserId)
                 .IsRequired()
-                .HasMaxLength(Constraints.usernameMaxLength);
+                .HasMaxLength(Constraints.idMaxLength);
 
             builder.Property(sub => sub.Type)
                 .IsRequired()

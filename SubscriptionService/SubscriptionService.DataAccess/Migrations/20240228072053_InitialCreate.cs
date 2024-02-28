@@ -34,7 +34,7 @@ namespace SubscriptionService.DataAccess.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    UserName = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     TariffPlanId = table.Column<string>(type: "nvarchar(50)", nullable: false),
                     SubscribedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     NextFeeDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -68,9 +68,9 @@ namespace SubscriptionService.DataAccess.Migrations
                 column: "TariffPlanId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Subscriptions_UserName",
+                name: "IX_Subscriptions_UserId",
                 table: "Subscriptions",
-                column: "UserName",
+                column: "UserId",
                 unique: true);
 
             migrationBuilder.CreateIndex(

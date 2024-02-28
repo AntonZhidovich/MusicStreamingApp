@@ -46,10 +46,10 @@ namespace SubscriptionService.API.Controllers
             return Ok(subscriptions);
         }
 
-        [HttpGet("user/{username}")]
-        public async Task<IActionResult> GetUserSubscriptionAsync([FromRoute] string username)
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetUserSubscriptionAsync([FromRoute] string userId)
         {
-            var subscription = await _sender.Send(new GetUserSubscriptionQuery(username), HttpContext.RequestAborted);
+            var subscription = await _sender.Send(new GetUserSubscriptionQuery(userId), HttpContext.RequestAborted);
 
             return Ok(subscription);
         }
