@@ -41,7 +41,10 @@ namespace MusicService.Application.Services
 
             var author = await GetDomainAuthorAsync(request.AuthorName, cancellationToken);
 
-            if (!currentUser.IsInRole(UserRoles.admin)) { CheckIfUserIsMember(author, currentUser); }
+            if (!currentUser.IsInRole(UserRoles.admin)) 
+            { 
+                CheckIfUserIsMember(author, currentUser); 
+            }
 
             author.Users.Add(user);
             _unitOfWork.Authors.Update(author);
@@ -89,7 +92,10 @@ namespace MusicService.Application.Services
         {
             var author = await GetDomainAuthorAsync(name, cancellationToken);
 
-            if (!currentUser.IsInRole(UserRoles.admin)) { CheckIfUserIsMember(author, currentUser); }
+            if (!currentUser.IsInRole(UserRoles.admin)) 
+            { 
+                CheckIfUserIsMember(author, currentUser); 
+            }
 
             _unitOfWork.Authors.Delete(author);
            
@@ -117,7 +123,10 @@ namespace MusicService.Application.Services
         {
             var author = await GetDomainAuthorAsync(request.AuthorName, cancellationToken);
 
-            if (!currentUser.IsInRole(UserRoles.admin)) { CheckIfUserIsMember(author, currentUser); }
+            if (!currentUser.IsInRole(UserRoles.admin)) 
+            { 
+                CheckIfUserIsMember(author, currentUser); 
+            }
 
             var user = await GetDomainUserAsync(request.UserName, cancellationToken);
 
@@ -143,7 +152,10 @@ namespace MusicService.Application.Services
         {
             var author = await GetDomainAuthorAsync(name, cancellationToken);
 
-            if (!currentUser.IsInRole(UserRoles.admin)) { CheckIfUserIsMember(author, currentUser); }
+            if (!currentUser.IsInRole(UserRoles.admin)) 
+            { 
+                CheckIfUserIsMember(author, currentUser); 
+            }
 
             _mapper.Map(request, author);
             _unitOfWork.Authors.Update(author);
