@@ -15,7 +15,7 @@ namespace MusicService.Infrastructure.Repositories
             return await _dbContext.Releases
                 .Include(release => release.Authors)
                 .Include(release => release.Songs)
-                .OrderBy(release => release.Name)
+                .OrderByDescending(release => release.ReleasedAt)
                 .AsNoTracking()
                 .GetPage(currentPage, pageSize)
                 .ToListAsync(cancellationToken);

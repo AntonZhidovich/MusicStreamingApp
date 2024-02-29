@@ -16,7 +16,7 @@ namespace MusicService.Application.Specifications
 
         public ReleasesFromAuthorSpecification(string author)
         {
-            OrderBy = release => release.Name;
+            OrderByDescending = release => release.ReleasedAt;
             Release release = new Release();
 
             Includes = new List<string>

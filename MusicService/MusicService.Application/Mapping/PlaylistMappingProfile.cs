@@ -10,10 +10,21 @@ namespace MusicService.Application.Mapping
         public PlaylistMappingProfile()
         {
             CreateMap<Playlist, PlaylistShortDto>()
+                .ForMember(dest => dest.Id, options => options.MapFrom(source => source.Id))
+                .ForMember(dest => dest.Name, options => options.MapFrom(source => source.Name))
+                .ForMember(dest => dest.CreatedAt, options => options.MapFrom(source => source.CreatedAt))
                 .ForMember(dest => dest.SongsCount, options => options.MapFrom(source => source.SongIds.Count));
 
-            CreateMap<CreatePlaylistRequest, Playlist>();
-            CreateMap<Playlist, PlaylistFullDto>();
+            CreateMap<CreatePlaylistRequest, Playlist>()
+                .ForMember(dest => dest.Id, options => options.MapFrom(source => source.Id))
+                .ForMember(dest => dest.Name, options => options.MapFrom(source => source.Name))
+                .ForMember(dest => dest.CreatedAt, options => options.MapFrom(source => source.CreatedAt))
+                .ForMember(dest => dest.SongIds, options => options.MapFrom(source => source.SongIds));
+
+            CreateMap<Playlist, PlaylistFullDto>()
+                .ForMember(dest => dest.Id, options => options.MapFrom(source => source.Id))
+                .ForMember(dest => dest.Name, options => options.MapFrom(source => source.Name))
+                .ForMember(dest => dest.CreatedAt, options => options.MapFrom(source => source.CreatedAt));
         }
     }
 }
