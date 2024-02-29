@@ -11,8 +11,21 @@ namespace SubscriptionService.DataAccess.Repositories.Implementations
         private ISubscriptionRepository? _subscriptions = null;
         private ITariffPlanRepository? _tariffPlans = null;
 
-        public ISubscriptionRepository Subscriptions => _subscriptions ??= _serviceProvider.GetService<ISubscriptionRepository>()!;
-        public ITariffPlanRepository TariffPlans => _tariffPlans ??= _serviceProvider.GetService<ITariffPlanRepository>()!;
+        public ISubscriptionRepository Subscriptions 
+        {
+            get 
+            { 
+                return _subscriptions ??= _serviceProvider.GetService<ISubscriptionRepository>()!; 
+            } 
+        }
+
+        public ITariffPlanRepository TariffPlans
+        {
+            get
+            {
+                return _tariffPlans ??= _serviceProvider.GetService<ITariffPlanRepository>()!;
+            }
+        }
 
         public UnitOfWork(
             SubscriptionDbContext dbContext,
