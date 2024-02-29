@@ -6,7 +6,6 @@ using SubscriptionService.BusinessLogic.Models;
 using SubscriptionService.BusinessLogic.Models.Subscription;
 using SubscriptionService.DataAccess.Entities;
 using SubscriptionService.DataAccess.Repositories.Interfaces;
-using static SubscriptionService.Contracts.GrpcClients.UserService;
 
 namespace SubscriptionService.BusinessLogic.Features.Queries.GetAllSubscriptions
 {
@@ -36,13 +35,12 @@ namespace SubscriptionService.BusinessLogic.Features.Queries.GetAllSubscriptions
 
             var pageResponse = subscriptions.GetPageResponse<Subscription, SubscriptionWithUserNameDto>(count, request.GetPageRequest, _mapper);
 
-            var users = await _userServiceClient.GetUsersInfoAsync(subscriptions.Select(subscription => subscription.UserId),
-                cancellationToken);
+            var usernamesById = (await _userServiceClient.GetIdUserNameMap(subscriptions.Select(subscription => subscription.UserId),
+                cancellationToken: cancellationToken)).UsernamesById;
 
             foreach (var subscription in pageResponse.Items)
             {
-                var user = users.FirstOrDefault(user => user.Id == subscription.UserId)!;
-                subscription.UserName = user.UserName;
+                subscription.UserName = usernamesById[subscription.UserId];
             }
 
             return pageResponse;

@@ -23,14 +23,14 @@ namespace SubscriptionService.BusinessLogic.Features.Services.Implementations
             return response.UserExists;
         }
 
-        public async Task<IEnumerable<UserInfo>> GetUsersInfoAsync(IEnumerable<string> ids, CancellationToken cancellationToken = default)
+        public async Task<GetIdUserNameMapResponse> GetIdUserNameMap(IEnumerable<string> ids, CancellationToken cancellationToken = default)
         {
-            var request = new GetUsersByIdRequest();
+            var request = new GetIdUserNameMapRequest();
             request.Ids.AddRange(ids);
 
-            var response = await _userServiceClient.GetUsersByIdAsync(request, cancellationToken: cancellationToken);
+            var response = await _userServiceClient.GetIdUserNameMapAsync(request, cancellationToken: cancellationToken);
 
-            return response.Users;
+            return response;
         }
 
         public async Task<UserInfo> GetUserInfoAsync(string id, CancellationToken cancellationToken = default)

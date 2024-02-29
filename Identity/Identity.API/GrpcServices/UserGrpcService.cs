@@ -44,13 +44,16 @@ namespace Identity.API.GrpcServices
             return response;
         }
 
-        public override async Task<GetUsersByIdResponse> GetUsersById(GetUsersByIdRequest request, ServerCallContext context)
+        public override async Task<GetIdUserNameMapResponse> GetIdUserNameMap(GetIdUserNameMapRequest request, ServerCallContext context)
         {
-            var response = new GetUsersByIdResponse();
+            var response = new GetIdUserNameMapResponse();
 
             var users = await _userService.GetByIdAsync(request.Ids);
 
-            response.Users.AddRange(_mapper.Map<IEnumerable<UserInfo>>(users));
+            foreach (var user in users)
+            {
+                response.UsernamesById.Add(user.Id, user.UserName);
+            }
 
             return response;
         }

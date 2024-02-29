@@ -5,7 +5,7 @@ option csharp_namespace = "Identity.BusinessLogic.GrpcServers";
 service UserService {
     rpc UserWithIdExists(UserWithIdExistsRequest) returns (UserWithIdExistsResponse) {}
     rpc GetUserById(GetUserByIdRequest) returns (GetUserByIdResponse) {}
-    rpc GetUsersById(GetUsersByIdRequest) returns (GetUsersByIdResponse) {}
+    rpc GetIdUserNameMap(GetIdUserNameMapRequest) returns (GetIdUserNameMapResponse) {}
 }
 
 message UserWithIdExistsRequest{
@@ -16,7 +16,7 @@ message GetUserByIdRequest{
     string id = 1;
 }
 
-message GetUsersByIdRequest{
+message GetIdUserNameMapRequest{
     repeated string ids = 1;
 }
 
@@ -29,8 +29,8 @@ message GetUserByIdResponse {
     string error = 2;
 }
 
-message GetUsersByIdResponse{
-    repeated UserInfo users = 1;
+message GetIdUserNameMapResponse{
+    map<string,string> usernames_by_id = 1;
 }
 
 message UserInfo{
