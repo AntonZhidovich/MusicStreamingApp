@@ -36,6 +36,18 @@ namespace Identity.DataAccess.Repositories.Implementations
             return _userManager.Users.FirstOrDefaultAsync(x => x.Email == email);
         }
 
+        public async Task<User?> GetUserByIdAsync(string id)
+        {
+            return await _userManager.Users.FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        public async Task<IEnumerable<User>> GetByIdAsync(IEnumerable<string> ids)
+        {
+            return await _userManager.Users
+                .Where(user => ids.Contains(user.Id))
+                .ToListAsync();
+        }
+
         public async Task<IdentityResult> AddUserAsync(User user, string password)
         {
             return await _userManager.CreateAsync(user, password);

@@ -28,6 +28,7 @@ namespace Identity.API
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
+            app.MapGrpcServices();
             app.MapControllers();
             app.Run();
         }

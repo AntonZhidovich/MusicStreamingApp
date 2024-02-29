@@ -39,6 +39,7 @@ namespace Identity.API.Extensions
             services.AddScoped<ISignInService, SignInService>();
             services.AddScoped<IRoleService, RoleService>();
             services.AddKafka();
+            services.AddGrpc();
 
             return services;
         }

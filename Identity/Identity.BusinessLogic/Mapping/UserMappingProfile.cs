@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Identity.BusinessLogic.GrpcServers;
 using Identity.BusinessLogic.Models;
 using Identity.BusinessLogic.Models.TokenService;
 using Identity.BusinessLogic.Models.UserService;
@@ -16,6 +17,7 @@ namespace Identity.BusinessLogic.Mapping
             CreateMap<UpdateUserRequest, User>();
             CreateMap<UserDto, GetTokensRequest>().ForMember(s => s.Roles, opt => opt.Ignore());
             CreateMap<IdentityRole, RoleDto>();
+            CreateMap<UserDto, UserInfo>();
         }
     }
 }

@@ -4,7 +4,7 @@ using SubscriptionService.BusinessLogic.Models.Subscription;
 
 namespace SubscriptionService.BusinessLogic.Features.Queries.GetSubscriptionWithPlan
 {
-    public class GetSubscriptionWithPlanQuery : IRequest<PageResponse<GetSubscriptionDto>>
+    public class GetSubscriptionWithPlanQuery : IRequest<PageResponse<SubscriptionWithUserNameDto>>
     {
         public GetPageRequest PageRequest { get; set; }
         public string TariffPlanName { get; set; }

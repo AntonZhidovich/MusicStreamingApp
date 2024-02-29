@@ -1,13 +1,17 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.Extensions.Options;
 using SubscriptionService.BusinessLogic.Constants;
 using SubscriptionService.BusinessLogic.Exceptions;
 using SubscriptionService.BusinessLogic.Features.Producers;
+using SubscriptionService.BusinessLogic.Features.Services.Interfaces;
 using SubscriptionService.BusinessLogic.Models.Messages;
 using SubscriptionService.BusinessLogic.Models.Subscription;
+using SubscriptionService.Contracts.GrpcClients;
 using SubscriptionService.DataAccess.Constants;
 using SubscriptionService.DataAccess.Entities;
 using SubscriptionService.DataAccess.Repositories.Interfaces;
+using static SubscriptionService.Contracts.GrpcClients.UserService;
 
 namespace SubscriptionService.BusinessLogic.Features.Commands.MakeSubscription
 {
@@ -17,16 +21,29 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.MakeSubscription
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IProducerService _producerService;
+        private readonly IUserServiceGrpcClient _userServiceClient;
 
-        public MakeSubscriptionCommandHandler(IUnitOfWork unitOfWork, IMapper mapper, IProducerService producerService)
+        public MakeSubscriptionCommandHandler(
+            IUnitOfWork unitOfWork, 
+            IMapper mapper, 
+            IProducerService producerService, 
+            IUserServiceGrpcClient userServiceClient)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _producerService = producerService;
+            _userServiceClient = userServiceClient;
         }
 
         public async Task<GetSubscriptionDto> Handle(MakeSubscriptionCommand request, CancellationToken cancellationToken)
         {
+            var userExists = await _userServiceClient.UserWithSuchIdExistsAsync(request.Dto.UserId, cancellationToken);
+
+            if (!userExists)
+            {
+                throw new NotFoundException(ExceptionMessages.userNotFound);
+            }
+
             var tariffPlan = await _unitOfWork.TariffPlans.GetByIdAsync(
                 request.Dto.TariffPlanId,
                 cancellationToken);

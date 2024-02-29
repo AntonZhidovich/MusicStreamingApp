@@ -54,6 +54,24 @@ namespace Identity.BusinessLogic.Services.Implementations
             return _mapper.Map<UserDto>(user);
         }
 
+
+        public async Task<IEnumerable<UserDto>> GetByIdAsync(IEnumerable<string> ids)
+        {
+            return _mapper.Map<IEnumerable<UserDto>>(await _userRepository.GetByIdAsync(ids));
+        }
+
+        public async Task<UserDto> GetByIdAsync(string id)
+        {
+            var user = await _userRepository.GetUserByIdAsync(id);
+
+            if (user == null)
+            {
+                throw new NotFoundException(ExceptionMessages.UserNotFound);
+            }
+
+            return _mapper.Map<UserDto>(user);
+        }
+
         public async Task<UserDto> RegisterAsync(RegisterUserRequest request)
         {
             var user = _mapper.Map<User>(request);
@@ -111,6 +129,13 @@ namespace Identity.BusinessLogic.Services.Implementations
             var user = await GetDomainUserByEmailAsync(request.Email);
 
             return await _userRepository.CheckPasswordAsync(user, request.Password);
+        }
+
+        public async Task<bool> UserWithIdExists(string id)
+        {
+            var user = await _userRepository.GetUserByIdAsync(id);
+
+            return user != null;
         }
 
         public async Task AddToRoleAsync(string email, RoleDto roleDto)

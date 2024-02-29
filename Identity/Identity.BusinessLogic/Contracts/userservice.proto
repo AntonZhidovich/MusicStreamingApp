@@ -1,0 +1,42 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "Identity.BusinessLogic.GrpcServers";
+
+service UserService {
+    rpc UserWithIdExists(UserWithIdExistsRequest) returns (UserWithIdExistsResponse) {}
+    rpc GetUserById(GetUserByIdRequest) returns (GetUserByIdResponse) {}
+    rpc GetUsersById(GetUsersByIdRequest) returns (GetUsersByIdResponse) {}
+}
+
+message UserWithIdExistsRequest{
+    string id = 1;
+}
+
+message GetUserByIdRequest{
+    string id = 1;
+}
+
+message GetUsersByIdRequest{
+    repeated string ids = 1;
+}
+
+message UserWithIdExistsResponse{
+    bool user_exists = 1; 
+}
+
+message GetUserByIdResponse {
+    UserInfo user = 1;
+    string error = 2;
+}
+
+message GetUsersByIdResponse{
+    repeated UserInfo users = 1;
+}
+
+message UserInfo{
+    string id = 1;
+    string user_name = 2;
+    string email = 3;
+    string first_name = 4;
+    string last_name = 5;
+}

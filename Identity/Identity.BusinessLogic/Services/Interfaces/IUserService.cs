@@ -8,7 +8,10 @@ namespace Identity.BusinessLogic.Services.Interfaces
         Task<UsersPageResponse> GetAllAsync(GetUsersRequest request);
         Task<UsersPageResponse> GetFromRegionAsync(GetUsersRequest request, string region);
         Task<UserDto> GetByEmailAsync(string email);
+        Task<UserDto> GetByIdAsync(string id);
+        Task<IEnumerable<UserDto>> GetByIdAsync(IEnumerable<string> ids);
         Task<bool> CheckPasswordAsync(CheckPasswordRequest request);
+        Task<bool> UserWithIdExists(string id);
         Task<UserDto> RegisterAsync(RegisterUserRequest request);
         Task<UserDto> UpdateAsync(string email, UpdateUserRequest request);
         Task DeleteAsync(DeleteUserRequest request);

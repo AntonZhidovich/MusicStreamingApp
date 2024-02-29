@@ -23,6 +23,8 @@ namespace SubscriptionService.BusinessLogic.Mapping
                 .ForMember(dest => dest.MaxPlaylistCount, options => options.MapFrom(src => src.TariffPlan.MaxPlaylistsCount));
 
             CreateMap<Subscription, SubscriptionCanceledMessage>();
+
+            CreateMap<Subscription, SubscriptionWithUserNameDto>();
         }
     }
 }

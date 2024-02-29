@@ -12,9 +12,12 @@ using SubscriptionService.BusinessLogic.Features.Behaviors;
 using SubscriptionService.BusinessLogic.Features.Consumers;
 using SubscriptionService.BusinessLogic.Features.Producers;
 using SubscriptionService.BusinessLogic.Features.Queries.GetAllTariffPlans;
+using SubscriptionService.BusinessLogic.Features.Services.Implementations;
+using SubscriptionService.BusinessLogic.Features.Services.Interfaces;
 using SubscriptionService.BusinessLogic.Mapping;
 using SubscriptionService.BusinessLogic.Options;
 using SubscriptionService.BusinessLogic.Validators;
+using SubscriptionService.Contracts.GrpcClients;
 using SubscriptionService.DataAccess.Data;
 using SubscriptionService.DataAccess.Repositories.Implementations;
 using SubscriptionService.DataAccess.Repositories.Interfaces;
@@ -31,6 +34,7 @@ namespace SubscriptionService.API.Extensions
             services.AddMediatR(config => config.RegisterServicesFromAssemblyContaining(typeof(GetAllTariffPlansQuery)));
             services.AddExceptionHandler<GlobalExceptionHandler>();
             services.AddKafka();
+            services.AddScoped<IUserServiceGrpcClient, UserServiceGrpcClient>();
 
             return services;
         }
@@ -133,6 +137,16 @@ namespace SubscriptionService.API.Extensions
             });
 
             services.AddScoped<IProducerService, ProducerService>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddGrpcClients(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddGrpcClient<UserService.UserServiceClient>(options =>
+            {
+                options.Address = new Uri(configuration["GrpcConfig:Uri"]!);
+            });
 
             return services;
         }

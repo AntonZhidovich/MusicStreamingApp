@@ -16,6 +16,7 @@ namespace SubscriptionService.API
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwagger();
+            builder.Services.AddGrpcClients(builder.Configuration);
 
             var app = builder.Build();
             app.Services.MigrateDatabase<SubscriptionDbContext>();
