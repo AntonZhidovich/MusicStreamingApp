@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using MusicService.Application.GrpcServers;
 using MusicService.Application.Models.AuthorService;
 using MusicService.Application.Models.DTOs;
 using MusicService.Application.Models.Messages;
@@ -23,6 +24,8 @@ namespace MusicService.Application.Mapping
 
             CreateMap<UserUpdatedMessage, User>()
                 .ForMember(dest => dest.UserName, options => options.MapFrom(src => src.NewUserName));
+
+            CreateMap<AddUserRequest, User>();
         }
     }
 }

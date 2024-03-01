@@ -17,6 +17,13 @@ namespace MusicService.API
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.ConfigureSwagger();
+            builder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(config =>
+                {
+                    config.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                });
+            });
 
             var app = builder.Build();
             app.Services.MigrateDatabase<MusicDbContext>();
@@ -32,6 +39,8 @@ namespace MusicService.API
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
+            app.MapGrpcServices();
+            app.UseCors();
             app.Run();
         }
     }

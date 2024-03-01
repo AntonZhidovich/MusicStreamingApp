@@ -1,0 +1,16 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "MusicService.Application.GrpcServers";
+
+service MusicUserService{
+    rpc AddUser(AddUserRequest) returns (AddUserResponse) {}
+}
+
+message AddUserRequest{
+    string id = 1;
+    string user_name = 2;
+    repeated string roles = 3;
+}
+
+message AddUserResponse{
+}

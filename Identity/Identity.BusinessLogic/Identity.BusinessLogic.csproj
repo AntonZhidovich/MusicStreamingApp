@@ -23,4 +23,8 @@
     <Protobuf Include="Contracts\userservice.proto" GrpcServices="Server" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Protobuf Include="Contracts\musicuserservice.proto" GrpcServices="Client" />
+  </ItemGroup>
+  
 </Project>

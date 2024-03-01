@@ -16,7 +16,8 @@ namespace Identity.API.GrpcServices
             _mapper = mapper;
         }
 
-        public override async Task<UserWithIdExistsResponse> UserWithIdExists(UserWithIdExistsRequest request, ServerCallContext context)
+        public override async Task<UserWithIdExistsResponse> UserWithIdExists(UserWithIdExistsRequest request, 
+            ServerCallContext context)
         {
             var response = new UserWithIdExistsResponse
             {

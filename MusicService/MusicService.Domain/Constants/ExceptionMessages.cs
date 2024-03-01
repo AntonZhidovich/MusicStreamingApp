@@ -3,6 +3,7 @@
     public static class ExceptionMessages
     {
         public const string UserNotFound = "No user was found.";
+        public const string UserAlreadyExists = "User already exists";
         public const string AuthorNotFound = "No author was found.";
         public const string GenreNotFound = "No genre was found.";
         public const string ReleaseNotFound = "No releases was found.";

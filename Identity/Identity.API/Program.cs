@@ -15,6 +15,14 @@ namespace Identity.API
             builder.Services.AddControllers();
             builder.Services.AddServices();
             builder.Services.ConfigureSwagger();
+            builder.Services.AddGrpcClients(builder.Configuration);
+            builder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(config =>
+                {
+                    config.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                });
+            });
 
             var app = builder.Build();
             app.UseMiddleware();
@@ -30,6 +38,7 @@ namespace Identity.API
             app.UseAuthorization();
             app.MapGrpcServices();
             app.MapControllers();
+            app.UseCors();
             app.Run();
         }
     }

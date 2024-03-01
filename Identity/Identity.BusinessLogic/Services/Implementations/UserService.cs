@@ -17,15 +17,18 @@ namespace Identity.BusinessLogic.Services.Implementations
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
         private readonly IProducerService _producerService;
+        private readonly IMusicUserGrpcServiceClient _musicUserServiceClient;
 
         public UserService(
             IUserRepository userRepository,
             IMapper mapper,
-            IProducerService producerService)
+            IProducerService producerService,
+            IMusicUserGrpcServiceClient musicUserServiceClient)
         {
             _userRepository = userRepository;
             _mapper = mapper;
             _producerService = producerService;
+            _musicUserServiceClient = musicUserServiceClient;
         }
 
         public async Task<UsersPageResponse> GetAllAsync(GetUsersRequest request)
@@ -84,6 +87,8 @@ namespace Identity.BusinessLogic.Services.Implementations
             }
 
             await _userRepository.AddUserToRoleAsync(user, UserRoles.listener);
+
+            await _musicUserServiceClient.AddUserAsync(user, new List<string> { UserRoles.listener });
 
             return _mapper.Map<UserDto>(user);
         }

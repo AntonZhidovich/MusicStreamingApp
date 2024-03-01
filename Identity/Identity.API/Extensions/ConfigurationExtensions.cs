@@ -2,6 +2,7 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Identity.API.ExceptionHandlers;
+using Identity.BusinessLogic.GrpcClients;
 using Identity.BusinessLogic.Mapping;
 using Identity.BusinessLogic.Options;
 using Identity.BusinessLogic.Services.Implementations;
@@ -39,6 +40,7 @@ namespace Identity.API.Extensions
             services.AddScoped<ISignInService, SignInService>();
             services.AddScoped<IRoleService, RoleService>();
             services.AddKafka();
+            services.AddScoped<IMusicUserGrpcServiceClient, MusicUserGrpcServiceClient>();
             services.AddGrpc();
 
             return services;
@@ -137,6 +139,16 @@ namespace Identity.API.Extensions
             });
 
             services.AddScoped<IProducerService, ProducerService>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddGrpcClients(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddGrpcClient<MusicUserService.MusicUserServiceClient>(options =>
+            {
+                options.Address = new Uri(configuration["GrpcConfig:Uri"]!);
+            });
 
             return services;
         }

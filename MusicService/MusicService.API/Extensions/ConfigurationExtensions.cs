@@ -45,6 +45,7 @@ namespace MusicService.API.Extensions
             services.AddScoped<IReleaseService, ReleaseService>();
             services.AddScoped<IPlaylistService, PlaylistService>();
             services.AddKafka();
+            services.AddGrpc();
 
             return services;
         }
