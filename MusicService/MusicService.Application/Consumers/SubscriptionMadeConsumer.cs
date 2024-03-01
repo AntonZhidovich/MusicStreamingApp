@@ -12,24 +12,23 @@ namespace MusicService.Application.Consumers
     public class SubscriptionMadeConsumer : BaseConsumerService<SubscriptionMadeMessage>
     {
         protected override string Topic { get; set; }
-        protected override Func<SubscriptionMadeMessage, CancellationToken, Task> MessageHandler { get; set; }
 
         public SubscriptionMadeConsumer(IOptions<ConsumerConfig> config, IOptions<KafkaTopics> topics, IServiceProvider serviceProvider, IMapper mapper)
            : base(config.Value, serviceProvider, mapper)
         {
             Topic = topics.Value.SubscriptionMade;
+        }
 
-            MessageHandler = async (message, cancellationToken) =>
-            {
-                using var scope = _serviceProvider.CreateScope();
-                var playlistRepository = scope.ServiceProvider.GetService<IPlaylistRepository>()!;
-                var userPlaylistTariff = _mapper.Map<UserPlaylistTariff>(message);
-                userPlaylistTariff.Id = Guid.NewGuid().ToString();
+        protected override async Task HandleMessage(SubscriptionMadeMessage message, CancellationToken cancellationToken = default)
+        {
+            using var scope = _serviceProvider.CreateScope();
+            var playlistRepository = scope.ServiceProvider.GetService<IPlaylistRepository>()!;
+            var userPlaylistTariff = _mapper.Map<UserPlaylistTariff>(message);
+            userPlaylistTariff.Id = Guid.NewGuid().ToString();
 
-                await playlistRepository.UpsertUserPlaylistTariffAsync(userPlaylistTariff, cancellationToken);
+            await playlistRepository.UpsertUserPlaylistTariffAsync(userPlaylistTariff, cancellationToken);
 
-                _consumer.Commit();
-            };
+            _consumer.Commit();
         }
     }
 }

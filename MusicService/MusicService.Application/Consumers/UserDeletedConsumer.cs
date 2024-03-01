@@ -11,39 +11,37 @@ namespace MusicService.Application.Consumers
     public class UserDeletedConsumer : BaseConsumerService<UserDeletedMessage>
     {
         protected override string Topic { get; set; }
-        protected override Func<UserDeletedMessage, CancellationToken, Task> MessageHandler { get; set; }
 
         public UserDeletedConsumer(IOptions<ConsumerConfig> config, IOptions<KafkaTopics> topics, IServiceProvider serviceProvider, IMapper mapper)
            : base(config.Value, serviceProvider, mapper)
         {
             Topic = topics.Value.UserDeleted;
-
-            MessageHandler = async (message, cancellationToken)=>
-            {
-                using var scope = _serviceProvider.CreateScope();
-                var unitOfWork = scope.ServiceProvider.GetService<IUnitOfWork>()!;
-
-                var user = await unitOfWork.Users.GetByIdAsync(message.Id, cancellationToken);
-
-                if (user == null)
-                {
-                    _consumer.Commit();
-                    return;
-                }
-
-                unitOfWork.Users.Delete(user);
-
-                await unitOfWork.CommitAsync(cancellationToken);
-
-                var playlistRepository = scope.ServiceProvider.GetService<IPlaylistRepository>()!;
-
-                await playlistRepository.DeleteUserPlaylistsAsync(user.Id, cancellationToken);
-
-                await playlistRepository.DeleteUserPlaylistTariffAsync(user.Id, cancellationToken);
-
-                _consumer.Commit();
-            };
         }
 
+        protected override async Task HandleMessage(UserDeletedMessage message, CancellationToken cancellationToken = default)
+        {
+            using var scope = _serviceProvider.CreateScope();
+            var unitOfWork = scope.ServiceProvider.GetService<IUnitOfWork>()!;
+
+            var user = await unitOfWork.Users.GetByIdAsync(message.Id, cancellationToken);
+
+            if (user == null)
+            {
+                _consumer.Commit();
+                return;
+            }
+
+            unitOfWork.Users.Delete(user);
+
+            await unitOfWork.CommitAsync(cancellationToken);
+
+            var playlistRepository = scope.ServiceProvider.GetService<IPlaylistRepository>()!;
+
+            await playlistRepository.DeleteUserPlaylistsAsync(user.Id, cancellationToken);
+
+            await playlistRepository.DeleteUserPlaylistTariffAsync(user.Id, cancellationToken);
+
+            _consumer.Commit();
+        }
     }
 }

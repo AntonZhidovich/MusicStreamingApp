@@ -9,7 +9,6 @@ namespace MusicService.Application.Consumers
         where TValue : class
     {
         protected abstract string Topic { get; set; }
-        protected abstract Func<TValue, CancellationToken, Task> MessageHandler { get; set; }
 
         protected readonly IConsumer<string, string> _consumer;
         protected readonly IServiceProvider _serviceProvider;
@@ -25,10 +24,7 @@ namespace MusicService.Application.Consumers
             _mapper = mapper;
         }
 
-        public override async Task StartAsync(CancellationToken cancellationToken)
-        {
-            await base.StartAsync(cancellationToken);
-        }
+        protected abstract Task HandleMessage(TValue message, CancellationToken cancellationToken = default);
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -44,7 +40,7 @@ namespace MusicService.Application.Consumers
                 var serializedMessage = _consumer.Consume(cancellationToken);
                 var message = JsonSerializer.Deserialize<TValue>(serializedMessage.Message.Value)!;
 
-                await MessageHandler(message, cancellationToken);
+                await HandleMessage(message, cancellationToken);
             }
         }
 

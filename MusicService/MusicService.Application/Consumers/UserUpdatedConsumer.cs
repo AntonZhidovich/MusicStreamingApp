@@ -11,33 +11,32 @@ namespace MusicService.Application.Consumers
     public class UserUpdatedConsumer : BaseConsumerService<UserUpdatedMessage>
     {
         protected override string Topic { get; set; }
-        protected override Func<UserUpdatedMessage, CancellationToken, Task> MessageHandler { get; set; }
 
         public UserUpdatedConsumer(IOptions<ConsumerConfig> config, IOptions<KafkaTopics> topics, IServiceProvider serviceProvider, IMapper mapper)
             : base(config.Value, serviceProvider, mapper)
         {
             Topic = topics.Value.UserUpdated;
+        }
 
-            MessageHandler = async (message, cancellationToken) =>
+        protected override async Task HandleMessage(UserUpdatedMessage message, CancellationToken cancellationToken = default)
+        {
+            using var scope = _serviceProvider.CreateScope();
+            var unitOfWork = scope.ServiceProvider.GetService<IUnitOfWork>()!;
+
+            var user = await unitOfWork.Users.GetByIdAsync(message.Id, cancellationToken);
+
+            if (user == null)
             {
-                using var scope = _serviceProvider.CreateScope();
-                var unitOfWork = scope.ServiceProvider.GetService<IUnitOfWork>()!;
-
-                var user = await unitOfWork.Users.GetByIdAsync(message.Id, cancellationToken);
-
-                if (user == null)
-                {
-                    _consumer.Commit();
-                    return;
-                }
-
-                _mapper.Map(message, user);
-                unitOfWork.Users.Update(user);
-
-                await unitOfWork.CommitAsync(cancellationToken);
-
                 _consumer.Commit();
-            };
+                return;
+            }
+
+            _mapper.Map(message, user);
+            unitOfWork.Users.Update(user);
+
+            await unitOfWork.CommitAsync(cancellationToken);
+
+            _consumer.Commit();
         }
     }
 }

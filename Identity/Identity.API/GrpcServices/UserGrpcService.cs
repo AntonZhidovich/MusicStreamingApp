@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Grpc.Core;
+using Identity.BusinessLogic.Exceptions;
 using Identity.BusinessLogic.GrpcServers;
 using Identity.BusinessLogic.Services.Interfaces;
 
@@ -37,7 +38,7 @@ namespace Identity.API.GrpcServices
 
                 response.User = _mapper.Map<UserInfo>(user);
             }
-            catch (Exception exception)
+            catch (NotFoundException exception)
             {
                 response.Error = exception.Message;
             }
