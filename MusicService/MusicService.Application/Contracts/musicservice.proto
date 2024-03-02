@@ -1,6 +1,6 @@
 ﻿syntax = "proto3";
 
-option csharp_namespace = "MusicService.Application.GrpcServers";
+option csharp_namespace = "MusicService.Grpc";
 
 service MusicUserService{
     rpc AddUser(AddUserRequest) returns (AddUserResponse) {}

@@ -1,4 +1,5 @@
-﻿using MusicService.API.GrpcServices;
+﻿using Identity.Grpc;
+using MusicService.API.GrpcServices;
 
 namespace MusicService.API.Extensions
 {

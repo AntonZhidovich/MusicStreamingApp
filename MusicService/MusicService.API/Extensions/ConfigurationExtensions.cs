@@ -1,6 +1,7 @@
 ﻿using Confluent.Kafka;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Identity.Grpc;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -44,6 +45,7 @@ namespace MusicService.API.Extensions
             services.AddScoped<ISongService, SongService>();
             services.AddScoped<IReleaseService, ReleaseService>();
             services.AddScoped<IPlaylistService, PlaylistService>();
+            services.AddScoped<IUserServiceGrpcClient, UserServiceGrpcClient>();
             services.AddKafka();
             services.AddGrpc();
 
@@ -137,12 +139,37 @@ namespace MusicService.API.Extensions
             return services;
         }
 
-        private static IServiceCollection AddKafka(this IServiceCollection services)
+        public static IServiceCollection AddKafka(this IServiceCollection services)
         {
             services.AddHostedService<UserDeletedConsumer>();
             services.AddHostedService<UserUpdatedConsumer>();
             services.AddHostedService<SubscriptionMadeConsumer>();
             services.AddHostedService<SubscriptionCanceledConsumer>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddGrpcClients(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddGrpcClient<UserService.UserServiceClient>(options =>
+            {
+                options.Address = new Uri(configuration["GrpcConfig:Identity:Uri"]!);
+            });
+
+            return services;
+        }
+
+        public static IServiceCollection AddCorsPolicy(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(config =>
+                {
+                config.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+                });
+            });
 
             return services;
         }

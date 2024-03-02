@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using Identity.BusinessLogic.GrpcClients;
 using Identity.BusinessLogic.Services.Interfaces;
 using Identity.DataAccess.Entities;
+using MusicService.Grpc;
 
 namespace Identity.BusinessLogic.Services.Implementations
 {

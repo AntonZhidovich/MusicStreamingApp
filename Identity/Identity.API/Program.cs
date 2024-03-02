@@ -16,13 +16,7 @@ namespace Identity.API
             builder.Services.AddServices();
             builder.Services.ConfigureSwagger();
             builder.Services.AddGrpcClients(builder.Configuration);
-            builder.Services.AddCors(options =>
-            {
-                options.AddDefaultPolicy(config =>
-                {
-                    config.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-                });
-            });
+            builder.Services.AddCorsPolicy(builder.Configuration);
 
             var app = builder.Build();
             app.UseMiddleware();

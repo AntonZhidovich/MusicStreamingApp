@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using MusicService.Application.GrpcServers;
 using MusicService.Application.Models.AuthorService;
 using MusicService.Application.Models.DTOs;
 using MusicService.Application.Models.Messages;
 using MusicService.Domain.Entities;
+using MusicService.Grpc;
 
 namespace MusicService.Application.Mapping
 {

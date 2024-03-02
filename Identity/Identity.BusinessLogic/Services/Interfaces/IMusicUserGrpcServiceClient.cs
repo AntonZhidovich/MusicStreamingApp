@@ -1,5 +1,5 @@
-﻿using Identity.BusinessLogic.GrpcClients;
-using Identity.DataAccess.Entities;
+﻿using Identity.DataAccess.Entities;
+using MusicService.Grpc;
 
 namespace Identity.BusinessLogic.Services.Interfaces
 {

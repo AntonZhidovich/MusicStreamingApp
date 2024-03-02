@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using Grpc.Core;
-using MusicService.Application.GrpcServers;
 using MusicService.Domain.Constants;
 using MusicService.Domain.Entities;
 using MusicService.Domain.Interfaces;
+using MusicService.Grpc;
 
 namespace MusicService.API.GrpcServices
 {

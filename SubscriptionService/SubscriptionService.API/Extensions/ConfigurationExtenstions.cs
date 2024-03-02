@@ -1,6 +1,6 @@
 ﻿using Confluent.Kafka;
 using FluentValidation;
-using FluentValidation.AspNetCore;
+using Identity.Grpc;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +17,6 @@ using SubscriptionService.BusinessLogic.Features.Services.Interfaces;
 using SubscriptionService.BusinessLogic.Mapping;
 using SubscriptionService.BusinessLogic.Options;
 using SubscriptionService.BusinessLogic.Validators;
-using SubscriptionService.Contracts.GrpcClients;
 using SubscriptionService.DataAccess.Data;
 using SubscriptionService.DataAccess.Repositories.Implementations;
 using SubscriptionService.DataAccess.Repositories.Interfaces;
@@ -145,7 +144,7 @@ namespace SubscriptionService.API.Extensions
         {
             services.AddGrpcClient<UserService.UserServiceClient>(options =>
             {
-                options.Address = new Uri(configuration["GrpcConfig:Uri"]!);
+                options.Address = new Uri(configuration["GrpcConfig:Identity:Uri"]!);
             });
 
             return services;

@@ -1,11 +1,10 @@
 ﻿using AutoMapper;
-using Identity.BusinessLogic.GrpcClients;
-using Identity.BusinessLogic.GrpcServers;
 using Identity.BusinessLogic.Models;
 using Identity.BusinessLogic.Models.TokenService;
 using Identity.BusinessLogic.Models.UserService;
 using Identity.DataAccess.Entities;
 using Microsoft.AspNetCore.Identity;
+using MusicService.Grpc;
 
 namespace Identity.BusinessLogic.Mapping
 {
@@ -18,7 +17,6 @@ namespace Identity.BusinessLogic.Mapping
             CreateMap<UpdateUserRequest, User>();
             CreateMap<UserDto, GetTokensRequest>().ForMember(s => s.Roles, opt => opt.Ignore());
             CreateMap<IdentityRole, RoleDto>();
-            CreateMap<UserDto, UserInfo>();
             CreateMap<User, AddUserRequest>();
         }
     }

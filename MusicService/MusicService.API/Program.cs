@@ -17,13 +17,8 @@ namespace MusicService.API
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.ConfigureSwagger();
-            builder.Services.AddCors(options =>
-            {
-                options.AddDefaultPolicy(config =>
-                {
-                    config.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-                });
-            });
+            builder.Services.AddGrpcClients(builder.Configuration);
+            builder.Services.AddCorsPolicy(builder.Configuration);
 
             var app = builder.Build();
             app.Services.MigrateDatabase<MusicDbContext>();

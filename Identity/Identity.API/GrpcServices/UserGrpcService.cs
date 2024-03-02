@@ -1,20 +1,18 @@
 ﻿using AutoMapper;
 using Grpc.Core;
-using Identity.BusinessLogic.Exceptions;
-using Identity.BusinessLogic.GrpcServers;
+using Identity.BusinessLogic.Models.UserService;
 using Identity.BusinessLogic.Services.Interfaces;
+using Identity.Grpc;
 
 namespace Identity.API.GrpcServices
 {
     public class UserGrpcService : UserService.UserServiceBase
     {
         private readonly IUserService _userService;
-        private readonly IMapper _mapper;
 
         public UserGrpcService(IUserService userService, IMapper mapper)
         {
             _userService = userService;
-            _mapper = mapper;
         }
 
         public override async Task<UserWithIdExistsResponse> UserWithIdExists(UserWithIdExistsRequest request, 
@@ -24,24 +22,6 @@ namespace Identity.API.GrpcServices
             {
                 UserExists = await _userService.UserWithIdExists(request.Id)
             };
-
-            return response;
-        }
-
-        public override async Task<GetUserByIdResponse> GetUserById(GetUserByIdRequest request, ServerCallContext context)
-        {
-            var response = new GetUserByIdResponse();
-
-            try
-            {
-                var user = await _userService.GetByIdAsync(request.Id);
-
-                response.User = _mapper.Map<UserInfo>(user);
-            }
-            catch (NotFoundException exception)
-            {
-                response.Error = exception.Message;
-            }
 
             return response;
         }
@@ -58,6 +38,15 @@ namespace Identity.API.GrpcServices
             }
 
             return response;
+        }
+
+        public override async Task<UserIsInRoleResponse> UserIsInRole(UserIsInRoleRequest request, ServerCallContext context)
+        {
+            var user = await _userService.GetByIdAsync(request.Id);
+
+            var roles = await _userService.GetRolesAsync(new GetUserRolesRequest { Email = user.Email });
+
+            return new UserIsInRoleResponse { UserIsInRole = roles.Contains(request.RoleName) };
         }
     }
 }

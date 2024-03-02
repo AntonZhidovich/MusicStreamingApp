@@ -1,17 +1,14 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.Extensions.Options;
 using SubscriptionService.BusinessLogic.Constants;
 using SubscriptionService.BusinessLogic.Exceptions;
 using SubscriptionService.BusinessLogic.Features.Producers;
 using SubscriptionService.BusinessLogic.Features.Services.Interfaces;
 using SubscriptionService.BusinessLogic.Models.Messages;
 using SubscriptionService.BusinessLogic.Models.Subscription;
-using SubscriptionService.Contracts.GrpcClients;
 using SubscriptionService.DataAccess.Constants;
 using SubscriptionService.DataAccess.Entities;
 using SubscriptionService.DataAccess.Repositories.Interfaces;
-using static SubscriptionService.Contracts.GrpcClients.UserService;
 
 namespace SubscriptionService.BusinessLogic.Features.Commands.MakeSubscription
 {
@@ -37,7 +34,7 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.MakeSubscription
 
         public async Task<GetSubscriptionDto> Handle(MakeSubscriptionCommand request, CancellationToken cancellationToken)
         {
-            var userExists = await _userServiceClient.UserWithSuchIdExistsAsync(request.Dto.UserId, cancellationToken);
+            var userExists = await _userServiceClient.UserWithIdExistsAsync(request.Dto.UserId, cancellationToken);
 
             if (!userExists)
             {

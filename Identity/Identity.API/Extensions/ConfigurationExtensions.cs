@@ -2,7 +2,6 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Identity.API.ExceptionHandlers;
-using Identity.BusinessLogic.GrpcClients;
 using Identity.BusinessLogic.Mapping;
 using Identity.BusinessLogic.Options;
 using Identity.BusinessLogic.Services.Implementations;
@@ -18,6 +17,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using MusicService.Grpc;
 using System.Text;
 
 namespace Identity.API.Extensions
@@ -147,7 +147,22 @@ namespace Identity.API.Extensions
         {
             services.AddGrpcClient<MusicUserService.MusicUserServiceClient>(options =>
             {
-                options.Address = new Uri(configuration["GrpcConfig:Uri"]!);
+                options.Address = new Uri(configuration["GrpcConfig:MusicService:Uri"]!);
+            });
+
+            return services;
+        }
+
+        public static IServiceCollection AddCorsPolicy(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(config =>
+                {
+                    config.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                });
             });
 
             return services;

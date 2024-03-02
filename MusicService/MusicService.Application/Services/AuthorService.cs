@@ -16,23 +16,23 @@ namespace MusicService.Application.Services
     {
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IUserServiceGrpcClient _userServiceClient;
 
         public AuthorService(
             IMapper mapper,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            IUserServiceGrpcClient userServiceClient)
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _userServiceClient = userServiceClient;
         }
 
         public async Task AddUserToAuthorAsync(AuthorUserRequest request, ClaimsPrincipal currentUser, CancellationToken cancellationToken = default)
         {
             var user = await GetDomainUserAsync(request.UserName, cancellationToken);
 
-            if (!user.Roles.Contains(UserRoles.creator))
-            {
-                throw new BadRequestException(ExceptionMessages.UserIsNotCreator);
-            }
+            await CheckIfUserIsInRoleAsync(user, UserRoles.creator, cancellationToken);
 
             if (user.Author != null)
             {
@@ -62,10 +62,7 @@ namespace MusicService.Application.Services
             {
                 var user = await GetDomainUserAsync(username, cancellationToken);
 
-                if (!user.Roles.Contains(UserRoles.creator))
-                {
-                    throw new BadRequestException(ExceptionMessages.UserIsNotCreator);
-                }
+                await CheckIfUserIsInRoleAsync(user, UserRoles.creator, cancellationToken);
 
                 if (user.Author != null)
                 {
@@ -184,6 +181,16 @@ namespace MusicService.Application.Services
             if (!_unitOfWork.Authors.UserIsMember(author, currentUserName))
             {
                 throw new AuthorizationException(ExceptionMessages.NotAuthorMember);
+            }
+        }
+
+        private async Task CheckIfUserIsInRoleAsync(User user, string  roleName, CancellationToken cancellationToken = default)
+        {
+            var userIsInRole = await _userServiceClient.UserIsInRoleAsync(user.Id, roleName, cancellationToken);
+
+            if (!userIsInRole)
+            {
+                throw new BadRequestException(ExceptionMessages.UserIsNotCreator);
             }
         }
     }
