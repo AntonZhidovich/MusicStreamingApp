@@ -10,7 +10,7 @@ using SubscriptionService.DataAccess.Repositories.Interfaces;
 namespace SubscriptionService.BusinessLogic.Features.Queries.GetAllSubscriptions
 {
     public class GetAllSubscriptionsQueryHandler
-        : IRequestHandler<GetAllSubscriptionsQuery, PageResponse<SubscriptionWithUserNameDto>>
+        : IRequestHandler<GetAllSubscriptionsQuery, PageResponse<GetSubscriptionWithUserNameDto>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -23,7 +23,7 @@ namespace SubscriptionService.BusinessLogic.Features.Queries.GetAllSubscriptions
             _userServiceClient = userServiceClient;
         }
 
-        public async Task<PageResponse<SubscriptionWithUserNameDto>> Handle(GetAllSubscriptionsQuery request,
+        public async Task<PageResponse<GetSubscriptionWithUserNameDto>> Handle(GetAllSubscriptionsQuery request,
             CancellationToken cancellationToken)
         {
             var subscriptions = await _unitOfWork.Subscriptions.GetAllAsync(
@@ -33,7 +33,7 @@ namespace SubscriptionService.BusinessLogic.Features.Queries.GetAllSubscriptions
 
             var count = await _unitOfWork.Subscriptions.CountAsync(cancellationToken);
 
-            var pageResponse = subscriptions.GetPageResponse<Subscription, SubscriptionWithUserNameDto>(count, request.GetPageRequest, _mapper);
+            var pageResponse = subscriptions.GetPageResponse<Subscription, GetSubscriptionWithUserNameDto>(count, request.GetPageRequest, _mapper);
 
             var usernamesById = (await _userServiceClient.GetIdUserNameMap(subscriptions.Select(subscription => subscription.UserId),
                 cancellationToken: cancellationToken)).UsernamesById;

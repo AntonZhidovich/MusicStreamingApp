@@ -13,27 +13,39 @@ namespace MusicService.Application.Mapping
         public ReleaseMappingProfile()
         {
             CreateMap<Release, ReleaseInSongDto>()
+                .ForMember(dest => dest.Id, options => options.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Name, options => options.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Authors, options => options.MapFrom(src => src.Authors.Select(author => author.Name)));
 
-            CreateMap<AddSongToReleaseRequest, Song>()
-                .ForMember(dest => dest.DurationMinutes, options =>
-                options.MapFrom(src => TimeSpan.ParseExact(src.DurationMinutes, Constraints.timeSpanFormat, CultureInfo.InvariantCulture)))
-                .ForMember(dest => dest.Genres, options => options.MapFrom(src => new List<Genre>()));
-
             CreateMap<CreateReleaseRequest, Release>()
+                .ForMember(dest => dest.Name, options => options.MapFrom(src => src.Name))
+                .ForMember(dest => dest.ReleasedAt, options => options.MapFrom(src => src.ReleasedAt))
                 .ForMember(dest => dest.Songs, options => options.MapFrom(src => new List<Song>()))
                 .ForMember(dest => dest.Authors, options => options.MapFrom(src => new List<Author>()))
                 .ForMember(dest => dest.SongsCount, options => options.Ignore());
 
             CreateMap<Release, ReleaseDto>()
+                .ForMember(dest => dest.Id, options => options.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Name, options => options.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Type, options => options.MapFrom(src => src.Type))
+                .ForMember(dest => dest.ReleasedAt, options => options.MapFrom(src => src.ReleasedAt))
                 .ForMember(dest => dest.AuthorNames, options => options.MapFrom(src => src.Authors.Select(author => author.Name)))
+                .ForMember(dest => dest.Songs, options => options.MapFrom(src => src.Songs))
+                .ForMember(dest => dest.SongsCount, options => options.MapFrom(src => src.SongsCount))
                 .ForMember(dest => dest.DurationMinutes, options => options.MapFrom(src => src.DurationMinutes.ToString()));
 
             CreateMap<Release, ReleaseShortDto>()
+                .ForMember(dest => dest.Id, options => options.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Name, options => options.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Type, options => options.MapFrom(src => src.Type))
+                .ForMember(dest => dest.ReleasedAt, options => options.MapFrom(src => src.ReleasedAt))
                 .ForMember(dest => dest.AuthorNames, options => options.MapFrom(src => src.Authors.Select(author => author.Name)))
+                .ForMember(dest => dest.SongsCount, options => options.MapFrom(src => src.SongsCount))
                 .ForMember(dest => dest.DurationMinutes, options => options.MapFrom(src => src.DurationMinutes.ToString()));
 
             CreateMap<UpdateReleaseRequest, Release>()
+                .ForMember(dest => dest.Name, options => options.MapFrom(src => src.Name))
+                .ForMember(dest => dest.ReleasedAt, options => options.MapFrom(src => src.ReleasedAt))
                 .ForAllMembers(options => options.Condition((source, dest, member) => member != null));
         }
     }

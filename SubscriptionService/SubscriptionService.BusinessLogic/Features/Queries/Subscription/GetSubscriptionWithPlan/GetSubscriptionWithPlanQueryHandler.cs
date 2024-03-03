@@ -11,7 +11,7 @@ using SubscriptionService.DataAccess.Repositories.Interfaces;
 namespace SubscriptionService.BusinessLogic.Features.Queries.GetSubscriptionWithPlan
 {
     public class GetSubscriptionWithPlanQueryHandler
-        : IRequestHandler<GetSubscriptionWithPlanQuery, PageResponse<SubscriptionWithUserNameDto>>
+        : IRequestHandler<GetSubscriptionWithPlanQuery, PageResponse<GetSubscriptionWithUserNameDto>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -24,7 +24,7 @@ namespace SubscriptionService.BusinessLogic.Features.Queries.GetSubscriptionWith
             _userServiceClient = userServiceClient;
         }
 
-        public async Task<PageResponse<SubscriptionWithUserNameDto>> Handle(GetSubscriptionWithPlanQuery request,
+        public async Task<PageResponse<GetSubscriptionWithUserNameDto>> Handle(GetSubscriptionWithPlanQuery request,
             CancellationToken cancellationToken)
         {
             var specification = new SubscriptionWithTariffPlanSpecification(request.TariffPlanName);
@@ -36,7 +36,7 @@ namespace SubscriptionService.BusinessLogic.Features.Queries.GetSubscriptionWith
 
             var count = await _unitOfWork.Subscriptions.CountAsync(specification, cancellationToken);
 
-            var pageResponse = subscriptions.GetPageResponse<Subscription, SubscriptionWithUserNameDto>(count, request.PageRequest, _mapper);
+            var pageResponse = subscriptions.GetPageResponse<Subscription, GetSubscriptionWithUserNameDto>(count, request.PageRequest, _mapper);
 
             var usernamesById = (await _userServiceClient.GetIdUserNameMap(subscriptions.Select(subscription => subscription.UserId),
                 cancellationToken: cancellationToken)).UsernamesById;

@@ -63,7 +63,10 @@ namespace MusicService.Application.Services
         {
             var release = await GetDomainReleaseAsync(releaseId, cancellationToken);
 
-            if (!user.IsInRole(UserRoles.admin)) { CheckIfUserIsMember(release.Authors, user); }
+            if (!user.IsInRole(UserRoles.admin)) 
+            { 
+                CheckIfUserIsMember(release.Authors, user); 
+            }
 
             var song = await AddSongToGivenReleaseAsync(release, request, cancellationToken);
             
@@ -86,7 +89,10 @@ namespace MusicService.Application.Services
 
             if (request.AuthorNames.Count != authors.Count()) { throw new NotFoundException(ExceptionMessages.AuthorNotFound); }
 
-            if (!user.IsInRole(UserRoles.admin)) { CheckIfUserIsMember(authors!, user); }
+            if (!user.IsInRole(UserRoles.admin)) 
+            { 
+                CheckIfUserIsMember(authors!, user); 
+            }
 
             foreach (var songRequest in request.Songs)
             {
@@ -105,7 +111,10 @@ namespace MusicService.Application.Services
             var release = await GetDomainReleaseAsync(id, cancellationToken);
             var authors = await _unitOfWork.Authors.GetByNameAsync(release.Authors.Select(author => author.Name), cancellationToken);
 
-            if (!user.IsInRole(UserRoles.admin)) { CheckIfUserIsMember(authors!, user); }
+            if (!user.IsInRole(UserRoles.admin)) 
+            { 
+                CheckIfUserIsMember(authors!, user); 
+            }
 
             _unitOfWork.Releases.Delete(release);
             
@@ -116,7 +125,10 @@ namespace MusicService.Application.Services
         {
             var release = await GetDomainReleaseAsync(releaseId, cancellationToken);
 
-            if (!user.IsInRole(UserRoles.admin)) { CheckIfUserIsMember(release.Authors, user); }
+            if (!user.IsInRole(UserRoles.admin)) 
+            { 
+                CheckIfUserIsMember(release.Authors, user); 
+            }
 
             var song = release.Songs.Find(song => song.Id == songId);
 
@@ -138,7 +150,10 @@ namespace MusicService.Application.Services
         {
             var release = await GetDomainReleaseAsync(id, cancellationToken);
 
-            if (!user.IsInRole(UserRoles.admin)) { CheckIfUserIsMember(release.Authors, user); }
+            if (!user.IsInRole(UserRoles.admin)) 
+            { 
+                CheckIfUserIsMember(release.Authors, user); 
+            }
 
             _mapper.Map(request, release);
             _unitOfWork.Releases.Update(release);
@@ -203,9 +218,9 @@ namespace MusicService.Application.Services
         {
             var currentUserName = user.Identity!.Name!;
 
-            foreach (var author in authors)
+            if (authors.Any(author => _unitOfWork.Authors.UserIsMember(author, currentUserName)))
             {
-                if (_unitOfWork.Authors.UserIsMember(author, currentUserName)) { return; }
+                return;
             }
 
             throw new AuthorizationException(ExceptionMessages.NotAuthorMember);

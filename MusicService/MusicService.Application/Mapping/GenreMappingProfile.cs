@@ -8,7 +8,9 @@ namespace MusicService.Application.Mapping
     {
         public GenreMappingProfile()
         {
-            CreateMap<Genre, GenreDto>();
+            CreateMap<Genre, GenreDto>()
+                .ForMember(dest => dest.Name, options => options.MapFrom(source => source.Name))
+                .ForMember(dest => dest.Description, options => options.MapFrom(source => source.Description));
         }
     }
 }

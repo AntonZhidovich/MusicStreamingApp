@@ -19,7 +19,7 @@ namespace MusicService.API.Controllers
             _songService = songService;
         }
 
-        [HttpGet("")]
+        [HttpGet]
         public async Task<IActionResult> GetAllGenresAsync([FromQuery] GetPageRequest request)
         {
             var genresPage = await _songService.GetAllAsync(request, HttpContext.RequestAborted);

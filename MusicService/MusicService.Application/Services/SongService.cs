@@ -97,7 +97,10 @@ namespace MusicService.Application.Services
 
             var authorName = await GetAuthorNameAsync(userName);
 
-            if (!user.IsInRole(UserRoles.admin)) { await CheckIfUserIsMemberAsync(authorName, userName, cancellationToken); }
+            if (!user.IsInRole(UserRoles.admin)) 
+            { 
+                await CheckIfUserIsMemberAsync(authorName, userName, cancellationToken); 
+            }
 
             using var stream = new MemoryStream();
             
@@ -114,7 +117,10 @@ namespace MusicService.Application.Services
             
             var authorName = await GetAuthorNameAsync(userName);
 
-            if (!user.IsInRole(UserRoles.admin)) { await CheckIfUserIsMemberAsync(authorName, user.Identity!.Name!, cancellationToken); }
+            if (!user.IsInRole(UserRoles.admin)) 
+            { 
+                await CheckIfUserIsMemberAsync(authorName, user.Identity!.Name!, cancellationToken); 
+            }
             
             await _sourceRepository.RemoveAsync(authorName, sourceName, cancellationToken);
         }
@@ -125,7 +131,10 @@ namespace MusicService.Application.Services
             
             var authorName = await GetAuthorNameAsync(userName);
 
-            if (!user.IsInRole(UserRoles.admin)) { await CheckIfUserIsMemberAsync(authorName, user.Identity!.Name!, cancellationToken); }
+            if (!user.IsInRole(UserRoles.admin)) 
+            { 
+                await CheckIfUserIsMemberAsync(authorName, user.Identity!.Name!, cancellationToken); 
+            }
 
             return await _sourceRepository.GetFromPrefixAsync(authorName, cancellationToken);
         }
