@@ -30,6 +30,7 @@ namespace MusicService.API.Extensions
             services.Configure<MinioOptions>(configuration.GetSection("MinioOptions"));
             services.Configure<ConsumerConfig>(configuration.GetSection("KafkaConsumerConfig"));
             services.Configure<KafkaTopics>(configuration.GetSection("KafkaTopics"));
+            services.Configure<RedisConfig>(configuration.GetSection("RedisConfig"));
 
             return services;
         }
@@ -69,6 +70,11 @@ namespace MusicService.API.Extensions
             .WithSSL(false)
             .Build());
 
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = configuration["RedisConfig:ConnectionString"];
+            });
+
             return services;
         }
 
@@ -82,6 +88,7 @@ namespace MusicService.API.Extensions
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IPlaylistRepository, PlaylistRepository>();
             services.AddScoped<ISongSourceRepository, SongSourceRepository>();
+            services.AddScoped<ICacheRepository, CacheRepository>();
 
             return services;
         }

@@ -20,15 +20,18 @@ namespace MusicService.Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ISongSourceRepository _sourceRepository;
+        private readonly ICacheRepository _cache;
 
         public SongService(
             IUnitOfWork unitOfWork,
             IMapper mapper,
-            ISongSourceRepository sourceRepository)
+            ISongSourceRepository sourceRepository,
+            ICacheRepository cache)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _sourceRepository = sourceRepository;
+            _cache = cache;
         }
 
         public async Task CheckIfSourceExistsAsync(string fullSourceName, CancellationToken cancellationToken = default)
@@ -68,9 +71,20 @@ namespace MusicService.Application.Services
 
         public async Task<SongDto> GetByIdAsync(string id, CancellationToken cancellationToken = default)
         {
+            var songDto = await _cache.GetAsync<SongDto>(id, cancellationToken);
+
+            if (songDto != null)
+            {
+                return songDto;
+            }
+
             var song = await GetDomainSongAsync(id, cancellationToken);
 
-            return _mapper.Map<SongDto>(song);
+            songDto = _mapper.Map<SongDto>(song);
+
+            await _cache.SetAsync(id, songDto, cancellationToken);
+
+            return songDto;
         }
 
         public async Task<SongDto> UpdateAsync(string id, UpdateSongRequest request, CancellationToken cancellationToken = default)
@@ -85,6 +99,8 @@ namespace MusicService.Application.Services
             _unitOfWork.Songs.Update(song);
             
             await _unitOfWork.CommitAsync(cancellationToken);
+
+            await _cache.RemoveAsync(id, cancellationToken);
 
             return _mapper.Map<SongDto>(song);
         }
