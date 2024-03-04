@@ -1,4 +1,5 @@
 using Identity.API.Extensions;
+using Identity.DataAccess.Data;
 
 namespace Identity.API
 {
@@ -19,6 +20,7 @@ namespace Identity.API
             builder.Services.AddCorsPolicy(builder.Configuration);
 
             var app = builder.Build();
+            app.Services.MigrateDatabase<UserDBContext>();
             app.UseMiddleware();
 
             if (app.Environment.IsDevelopment())

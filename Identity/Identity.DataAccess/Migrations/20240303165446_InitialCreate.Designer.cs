@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Identity.DataAccess.Migrations
 {
     [DbContext(typeof(UserDBContext))]
-    [Migration("20240201113924_InitialCreate")]
+    [Migration("20240303165446_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -136,7 +136,7 @@ namespace Identity.DataAccess.Migrations
                             Id = "af3c8548-ac9e-43bf-8474-ae514d9780d6",
                             AccessFailedCount = 0,
                             ConcurrencyStamp = "7af8d93c-9b9b-4e09-bc1d-9ef180915552",
-                            CreationDate = new DateTime(2024, 2, 1, 11, 39, 22, 185, DateTimeKind.Utc).AddTicks(4671),
+                            CreationDate = new DateTime(2024, 3, 3, 16, 54, 46, 433, DateTimeKind.Utc).AddTicks(8367),
                             Email = "dmitry.ivanov@gmail.com",
                             EmailConfirmed = false,
                             FirstName = "Dmitry",
@@ -150,6 +150,66 @@ namespace Identity.DataAccess.Migrations
                             SecurityStamp = "LHOBZXJKHQASYZODSS7FPA2UQOKTAHDR",
                             TwoFactorEnabled = false,
                             UserName = "dmitry.ivanov"
+                        },
+                        new
+                        {
+                            Id = "c13d3c43-7724-4cbd-9226-56fb2fb7e482",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "48fa758e-e07d-4abf-83ca-797db1fe3311",
+                            CreationDate = new DateTime(2024, 3, 3, 16, 54, 46, 433, DateTimeKind.Utc).AddTicks(8379),
+                            Email = "bennington@outlook.com",
+                            EmailConfirmed = false,
+                            FirstName = "Chester",
+                            LastName = "Bennington",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "BENNINGTON@OUTLOOK.COM",
+                            NormalizedUserName = "CHESTER.BENNINGTON",
+                            PasswordHash = "AQAAAAIAAYagAAAAECsYLJkr31tTmZasfE+51TiiS2V1NwwmRmFgCtr/p7K0aK6jTznzliXwQVzet9q4PA==",
+                            PhoneNumberConfirmed = false,
+                            Region = "Los Angeles",
+                            SecurityStamp = "ZNUHMAR7OTK2XF4DUDTZUOJVRLP5CKSZ",
+                            TwoFactorEnabled = false,
+                            UserName = "Chester.Bennington"
+                        },
+                        new
+                        {
+                            Id = "98975656-f5e8-42d9-9f6b-58598773e16c",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "f1c51ace-2e20-4ac7-8b56-8799f4c794bb",
+                            CreationDate = new DateTime(2024, 3, 3, 16, 54, 46, 433, DateTimeKind.Utc).AddTicks(8464),
+                            Email = "MikeShinoda@gmail.com",
+                            EmailConfirmed = false,
+                            FirstName = "Mike",
+                            LastName = "Shinoda",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "MIKESHINODA@GMAIL.COM",
+                            NormalizedUserName = "MIKESHINODA1977",
+                            PasswordHash = "AQAAAAIAAYagAAAAEMleAqjG11pRU4FUv3ReSBj+3QvI5irY8WpzypbgyOD9qhLCgI8IRFiWbB7Gq7O6dw==",
+                            PhoneNumberConfirmed = false,
+                            Region = "Los Angeles",
+                            SecurityStamp = "BGA2JFI5KXTO6565STR4P34F3QPQR2GG",
+                            TwoFactorEnabled = false,
+                            UserName = "MikeShinoda1977"
+                        },
+                        new
+                        {
+                            Id = "6930fd61-ac4f-4fc1-ab3c-8cc9db42aa90",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "6b975ebc-7954-4be3-91ec-5854ba11b035",
+                            CreationDate = new DateTime(2024, 3, 3, 16, 54, 46, 433, DateTimeKind.Utc).AddTicks(8474),
+                            Email = "garritsen@gmail.com",
+                            EmailConfirmed = false,
+                            FirstName = "Martin",
+                            LastName = "Garritsen",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "GARRITSEN@GMAIL.COM",
+                            NormalizedUserName = "MARTIJN_GARRITSEN",
+                            PasswordHash = "AQAAAAIAAYagAAAAEIdo5ONoHW/GVFfPqonfYe1pGZPGPNA5LZJkbJCs2pw59yHOx8PVxj62thP8RrEH0A==",
+                            PhoneNumberConfirmed = false,
+                            Region = "Amsterdam",
+                            SecurityStamp = "CFSP6QTASV5VVOH2ROTWN7SGSEK3RHFW",
+                            TwoFactorEnabled = false,
+                            UserName = "Martijn_Garritsen"
                         });
                 });
 
@@ -295,7 +355,27 @@ namespace Identity.DataAccess.Migrations
                         new
                         {
                             UserId = "af3c8548-ac9e-43bf-8474-ae514d9780d6",
+                            RoleId = "f95d795a-0d1a-4c38-8323-6f6140f4b54d"
+                        },
+                        new
+                        {
+                            UserId = "af3c8548-ac9e-43bf-8474-ae514d9780d6",
                             RoleId = "f95d795a-0d1s-4728-8323-ada65d4sa4da"
+                        },
+                        new
+                        {
+                            UserId = "c13d3c43-7724-4cbd-9226-56fb2fb7e482",
+                            RoleId = "f95d795a-0d1a-4c38-8323-6f6140f4b54d"
+                        },
+                        new
+                        {
+                            UserId = "98975656-f5e8-42d9-9f6b-58598773e16c",
+                            RoleId = "f95d795a-0d1a-4c38-8323-6f6140f4b54d"
+                        },
+                        new
+                        {
+                            UserId = "6930fd61-ac4f-4fc1-ab3c-8cc9db42aa90",
+                            RoleId = "f95d795a-0d1a-4c38-8323-6f6140f4b54d"
                         });
                 });
 

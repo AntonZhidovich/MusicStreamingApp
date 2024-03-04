@@ -88,7 +88,7 @@ namespace Identity.BusinessLogic.Services.Implementations
 
             await _userRepository.AddUserToRoleAsync(user, UserRoles.listener);
 
-            await _musicUserServiceClient.AddUserAsync(user, new List<string> { UserRoles.listener });
+            await _musicUserServiceClient.AddUserAsync(user);
 
             return _mapper.Map<UserDto>(user);
         }

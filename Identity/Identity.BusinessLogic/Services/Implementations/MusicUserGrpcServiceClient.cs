@@ -17,12 +17,10 @@ namespace Identity.BusinessLogic.Services.Implementations
             _mapper = mapper;
         }
 
-        public async Task<AddUserResponse> AddUserAsync(User user, 
-            IEnumerable<string> roles, 
+        public async Task<AddUserResponse> AddUserAsync(User user,
             CancellationToken cancellationToken = default)
         {
             var request = _mapper.Map<AddUserRequest>(user);
-            request.Roles.AddRange(roles);
 
             await _musicUserServiceClient.AddUserAsync(request, 
                 cancellationToken: cancellationToken);

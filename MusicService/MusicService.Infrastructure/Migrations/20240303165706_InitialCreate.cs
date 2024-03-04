@@ -47,7 +47,7 @@ namespace MusicService.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Type = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     ReleasedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     SongsCount = table.Column<int>(type: "int", nullable: false),
@@ -63,13 +63,8 @@ namespace MusicService.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Region = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AuthorId = table.Column<string>(type: "nvarchar(50)", nullable: true),
-                    Roles = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    AuthorId = table.Column<string>(type: "nvarchar(50)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -114,7 +109,7 @@ namespace MusicService.Infrastructure.Migrations
                     Title = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     ReleaseId = table.Column<string>(type: "nvarchar(50)", nullable: false),
                     DurationMinutes = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    SourceName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                    SourceName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -156,20 +151,19 @@ namespace MusicService.Infrastructure.Migrations
                 columns: new[] { "Id", "BrokenAt", "CreatedAt", "Description", "IsBroken", "Name" },
                 values: new object[,]
                 {
-                    { "7bfe40e0-f945-487b-ae93-a07cfbdc87db", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 2, 14, 13, 29, 30, 216, DateTimeKind.Local).AddTicks(6445), "Dutch electronic music producer whose multi-platinum dance anthems topped charts around the globe.", false, "Martin Garrix" },
-                    { "e372c6da-4c4d-4cd5-a1ca-c8507cf2d326", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 2, 14, 13, 29, 30, 216, DateTimeKind.Local).AddTicks(6427), "Linkin Park is an American rock band from Agoura Hills, California. The band's current lineup comprises vocalist/rhythm guitarist/keyboardist Mike Shinoda, lead guitarist Brad Delson, bassist Dave Farrell, DJ/turntables Joe Hahn and drummer Rob Bourdon, all of whom are founding members.", false, "Linkin park" }
+                    { "7bfe40e0-f945-487b-ae93-a07cfbdc87db", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 3, 3, 19, 57, 6, 71, DateTimeKind.Local).AddTicks(7326), "Dutch electronic music producer whose multi-platinum dance anthems topped charts around the globe.", false, "Martin Garrix" },
+                    { "e372c6da-4c4d-4cd5-a1ca-c8507cf2d326", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 3, 3, 19, 57, 6, 71, DateTimeKind.Local).AddTicks(7304), "Linkin Park is an American rock band from Agoura Hills, California. The band's current lineup comprises vocalist/rhythm guitarist/keyboardist Mike Shinoda, lead guitarist Brad Delson, bassist Dave Farrell, DJ/turntables Joe Hahn and drummer Rob Bourdon, all of whom are founding members.", false, "Linkin park" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "Id", "AuthorId", "Email", "FirstName", "LastName", "Region", "Roles", "UserName" },
+                columns: new[] { "Id", "AuthorId", "UserName" },
                 values: new object[,]
                 {
-                    { "3e4cc735-f041-424d-9ada-f835a7c1978a", null, "yegor.kozlov02@mail.ru", "Yegor", "Kozlov", "Minsk", "[\"listener\",\"admin\"]", "yegor.kozlov02" },
-                    { "76ef2410-4e2e-4542-a20b-b0f19dfd5d76", null, "dmitry.ivanov@gmail.com", "Dmitry", "Ivanov", "Italy", "[\"listener\"]", "dmitry.ivanov" },
-                    { "70d71f5a-a4ef-488a-b4e9-eb86f82481a8", "e372c6da-4c4d-4cd5-a1ca-c8507cf2d326", "chester.bennington@outlook.com", "Chester", "Bennington", "California", "[\"creator\",\"listener\",\"admin\"]", "Chester.Bennington" },
-                    { "7b761e59-78f3-4862-b1ad-87065bc8f51b", "7bfe40e0-f945-487b-ae93-a07cfbdc87db", "garritsen@gmail.com", "Martijn", "Garritsen", "Netherlands", "[\"creator\",\"listener\"]", "Martijn-Garritsen" },
-                    { "d480a3c1-99aa-4775-819b-94e9183d0e21", "e372c6da-4c4d-4cd5-a1ca-c8507cf2d326", "shinoda77@gmail.com", "Mike", "Shinoda", "California", "[\"creator\",\"listener\"]", "MikeShinoda1977" }
+                    { "af3c8548-ac9e-43bf-8474-ae514d9780d6", null, "dmitry.ivanov" },
+                    { "6930fd61-ac4f-4fc1-ab3c-8cc9db42aa90", "7bfe40e0-f945-487b-ae93-a07cfbdc87db", "Martijn_Garritsen" },
+                    { "98975656-f5e8-42d9-9f6b-58598773e16c", "e372c6da-4c4d-4cd5-a1ca-c8507cf2d326", "MikeShinoda1977" },
+                    { "c13d3c43-7724-4cbd-9226-56fb2fb7e482", "e372c6da-4c4d-4cd5-a1ca-c8507cf2d326", "Chester.Bennington" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -195,12 +189,6 @@ namespace MusicService.Infrastructure.Migrations
                 column: "SongsId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Releases_Name",
-                table: "Releases",
-                column: "Name",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Songs_ReleaseId",
                 table: "Songs",
                 column: "ReleaseId");
@@ -209,12 +197,6 @@ namespace MusicService.Infrastructure.Migrations
                 name: "IX_Users_AuthorId",
                 table: "Users",
                 column: "AuthorId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_Email",
-                table: "Users",
-                column: "Email",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_UserName",

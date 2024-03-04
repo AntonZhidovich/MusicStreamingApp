@@ -9,7 +9,6 @@ service MusicUserService{
 message AddUserRequest{
     string id = 1;
     string user_name = 2;
-    repeated string roles = 3;
 }
 
 message AddUserResponse{

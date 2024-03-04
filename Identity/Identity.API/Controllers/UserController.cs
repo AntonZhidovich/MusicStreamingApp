@@ -9,7 +9,7 @@ namespace Identity.API.Controllers
 {
     [ApiController]
     [Route("api/users")]
-    [Authorize(Roles = UserRoles.admin)]
+    [Authorize]
     public class UserController : Controller
     {
         private readonly IUserService _userService;
@@ -20,12 +20,14 @@ namespace Identity.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = UserRoles.admin)]
         public async Task<IActionResult> GetAllUsersAsync([FromQuery] GetUsersRequest request)
         {
             return Ok(await _userService.GetAllAsync(request));
         }
 
         [HttpGet("region/{region}")]
+        [Authorize(Roles = UserRoles.admin)]
         public async Task<IActionResult> GetUsersFromRegionAsync([FromRoute] string region, [FromQuery] GetUsersRequest request)
         {
             return Ok(await _userService.GetFromRegionAsync(request, region));
@@ -65,6 +67,7 @@ namespace Identity.API.Controllers
         }
 
         [HttpGet("{email}/roles")]
+        [Authorize(Roles = UserRoles.admin)]
         public async Task<IActionResult> GetUserRolesAsync([FromRoute] string email)
         {
             var roles = await _userService.GetRolesAsync(new GetUserRolesRequest { Email = email });
@@ -73,6 +76,7 @@ namespace Identity.API.Controllers
         }
 
         [HttpPost("{email}/roles")]
+        [Authorize(Roles = UserRoles.admin)]
         public async Task<IActionResult> AddUserToRoleAsync([FromRoute] string email, [FromBody] RoleDto roleDto)
         {
             await _userService.AddToRoleAsync(email, roleDto);
@@ -81,6 +85,7 @@ namespace Identity.API.Controllers
         }
 
         [HttpDelete("{email}/roles/{rolename}")]
+        [Authorize(Roles = UserRoles.admin)]
         public async Task<IActionResult> RemoveUserFromRoleAsync([FromRoute] string email, [FromRoute] string rolename)
         {
             await _userService.RemoveFromRoleAsync(new RemoveUserFromRoleRequest { Email = email, RoleName = rolename});
