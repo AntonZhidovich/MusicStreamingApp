@@ -57,7 +57,6 @@ namespace Identity.BusinessLogic.Services.Implementations
             return _mapper.Map<UserDto>(user);
         }
 
-
         public async Task<IEnumerable<UserDto>> GetByIdAsync(IEnumerable<string> ids)
         {
             return _mapper.Map<IEnumerable<UserDto>>(await _userRepository.GetByIdAsync(ids));
@@ -125,6 +124,18 @@ namespace Identity.BusinessLogic.Services.Implementations
         public async Task<IEnumerable<string>> GetRolesAsync(GetUserRolesRequest request)
         {
             var user = await GetDomainUserByEmailAsync(request.Email);
+
+            return await _userRepository.GetUserRolesAsync(user);
+        }
+
+        public async Task<IEnumerable<string>> GetRolesAsync(string userId)
+        {
+            var user = await _userRepository.GetUserByIdAsync(userId);
+
+            if (user == null)
+            {
+                throw new NotFoundException(ExceptionMessages.UserNotFound);
+            }
 
             return await _userRepository.GetUserRolesAsync(user);
         }

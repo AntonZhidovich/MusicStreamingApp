@@ -42,9 +42,7 @@ namespace Identity.API.GrpcServices
 
         public override async Task<UserIsInRoleResponse> UserIsInRole(UserIsInRoleRequest request, ServerCallContext context)
         {
-            var user = await _userService.GetByIdAsync(request.Id);
-
-            var roles = await _userService.GetRolesAsync(new GetUserRolesRequest { Email = user.Email });
+            var roles = await _userService.GetRolesAsync(request.Id);
 
             return new UserIsInRoleResponse { UserIsInRole = roles.Contains(request.RoleName) };
         }

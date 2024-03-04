@@ -34,6 +34,8 @@ namespace SubscriptionService.BusinessLogic.Features.Consumers
             unitOfWork.Subscriptions.Delete(subscription);
 
             await unitOfWork.CommitAsync(cancellationToken);
+
+            _consumer.Commit();
         }
 
     }

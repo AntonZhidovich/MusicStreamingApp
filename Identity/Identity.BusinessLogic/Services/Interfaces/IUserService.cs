@@ -16,6 +16,7 @@ namespace Identity.BusinessLogic.Services.Interfaces
         Task<UserDto> UpdateAsync(string email, UpdateUserRequest request);
         Task DeleteAsync(DeleteUserRequest request);
         Task<IEnumerable<string>> GetRolesAsync(GetUserRolesRequest request);
+        Task<IEnumerable<string>> GetRolesAsync(string userId);
         Task AddToRoleAsync(string email, RoleDto roleDto);
         Task RemoveFromRoleAsync(RemoveUserFromRoleRequest request);
     }
