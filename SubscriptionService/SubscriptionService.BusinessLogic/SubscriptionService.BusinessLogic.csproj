@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
+  
   <ItemGroup>
     <Compile Remove="Handlers\**" />
     <EmbeddedResource Remove="Handlers\**" />
@@ -28,9 +28,18 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Hangfire" Version="1.8.11" />
+    <PackageReference Include="MailKit" Version="4.4.0" />
     <PackageReference Include="MediatR" Version="12.2.0" />
+    <PackageReference Include="RazorLight" Version="2.3.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="EmailTemplates\SubscriptionMadeEmailTemplate.cshtml">
+      <LogicalName>EmailTemplates.SubscriptionMadeEmailTemplate.cshtml</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  
   <ItemGroup>
     <Protobuf Include="..\..\Identity\Identity.BusinessLogic\Contracts\userservice.proto" GrpcServices="Client">
       <Link>Protos\userservice.proto</Link>

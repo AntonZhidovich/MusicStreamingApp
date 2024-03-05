@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Hangfire;
 using MediatR;
 using SubscriptionService.BusinessLogic.Constants;
 using SubscriptionService.BusinessLogic.Exceptions;
@@ -19,27 +20,25 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.MakeSubscription
         private readonly IMapper _mapper;
         private readonly IProducerService _producerService;
         private readonly IUserServiceGrpcClient _userServiceClient;
+        private readonly IEmailSenderService _emailSender;
 
         public MakeSubscriptionCommandHandler(
             IUnitOfWork unitOfWork, 
             IMapper mapper, 
             IProducerService producerService, 
-            IUserServiceGrpcClient userServiceClient)
+            IUserServiceGrpcClient userServiceClient,
+            IEmailSenderService emailSender)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _producerService = producerService;
             _userServiceClient = userServiceClient;
+            _emailSender = emailSender;
         }
 
         public async Task<GetSubscriptionDto> Handle(MakeSubscriptionCommand request, CancellationToken cancellationToken)
         {
-            var userExists = await _userServiceClient.UserWithIdExistsAsync(request.Dto.UserId, cancellationToken);
-
-            if (!userExists)
-            {
-                throw new NotFoundException(ExceptionMessages.userNotFound);
-            }
+            var userInfo = await _userServiceClient.GetUserInfoAsync(request.Dto.UserId, cancellationToken);
 
             var tariffPlan = await _unitOfWork.TariffPlans.GetByIdAsync(
                 request.Dto.TariffPlanId,
@@ -84,7 +83,15 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.MakeSubscription
 
             await _producerService.ProduceSubscriptionMadeAsync(_mapper.Map<SubscriptionMadeMessage>(subscription), cancellationToken);
 
-            return _mapper.Map<GetSubscriptionDto>(subscription);
+            var subscriptionDto = _mapper.Map<GetSubscriptionDto>(subscription);
+
+            BackgroundJob.Enqueue(() => _emailSender.SendSubscriptionMadeMessage(new SubscriptionWithUserInfo
+            {
+                UserInfo = userInfo,
+                Subscription = subscriptionDto
+            }));
+
+            return subscriptionDto;
         }
     }
 }
