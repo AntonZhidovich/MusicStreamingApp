@@ -9,10 +9,12 @@ namespace Identity.API.GrpcServices
     public class UserGrpcService : UserService.UserServiceBase
     {
         private readonly IUserService _userService;
+        private readonly IMapper _mapper;
 
         public UserGrpcService(IUserService userService, IMapper mapper)
         {
             _userService = userService;
+            _mapper = mapper;
         }
 
         public override async Task<UserWithIdExistsResponse> UserWithIdExists(UserWithIdExistsRequest request, 
@@ -45,6 +47,20 @@ namespace Identity.API.GrpcServices
             var roles = await _userService.GetRolesAsync(request.Id);
 
             return new UserIsInRoleResponse { UserIsInRole = roles.Contains(request.RoleName) };
+        }
+
+        public override async Task<GetUserInfoResponse> GetUserInfo(GetUserInfoRequest request, ServerCallContext context)
+        {
+            UserInfo? userInfo = null;
+
+            if (await _userService.UserWithIdExists(request.Id))
+            {
+                var userDto = await _userService.GetByIdAsync(request.Id);
+
+                userInfo = _mapper.Map<UserInfo>(userDto);
+            }
+
+            return new GetUserInfoResponse { UserInfo = userInfo };
         }
     }
 }

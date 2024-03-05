@@ -6,6 +6,7 @@ service UserService {
     rpc UserWithIdExists(UserWithIdExistsRequest) returns (UserWithIdExistsResponse) {}
     rpc GetIdUserNameMap(GetIdUserNameMapRequest) returns (GetIdUserNameMapResponse) {}
     rpc UserIsInRole(UserIsInRoleRequest) returns (UserIsInRoleResponse) {}
+    rpc GetUserInfo(GetUserInfoRequest) returns (GetUserInfoResponse) {}
 }
 
 message UserWithIdExistsRequest{
@@ -21,6 +22,10 @@ message UserIsInRoleRequest{
     string role_name = 2;
 }
 
+message GetUserInfoRequest{
+    string id = 1;
+}
+
 message UserWithIdExistsResponse{
     bool user_exists = 1; 
 }
@@ -31,4 +36,16 @@ message GetIdUserNameMapResponse{
 
 message UserIsInRoleResponse{
     bool user_is_in_role = 1;
+}
+
+message GetUserInfoResponse{
+    UserInfo user_info = 1;
+}
+
+message UserInfo{
+    string first_name = 1;
+    string last_name  = 2;
+    string region = 3;
+    string email = 4;
+    string username = 5;
 }

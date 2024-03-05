@@ -1,4 +1,6 @@
 ﻿using Identity.Grpc;
+using SubscriptionService.BusinessLogic.Constants;
+using SubscriptionService.BusinessLogic.Exceptions;
 using SubscriptionService.BusinessLogic.Features.Services.Interfaces;
 
 namespace SubscriptionService.BusinessLogic.Features.Services.Implementations
@@ -29,6 +31,20 @@ namespace SubscriptionService.BusinessLogic.Features.Services.Implementations
             var response = await _userServiceClient.GetIdUserNameMapAsync(request, cancellationToken: cancellationToken);
 
             return response;
+        }
+
+        public async Task<UserInfo> GetUserInfoAsync(string id, CancellationToken cancellationToken = default)
+        {
+            var request = new GetUserInfoRequest { Id = id };
+
+            var response = await _userServiceClient.GetUserInfoAsync(request, cancellationToken: cancellationToken);
+
+            if (response.UserInfo == null)
+            {
+                throw new NotFoundException(ExceptionMessages.userNotFound);
+            }
+
+            return response.UserInfo;
         }
     }
 }
