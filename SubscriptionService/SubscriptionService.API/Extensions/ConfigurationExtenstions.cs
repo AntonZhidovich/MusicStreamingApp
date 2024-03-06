@@ -36,7 +36,6 @@ namespace SubscriptionService.API.Extensions
             services.AddExceptionHandler<GlobalExceptionHandler>();
             services.AddKafka();
             services.AddScoped<IUserServiceGrpcClient, UserServiceGrpcClient>();
-            services.AddScoped<IEmailSenderService, EmailSenderService>();
 
             services.AddScoped<IRazorLightEngine>(provider =>
             {
@@ -46,6 +45,7 @@ namespace SubscriptionService.API.Extensions
                 .Build();
             });
 
+            services.AddScoped<IEmailSenderService, EmailSenderService>();
             services.AddScoped<IEmailMessageRenderer, EmailMessageRenderer>();
             services.AddScoped<IBackgroundJobsService, BackgroundJobsService>();
 

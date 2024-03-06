@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using SubscriptionService.BusinessLogic.Constants;
 using SubscriptionService.BusinessLogic.Features.Commands.CancelSubscription;
 using SubscriptionService.BusinessLogic.Features.Commands.MakeSubscription;
-using SubscriptionService.BusinessLogic.Features.Commands.MakeSubscriptionPayment;
 using SubscriptionService.BusinessLogic.Features.Commands.UpdateSubscription;
 using SubscriptionService.BusinessLogic.Features.Queries.GetAllSubscriptions;
 using SubscriptionService.BusinessLogic.Features.Queries.GetSubscriptionWithPlan;
@@ -76,14 +75,6 @@ namespace SubscriptionService.API.Controllers
             await _sender.Send(new CancelSubscriptionCommand(id), HttpContext.RequestAborted);
 
             return NoContent();
-        }
-
-        [HttpPost("{id}/payment")]
-        public async Task<IActionResult> MakePaymentAsync([FromRoute] string id)
-        {
-            var subscription = await _sender.Send(new MakeSubscriptionPaymentCommand(id), HttpContext.RequestAborted);
-
-            return Ok(subscription);
         }
     }
 }

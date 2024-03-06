@@ -1,5 +1,4 @@
-﻿using Identity.Grpc;
-using RazorLight;
+﻿using RazorLight;
 using SubscriptionService.BusinessLogic.Features.Services.Interfaces;
 
 namespace SubscriptionService.BusinessLogic.Features.Services.Implementations

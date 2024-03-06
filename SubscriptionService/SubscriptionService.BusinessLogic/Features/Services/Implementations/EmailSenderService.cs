@@ -12,7 +12,7 @@ namespace SubscriptionService.BusinessLogic.Features.Services.Implementations
 {
     public class EmailSenderService : IEmailSenderService
     {
-        private readonly SMTPConfig _SmtpConfig;
+        private readonly SMTPConfig _smtpConfig;
         private readonly EmailSender _emailSender;
         private readonly IEmailMessageRenderer _messageRenderer;
 
@@ -21,7 +21,7 @@ namespace SubscriptionService.BusinessLogic.Features.Services.Implementations
             IOptions<SMTPConfig> smtpConfig, 
             IOptions<EmailSender> emailSender)
         {
-            _SmtpConfig = smtpConfig.Value;
+            _smtpConfig = smtpConfig.Value;
             _emailSender = emailSender.Value;
             _messageRenderer = messageRenderer;
         }
@@ -41,6 +41,7 @@ namespace SubscriptionService.BusinessLogic.Features.Services.Implementations
         private MimeMessage CreateMessage(SubscriptionWithUserInfo info, string templatePath)
         {
             var message = new MimeMessage();
+            message.From.Add(MailboxAddress.Parse(_emailSender.UserName));
             message.To.Add(MailboxAddress.Parse(info.UserInfo.Email));
             message.Subject = $"Listn Music – {info.UserInfo.Region} Region.";
 
@@ -54,10 +55,8 @@ namespace SubscriptionService.BusinessLogic.Features.Services.Implementations
 
         private void SendMessage(MimeMessage message)
         {
-            message.From.Add(MailboxAddress.Parse(_emailSender.UserName));
-
             using var smtp = new SmtpClient();
-            smtp.Connect(_SmtpConfig.Host, _SmtpConfig.Port, SecureSocketOptions.StartTls);
+            smtp.Connect(_smtpConfig.Host, _smtpConfig.Port, SecureSocketOptions.StartTls);
             smtp.Authenticate(_emailSender.UserName, _emailSender.Password);
             smtp.Send(message);
             smtp.Disconnect(true);
