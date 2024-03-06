@@ -7,5 +7,6 @@ namespace SubscriptionService.BusinessLogic.Features.Services.Interfaces
     public interface IEmailSenderService
     {
         void SendSubscriptionMadeMessage(SubscriptionWithUserInfo info);
+        void SendSubscriptionCanceledMessage(SubscriptionWithUserInfo info);
     }
 }

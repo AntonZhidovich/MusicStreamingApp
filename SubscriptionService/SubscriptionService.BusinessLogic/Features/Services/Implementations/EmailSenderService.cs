@@ -28,19 +28,31 @@ namespace SubscriptionService.BusinessLogic.Features.Services.Implementations
 
         public void SendSubscriptionMadeMessage(SubscriptionWithUserInfo info)
         {
+            var message = CreateMessage(info, EmailTemplates.subscriptionMade);
+            SendMessage(message);
+        }
+
+        public void SendSubscriptionCanceledMessage(SubscriptionWithUserInfo info)
+        {
+            var message = CreateMessage(info, EmailTemplates.subscriptionCanceled);
+            SendMessage(message);
+        }
+
+        private MimeMessage CreateMessage(SubscriptionWithUserInfo info, string templatePath)
+        {
             var message = new MimeMessage();
             message.To.Add(MailboxAddress.Parse(info.UserInfo.Email));
             message.Subject = $"Listn Music – {info.UserInfo.Region} Region.";
 
             message.Body = new TextPart(TextFormat.Html)
             {
-                Text = _messageRenderer.Render(EmailTemplates.subscriptionMade, info).Result
+                Text = _messageRenderer.Render(templatePath, info).Result
             };
 
-            SendMessage(message);
+            return message;
         }
 
-        public void SendMessage(MimeMessage message)
+        private void SendMessage(MimeMessage message)
         {
             message.From.Add(MailboxAddress.Parse(_emailSender.UserName));
 

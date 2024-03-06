@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Google.Protobuf.WellKnownTypes;
 using Hangfire;
 using MediatR;
 using SubscriptionService.BusinessLogic.Constants;
@@ -21,19 +22,22 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.MakeSubscription
         private readonly IProducerService _producerService;
         private readonly IUserServiceGrpcClient _userServiceClient;
         private readonly IEmailSenderService _emailSender;
+        private readonly IBackgroundJobsService _backgroundJobsService;
 
         public MakeSubscriptionCommandHandler(
             IUnitOfWork unitOfWork, 
             IMapper mapper, 
             IProducerService producerService, 
             IUserServiceGrpcClient userServiceClient,
-            IEmailSenderService emailSender)
+            IEmailSenderService emailSender,
+            IBackgroundJobsService backgroundJobsService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _producerService = producerService;
             _userServiceClient = userServiceClient;
             _emailSender = emailSender;
+            _backgroundJobsService = backgroundJobsService;
         }
 
         public async Task<GetSubscriptionDto> Handle(MakeSubscriptionCommand request, CancellationToken cancellationToken)
@@ -62,16 +66,19 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.MakeSubscription
             subscription.Id = Guid.NewGuid().ToString();
             subscription.SubscribedAt = DateTime.UtcNow;
             subscription.TariffPlan = tariffPlan;
+            string subscriptionPaymentCron;
 
             switch (subscription.Type)
             {
                 case SubscriptionTypes.month:
                     subscription.NextFeeDate = DateTime.UtcNow.AddMonths(1);
                     subscription.Fee = tariffPlan.MonthFee;
+                    subscriptionPaymentCron = Cron.Monthly();
                     break;
                 case SubscriptionTypes.annual:
                     subscription.NextFeeDate = DateTime.UtcNow.AddYears(1);
                     subscription.Fee = tariffPlan.AnnualFee;
+                    subscriptionPaymentCron = Cron.Yearly();
                     break;
                 default:
                     throw new UnprocessableEntityException(ExceptionMessages.incorrctSubscriptionType);
@@ -90,6 +97,10 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.MakeSubscription
                 UserInfo = userInfo,
                 Subscription = subscriptionDto
             }));
+
+            RecurringJob.AddOrUpdate(subscription.Id,
+                () => _backgroundJobsService.MakeSubscriptionPayment(subscription.Id),
+                subscriptionPaymentCron);
 
             return subscriptionDto;
         }

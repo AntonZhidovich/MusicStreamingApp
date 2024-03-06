@@ -11,6 +11,10 @@
     <EmbeddedResource Remove="Handlers\**" />
     <None Remove="Handlers\**" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="EmailTemplates\SubscriptionCanceledEmailTemplate.cshtml" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\SubscriptionService.DataAccess\SubscriptionService.DataAccess.csproj" />
@@ -35,6 +39,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="EmailTemplates\SubscriptionCanceledEmailTemplate.cshtml">
+      <LogicalName>EmailTemplates.SubscriptionCanceledEmailTemplate.cshtml</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="EmailTemplates\SubscriptionMadeEmailTemplate.cshtml">
       <LogicalName>EmailTemplates.SubscriptionMadeEmailTemplate.cshtml</LogicalName>
     </EmbeddedResource>

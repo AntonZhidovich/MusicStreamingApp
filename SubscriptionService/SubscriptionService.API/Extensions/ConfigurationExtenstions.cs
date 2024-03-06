@@ -10,7 +10,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RazorLight;
 using SubscriptionService.API.ExceptionHandlers;
-using SubscriptionService.BusinessLogic;
 using SubscriptionService.BusinessLogic.Features.Behaviors;
 using SubscriptionService.BusinessLogic.Features.Consumers;
 using SubscriptionService.BusinessLogic.Features.Producers;
@@ -48,6 +47,7 @@ namespace SubscriptionService.API.Extensions
             });
 
             services.AddScoped<IEmailMessageRenderer, EmailMessageRenderer>();
+            services.AddScoped<IBackgroundJobsService, BackgroundJobsService>();
 
             return services;
         }
