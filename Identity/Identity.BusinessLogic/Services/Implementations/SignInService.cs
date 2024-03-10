@@ -5,37 +5,48 @@ using Identity.BusinessLogic.Models;
 using Identity.BusinessLogic.Models.TokenService;
 using Identity.BusinessLogic.Models.UserService;
 using Identity.BusinessLogic.Services.Interfaces;
+using Identity.DataAccess.Repositories.Interfaces;
 
 namespace Identity.BusinessLogic.Services.Implementations
 {
     public class SignInService : ISignInService
     {
-        private readonly IUserService _userService;
+        private readonly IUserRepository _userRepository;
         private readonly ITokenService _tokenService;
+        private readonly IRoleService _roleService;
         private readonly IMapper _mapper;
 
         public SignInService(
-            IUserService userService,
+            IUserRepository userRepository,
             ITokenService tokenService,
+            IRoleService roleService,
             IMapper mapper)
         {
-            _userService = userService;
+            _userRepository = userRepository;
             _tokenService = tokenService;
+            _roleService = roleService;
             _mapper = mapper;
         }
 
         public async Task<Tokens> SignInAsync(CheckPasswordRequest request, CancellationToken cancellationToken = default)
         {
-            bool isAuthenticated = await _userService.CheckPasswordAsync(request);
+            string normalizedEmail = request.Email.Trim().ToUpper();
+
+            var user = await _userRepository.GetUserByEmail(normalizedEmail);
+
+            if (user == null)
+            {
+                throw new NotFoundException(ExceptionMessages.UserNotFound);
+            }
+
+            bool isAuthenticated = await _userRepository.CheckPasswordAsync(user, request.Password);
 
             if (!isAuthenticated)
             {
                 throw new InvalidAuthorizationException(ExceptionMessages.InvalidPassword);
             }
-
-            var user = await _userService.GetByEmailAsync(request.Email);
             
-            var roles = await _userService.GetRolesAsync(new GetUserRolesRequest { Email = user.Email });
+            var roles = await _roleService.GetUserRolesByEmailAsync(normalizedEmail);
             
             var tokensRequest = _mapper.Map<GetTokensRequest>(user);
             tokensRequest.Roles = roles;

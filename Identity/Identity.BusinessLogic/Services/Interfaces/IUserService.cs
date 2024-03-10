@@ -10,14 +10,9 @@ namespace Identity.BusinessLogic.Services.Interfaces
         Task<UserDto> GetByEmailAsync(string email);
         Task<UserDto> GetByIdAsync(string id);
         Task<IEnumerable<UserDto>> GetByIdAsync(IEnumerable<string> ids);
-        Task<bool> CheckPasswordAsync(CheckPasswordRequest request);
         Task<bool> UserWithIdExists(string id);
         Task<UserDto> RegisterAsync(RegisterUserRequest request);
         Task<UserDto> UpdateAsync(string email, UpdateUserRequest request);
-        Task DeleteAsync(DeleteUserRequest request);
-        Task<IEnumerable<string>> GetRolesAsync(GetUserRolesRequest request);
-        Task<IEnumerable<string>> GetRolesAsync(string userId);
-        Task AddToRoleAsync(string email, RoleDto roleDto);
-        Task RemoveFromRoleAsync(RemoveUserFromRoleRequest request);
+        Task DeleteAsync(string email);
     }
 }

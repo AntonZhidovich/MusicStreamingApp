@@ -16,7 +16,7 @@ namespace Identity.BusinessLogic.Mapping
             CreateMap<RegisterUserRequest, User>();
             CreateMap<User, UserDto>();
             CreateMap<UpdateUserRequest, User>();
-            CreateMap<UserDto, GetTokensRequest>().ForMember(s => s.Roles, opt => opt.Ignore());
+            CreateMap<User, GetTokensRequest>().ForMember(s => s.Roles, opt => opt.Ignore());
             CreateMap<IdentityRole, RoleDto>();
             CreateMap<User, AddUserRequest>();
             CreateMap<UserDto, UserInfo>();
