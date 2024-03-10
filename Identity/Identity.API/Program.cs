@@ -1,5 +1,6 @@
 using Identity.API.Extensions;
 using Identity.DataAccess.Data;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace Identity.API
 {
@@ -21,6 +22,7 @@ namespace Identity.API
 
             var app = builder.Build();
             app.Services.MigrateDatabase<UserDBContext>();
+
             app.UseMiddleware();
 
             if (app.Environment.IsDevelopment())

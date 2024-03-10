@@ -23,7 +23,6 @@ namespace SubscriptionService.API
             var app = builder.Build();
             app.Services.MigrateDatabase<SubscriptionDbContext>();
             app.UseExceptionHandler(options => { });
-            app.UseHangfireDashboard();
 
             if (app.Environment.IsDevelopment())
             {
@@ -33,6 +32,7 @@ namespace SubscriptionService.API
 
             app.UseHttpsRedirection();
             app.UseAuthorization();
+            app.UseHangfireDashboard();
             app.MapControllers();
             app.Run();
         }
