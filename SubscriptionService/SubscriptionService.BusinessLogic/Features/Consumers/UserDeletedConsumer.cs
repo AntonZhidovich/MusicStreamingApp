@@ -28,6 +28,7 @@ namespace SubscriptionService.BusinessLogic.Features.Consumers
             if (subscription == null)
             {
                 _consumer.Commit();
+
                 return;
             }
 

@@ -1,15 +1,14 @@
 ﻿syntax = "proto3";
 
+import "google/protobuf/empty.proto";
+
 option csharp_namespace = "MusicService.Grpc";
 
 service MusicUserService{
-    rpc AddUser(AddUserRequest) returns (AddUserResponse) {}
+    rpc AddUser(AddUserRequest) returns (google.protobuf.Empty) {}
 }
 
 message AddUserRequest{
     string id = 1;
     string user_name = 2;
-}
-
-message AddUserResponse{
 }

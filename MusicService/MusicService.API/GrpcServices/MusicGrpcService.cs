@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using MusicService.Domain.Constants;
 using MusicService.Domain.Entities;
@@ -18,7 +19,7 @@ namespace MusicService.API.GrpcServices
             _mapper = mapper;
         }
 
-        public override async Task<AddUserResponse> AddUser(AddUserRequest request, ServerCallContext context)
+        public override async Task<Empty> AddUser(AddUserRequest request, ServerCallContext context)
         {
             if (await _unitOfWork.Users.GetByIdAsync(request.Id) != null)
             {
@@ -31,7 +32,7 @@ namespace MusicService.API.GrpcServices
 
             await _unitOfWork.CommitAsync(context.CancellationToken);
 
-            return new AddUserResponse();
+            return new Empty();
         }
     }
 }

@@ -20,7 +20,7 @@ namespace SubscriptionService.BusinessLogic.Features.Services.Implementations
         public async Task<bool> UserWithIdExistsAsync(string id, CancellationToken cancellationToken = default)
         {
             var response = await _userServiceClient.UserWithIdExistsAsync(
-                new UserWithIdExistsRequest { Id = id },
+                new UserIdRequest { Id = id },
                 cancellationToken: cancellationToken);
 
             return response.UserExists;
@@ -38,7 +38,7 @@ namespace SubscriptionService.BusinessLogic.Features.Services.Implementations
 
         public async Task<UserInfo> GetUserInfoAsync(string id, CancellationToken cancellationToken = default)
         {
-            var request = new GetUserInfoRequest { Id = id };
+            var request = new UserIdRequest { Id = id };
 
             var response = await _userServiceClient.GetUserInfoAsync(request, cancellationToken: cancellationToken);
 
