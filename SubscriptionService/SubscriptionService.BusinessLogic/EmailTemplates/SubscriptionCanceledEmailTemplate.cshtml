@@ -1,0 +1,25 @@
+﻿@using SubscriptionService.BusinessLogic.Models.Subscription
+@model SubscriptionWithUserInfo
+
+<table width="800" align="center" valign="top">
+    <tbody>
+        <tr>
+            <td align="center" class="esd-block-text">
+                <h1>Bye, @Model.UserInfo.FirstName @Model.UserInfo.LastName!</h1>
+            </td>
+        </tr>
+        <tr>
+            <td align="center">
+                <p>You canceled your current subscription. Check out the other tariff plans and find the one that suits you best.</p>
+            </td>
+        </tr>
+    </tbody>
+    <tr>
+        <td align="center"><img src="https://img.freepik.com/free-vector/abstract-shapes-3_78370-76.jpg?t=st=1709675032~exp=1709678632~hmac=7b8efc03e39769bc6bc4e7daaa70dfeae93298d2bfe58269e5decb0a9cfe1997&w=996" width="600"></td>
+    </tr>
+    <tr>
+        <td align="center">
+            See you again!
+        </td>
+    </tr>
+</table>

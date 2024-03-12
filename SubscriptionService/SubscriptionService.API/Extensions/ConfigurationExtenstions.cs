@@ -1,5 +1,6 @@
 ﻿using Confluent.Kafka;
 using FluentValidation;
+using Hangfire;
 using Identity.Grpc;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -7,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using RazorLight;
 using SubscriptionService.API.ExceptionHandlers;
 using SubscriptionService.BusinessLogic.Features.Behaviors;
 using SubscriptionService.BusinessLogic.Features.Consumers;
@@ -34,6 +36,18 @@ namespace SubscriptionService.API.Extensions
             services.AddExceptionHandler<GlobalExceptionHandler>();
             services.AddKafka();
             services.AddScoped<IUserServiceGrpcClient, UserServiceGrpcClient>();
+
+            services.AddScoped<IRazorLightEngine>(provider =>
+            {
+                return new RazorLightEngineBuilder()
+                .UseEmbeddedResourcesProject(typeof(EmailSenderService).Assembly)
+                .UseMemoryCachingProvider()
+                .Build();
+            });
+
+            services.AddScoped<IEmailSenderService, EmailSenderService>();
+            services.AddScoped<IEmailMessageRenderer, EmailMessageRenderer>();
+            services.AddScoped<IBackgroundJobsService, BackgroundJobsService>();
 
             return services;
         }
@@ -123,6 +137,8 @@ namespace SubscriptionService.API.Extensions
             services.Configure<ConsumerConfig>(configuration.GetSection("KafkaConsumerConfig"));
             services.Configure<ProducerConfig>(configuration.GetSection("KafkaProducerConfig"));
             services.Configure<KafkaTopics>(configuration.GetSection("KafkaTopics"));
+            services.Configure<SMTPConfig>(configuration.GetSection("SMTPConfig"));
+            services.Configure<EmailSender>(configuration.GetSection("EmailSender"));
 
             return services;
         }
@@ -152,6 +168,18 @@ namespace SubscriptionService.API.Extensions
             {
                 options.Address = new Uri(configuration["GrpcConfig:Identity:Uri"]!);
             });
+
+            return services;
+        }
+
+        public static IServiceCollection AddHangfire(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddHangfire(options =>
+            {
+                options.UseSqlServerStorage(configuration["HangfireConfig:ConnectionString"]);
+            });
+
+            services.AddHangfireServer();
 
             return services;
         }

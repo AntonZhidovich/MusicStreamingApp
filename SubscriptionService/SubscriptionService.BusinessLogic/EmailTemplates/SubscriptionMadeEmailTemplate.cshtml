@@ -1,0 +1,25 @@
+﻿@using SubscriptionService.BusinessLogic.Models.Subscription
+@model SubscriptionWithUserInfo
+
+<table width="800" align="center" valign="top">
+    <tbody>
+        <tr>
+            <td align="center" class="esd-block-text">
+                <h1>Hey, @Model.UserInfo.FirstName @Model.UserInfo.LastName!</h1>
+            </td>
+        </tr>
+        <tr>
+            <td align="center">
+                <p>Thank you for making a '@Model.Subscription.TariffPlanName' subscription! Your @Model.Subscription.Type payment is @Model.Subscription.Fee Dollars USA.</p>
+            </td>
+        </tr>
+    </tbody>
+    <tr>
+        <td align="center"><img src="https://tlr.stripocdn.email/content/guids/CABINET_94b5710b00a9b3157c0612dcf95cf239/images/layer_1_1.png" width="600"></td>
+    </tr>
+    <tr>
+        <td align="center">
+            Find yourself enjoying thousands of tracks on Listn Music!
+        </td>
+    </tr>
+</table>

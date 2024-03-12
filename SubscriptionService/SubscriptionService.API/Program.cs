@@ -1,3 +1,4 @@
+using Hangfire;
 using SubscriptionService.API.Extensions;
 using SubscriptionService.DataAccess.Data;
 
@@ -17,10 +18,12 @@ namespace SubscriptionService.API
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwagger();
             builder.Services.AddGrpcClients(builder.Configuration);
+            builder.Services.AddHangfire(builder.Configuration);
 
             var app = builder.Build();
             app.Services.MigrateDatabase<SubscriptionDbContext>();
             app.UseExceptionHandler(options => { });
+            app.UseHangfireDashboard();
 
             if (app.Environment.IsDevelopment())
             {
