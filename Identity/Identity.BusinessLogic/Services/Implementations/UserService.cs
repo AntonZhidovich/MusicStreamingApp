@@ -112,39 +112,13 @@ namespace Identity.BusinessLogic.Services.Implementations
             return updatedDto;
         }
 
-        public async Task DeleteAsync(DeleteUserRequest request)
+        public async Task DeleteAsync(string email)
         {
-            var user = await GetDomainUserByEmailAsync(request.Email);
+            var user = await GetDomainUserByEmailAsync(email);
             
             await _userRepository.DeleteUserAsync(user);
 
             await _producerService.ProduceUserDeletedAsync(new UserDeletedMessage { Id = user.Id });
-        }
-
-        public async Task<IEnumerable<string>> GetRolesAsync(GetUserRolesRequest request)
-        {
-            var user = await GetDomainUserByEmailAsync(request.Email);
-
-            return await _userRepository.GetUserRolesAsync(user);
-        }
-
-        public async Task<IEnumerable<string>> GetRolesAsync(string userId)
-        {
-            var user = await _userRepository.GetUserByIdAsync(userId);
-
-            if (user == null)
-            {
-                throw new NotFoundException(ExceptionMessages.UserNotFound);
-            }
-
-            return await _userRepository.GetUserRolesAsync(user);
-        }
-
-        public async Task<bool> CheckPasswordAsync(CheckPasswordRequest request)
-        {
-            var user = await GetDomainUserByEmailAsync(request.Email);
-
-            return await _userRepository.CheckPasswordAsync(user, request.Password);
         }
 
         public async Task<bool> UserWithIdExists(string id)
@@ -154,24 +128,10 @@ namespace Identity.BusinessLogic.Services.Implementations
             return user != null;
         }
 
-        public async Task AddToRoleAsync(string email, RoleDto roleDto)
-        {
-            var user = await GetDomainUserByEmailAsync(email);
-            
-            await _userRepository.AddUserToRoleAsync(user, roleDto.Name);
-        }
-
-        public async Task RemoveFromRoleAsync(RemoveUserFromRoleRequest request)
-        {
-            var user = await GetDomainUserByEmailAsync(request.Email);
-            
-            await _userRepository.RemoveUserFromRoleAsync(user, request.RoleName);
-        }
-
         private async Task<User> GetDomainUserByEmailAsync(string email)
         {
             string normalizedEmail = email.Trim().ToUpper();
-            
+
             var user = await _userRepository.GetUserByEmail(normalizedEmail);
 
             if (user == null)

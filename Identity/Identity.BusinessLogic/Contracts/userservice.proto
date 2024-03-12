@@ -3,13 +3,13 @@
 option csharp_namespace = "Identity.Grpc";
 
 service UserService {
-    rpc UserWithIdExists(UserWithIdExistsRequest) returns (UserWithIdExistsResponse) {}
+    rpc UserWithIdExists(UserIdRequest) returns (UserWithIdExistsResponse) {}
     rpc GetIdUserNameMap(GetIdUserNameMapRequest) returns (GetIdUserNameMapResponse) {}
     rpc UserIsInRole(UserIsInRoleRequest) returns (UserIsInRoleResponse) {}
-    rpc GetUserInfo(GetUserInfoRequest) returns (GetUserInfoResponse) {}
+    rpc GetUserInfo(UserIdRequest) returns (GetUserInfoResponse) {}
 }
 
-message UserWithIdExistsRequest{
+message UserIdRequest{
     string id = 1;
 }
 

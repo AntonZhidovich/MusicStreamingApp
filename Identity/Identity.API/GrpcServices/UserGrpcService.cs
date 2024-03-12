@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Grpc.Core;
-using Identity.BusinessLogic.Models.UserService;
 using Identity.BusinessLogic.Services.Interfaces;
 using Identity.Grpc;
 
@@ -9,15 +8,17 @@ namespace Identity.API.GrpcServices
     public class UserGrpcService : UserService.UserServiceBase
     {
         private readonly IUserService _userService;
+        private readonly IRoleService _roleService;
         private readonly IMapper _mapper;
 
-        public UserGrpcService(IUserService userService, IMapper mapper)
+        public UserGrpcService(IUserService userService,IRoleService roleService, IMapper mapper)
         {
             _userService = userService;
+            _roleService = roleService;
             _mapper = mapper;
         }
 
-        public override async Task<UserWithIdExistsResponse> UserWithIdExists(UserWithIdExistsRequest request, 
+        public override async Task<UserWithIdExistsResponse> UserWithIdExists(UserIdRequest request, 
             ServerCallContext context)
         {
             var response = new UserWithIdExistsResponse
@@ -44,12 +45,12 @@ namespace Identity.API.GrpcServices
 
         public override async Task<UserIsInRoleResponse> UserIsInRole(UserIsInRoleRequest request, ServerCallContext context)
         {
-            var roles = await _userService.GetRolesAsync(request.Id);
+            var roles = await _roleService.GetUserRolesAsync(request.Id);
 
             return new UserIsInRoleResponse { UserIsInRole = roles.Contains(request.RoleName) };
         }
 
-        public override async Task<GetUserInfoResponse> GetUserInfo(GetUserInfoRequest request, ServerCallContext context)
+        public override async Task<GetUserInfoResponse> GetUserInfo(UserIdRequest request, ServerCallContext context)
         {
             UserInfo? userInfo = null;
 
