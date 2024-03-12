@@ -18,15 +18,18 @@ namespace MusicService.Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly ISongService _songService;
         private readonly IMapper _mapper;
+        private readonly ICacheRepository _cache;
 
         public ReleaseService(
             IUnitOfWork unitOfWork,
             ISongService songService,
-            IMapper mapper)
+            IMapper mapper,
+            ICacheRepository cache)
         {
             _unitOfWork = unitOfWork;
             _songService = songService;
             _mapper = mapper;
+            _cache = cache;
         }
 
         public async Task<PageResponse<ReleaseShortDto>> GetAllAsync(GetPageRequest request, CancellationToken cancellationToken = default)
@@ -39,9 +42,20 @@ namespace MusicService.Application.Services
 
         public async Task<ReleaseDto> GetByIdAsync(string id, CancellationToken cancellationToken = default)
         {
+            var releaseDto = await _cache.GetAsync<ReleaseDto>(id, cancellationToken);
+
+            if (releaseDto != null)
+            {
+                return releaseDto;
+            }
+
             var release = await GetDomainReleaseAsync(id, cancellationToken);
 
-            return _mapper.Map<ReleaseDto>(release);
+            releaseDto = _mapper.Map<ReleaseDto>(release);
+
+            await _cache.SetAsync(id, releaseDto, cancellationToken);
+
+            return releaseDto;
         }
 
         public async Task<PageResponse<ReleaseShortDto>> GetAllFromAuthorAsync(GetPageRequest request, 
@@ -74,6 +88,8 @@ namespace MusicService.Application.Services
             _unitOfWork.Releases.Update(release);
             
             await _unitOfWork.CommitAsync(cancellationToken);
+
+            await _cache.RemoveAsync(releaseId, cancellationToken);
 
             return _mapper.Map<SongDto>(song);
         }
@@ -119,6 +135,8 @@ namespace MusicService.Application.Services
             _unitOfWork.Releases.Delete(release);
             
             await _unitOfWork.CommitAsync(cancellationToken);
+
+            await _cache.RemoveAsync(id, cancellationToken);
         }
 
         public async Task RemoveSongFromReleaseAsync(string releaseId, string songId, ClaimsPrincipal user, CancellationToken cancellationToken = default)
@@ -144,6 +162,8 @@ namespace MusicService.Application.Services
             _unitOfWork.Releases.Update(release);
             
             await _unitOfWork.CommitAsync(cancellationToken);
+
+            await _cache.RemoveAsync(releaseId, cancellationToken);
         }
 
         public async Task<ReleaseShortDto> UpdateAsync(string id, UpdateReleaseRequest request, ClaimsPrincipal user, CancellationToken cancellationToken = default)
@@ -159,6 +179,8 @@ namespace MusicService.Application.Services
             _unitOfWork.Releases.Update(release);
             
             await _unitOfWork.CommitAsync(cancellationToken);
+
+            await _cache.RemoveAsync(id, cancellationToken);
 
             return _mapper.Map<ReleaseShortDto>(release);
         }

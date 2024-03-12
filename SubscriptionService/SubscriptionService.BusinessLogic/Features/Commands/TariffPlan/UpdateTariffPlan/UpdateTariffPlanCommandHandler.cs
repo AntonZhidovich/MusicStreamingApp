@@ -12,11 +12,13 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.UpdateTariffPlan
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly ICacheRepository _cache;
 
-        public UpdateTariffPlanCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
+        public UpdateTariffPlanCommandHandler(IUnitOfWork unitOfWork, IMapper mapper, ICacheRepository cache)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _cache = cache;
         }
 
         public async Task<GetTariffPlanDto> Handle(UpdateTariffPlanCommand request, CancellationToken cancellationToken)
@@ -32,6 +34,8 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.UpdateTariffPlan
             _unitOfWork.TariffPlans.Update(tariffPlan);
 
             await _unitOfWork.CommitAsync(cancellationToken);
+
+            await _cache.RemoveAsync($"{typeof(GetTariffPlanDto)}{tariffPlan.Name.Trim().ToLower()}", cancellationToken);
 
             return _mapper.Map<GetTariffPlanDto>(tariffPlan);
         }

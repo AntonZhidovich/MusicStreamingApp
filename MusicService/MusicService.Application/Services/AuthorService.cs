@@ -17,15 +17,18 @@ namespace MusicService.Application.Services
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserServiceGrpcClient _userServiceClient;
+        private readonly ICacheRepository _cache;
 
         public AuthorService(
             IMapper mapper,
             IUnitOfWork unitOfWork,
-            IUserServiceGrpcClient userServiceClient)
+            IUserServiceGrpcClient userServiceClient,
+            ICacheRepository cache)
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _userServiceClient = userServiceClient;
+            _cache = cache;
         }
 
         public async Task AddUserToAuthorAsync(AuthorUserRequest request, ClaimsPrincipal currentUser, CancellationToken cancellationToken = default)
@@ -50,6 +53,8 @@ namespace MusicService.Application.Services
             _unitOfWork.Authors.Update(author);
             
             await _unitOfWork.CommitAsync(cancellationToken);
+
+            await _cache.RemoveAsync(GetCacheKey(request.AuthorName), cancellationToken);
         }
 
         public async Task<AuthorDto> CreateAsync(CreateAuthorRequest request, CancellationToken cancellationToken = default)
@@ -97,6 +102,8 @@ namespace MusicService.Application.Services
             _unitOfWork.Authors.Delete(author);
            
             await _unitOfWork.CommitAsync(cancellationToken);
+
+            await _cache.RemoveAsync(name, cancellationToken);
         }
 
         public async Task<PageResponse<AuthorDto>> GetAllAsync(GetPageRequest request, CancellationToken cancellationToken = default)
@@ -109,9 +116,22 @@ namespace MusicService.Application.Services
 
         public async Task<AuthorDto> GetByNameAsync(string name, CancellationToken cancellationToken = default)
         {
+            var key = GetCacheKey(name);
+
+            var authorDto = await _cache.GetAsync<AuthorDto>(key, cancellationToken);
+
+            if (authorDto != null)
+            {
+                return authorDto;
+            }
+
             var author = await GetDomainAuthorAsync(name, cancellationToken);
 
-            return _mapper.Map<AuthorDto>(author);
+            authorDto = _mapper.Map<AuthorDto>(author);
+
+            await _cache.SetAsync(key, authorDto, cancellationToken);
+
+            return authorDto;
         }
 
         public async Task RemoveUserFromAuthorAsync(AuthorUserRequest request, 
@@ -140,6 +160,8 @@ namespace MusicService.Application.Services
             author.Users.Remove(user);
             
             await _unitOfWork.CommitAsync(cancellationToken);
+
+            await _cache.RemoveAsync(GetCacheKey(request.AuthorName), cancellationToken);
         }
 
         public async Task<AuthorDto> UpdateAsync(string name, 
@@ -158,6 +180,8 @@ namespace MusicService.Application.Services
             _unitOfWork.Authors.Update(author);
            
             await _unitOfWork.CommitAsync(cancellationToken);
+
+            await _cache.RemoveAsync(name, cancellationToken);
 
             return _mapper.Map<AuthorDto>(author);
         }
@@ -204,6 +228,11 @@ namespace MusicService.Application.Services
             {
                 throw new BadRequestException(ExceptionMessages.UserIsNotCreator);
             }
+        }
+
+        private string GetCacheKey(string name)
+        {
+            return $"{typeof(Author)}{name.Trim().ToLower()}";
         }
     }
 }

@@ -42,6 +42,11 @@ namespace SubscriptionService.API.Extensions
         {
             services.AddDbContext<SubscriptionDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("sqlserver")));
+
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = configuration["RedisConfig:ConnectionString"];
+            });
             
             return services;
         }
@@ -51,6 +56,7 @@ namespace SubscriptionService.API.Extensions
             services.AddScoped<ITariffPlanRepository, TariffPlanRepository>();
             services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<ICacheRepository, CacheRepository>();
 
             return services;
         }
