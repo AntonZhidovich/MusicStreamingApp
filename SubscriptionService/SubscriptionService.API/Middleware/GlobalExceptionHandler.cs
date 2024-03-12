@@ -26,7 +26,7 @@ namespace SubscriptionService.API.ExceptionHandlers
 
             httpContext.Response.StatusCode = statusCode;
 
-            _logger.LogError(exception, $"Exception: {exception.GetType().Name} {exception.Message}");
+            _logger.LogError(exception, $"Exception: {exception.GetType().Name}. {exception.Message}");
 
             await httpContext.Response.WriteAsJsonAsync(problemDetails);
 

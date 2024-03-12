@@ -1,5 +1,4 @@
-﻿
-namespace SubscriptionService.API.Middleware
+﻿namespace Identity.API.Middleware
 {
     public class LoggingMiddleware
     {

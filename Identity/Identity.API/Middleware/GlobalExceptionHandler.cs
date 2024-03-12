@@ -4,10 +4,17 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Text.Json;
 
-namespace Identity.API.ExceptionHandlers
+namespace Identity.API.Middleware
 {
     public class GlobalExceptionHandler : IExceptionHandler
     {
+        private readonly ILogger<GlobalExceptionHandler> _logger;
+
+        public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger)
+        {
+            _logger = logger;
+        }
+
         public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
         {
             int statusCode = GetErrorCode(exception);
@@ -19,6 +26,9 @@ namespace Identity.API.ExceptionHandlers
             };
 
             httpContext.Response.StatusCode = statusCode;
+
+            _logger.LogError(exception, $"Exception: {exception.GetType().Name}. {exception.Message}");
+
             await httpContext.Response.WriteAsJsonAsync(problemDetails);
 
             return true;
@@ -29,8 +39,8 @@ namespace Identity.API.ExceptionHandlers
             switch (e)
             {
                 case BaseIdentityException identityException:
-                    
-                    string detail =  JsonSerializer.Serialize(
+
+                    string detail = JsonSerializer.Serialize(
                         identityException.Errors?.Select(e => new { Error = e.Description }));
                     return detail;
                 default:

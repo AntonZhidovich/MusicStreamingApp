@@ -9,7 +9,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RazorLight;
-using SubscriptionService.API.ExceptionHandlers;
+using SubscriptionService.API.Middleware;
 using SubscriptionService.BusinessLogic.Features.Behaviors;
 using SubscriptionService.BusinessLogic.Features.Consumers;
 using SubscriptionService.BusinessLogic.Features.Producers;

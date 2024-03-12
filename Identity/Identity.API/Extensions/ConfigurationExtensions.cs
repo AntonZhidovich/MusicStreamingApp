@@ -1,7 +1,7 @@
 ﻿using Confluent.Kafka;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using Identity.API.ExceptionHandlers;
+using Identity.API.Middleware;
 using Identity.BusinessLogic.Mapping;
 using Identity.BusinessLogic.Options;
 using Identity.BusinessLogic.Services.Implementations;
@@ -96,6 +96,7 @@ namespace Identity.API.Extensions
 
         public static IApplicationBuilder UseMiddleware(this IApplicationBuilder app)
         {
+            app.UseMiddleware<LoggingMiddleware>();
             app.UseExceptionHandler(options => { });
 
             return app;
