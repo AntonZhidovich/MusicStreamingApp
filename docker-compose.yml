@@ -63,11 +63,19 @@ services:
     volumes:
       - mssql_data:/var/opt/mssql/data
     restart: unless-stopped
-    command:
+    entrypoint: >
       /bin/sh -c "
-      sleep 30 && /opt/mssql-tools/bin/sqlcmd -Q \"IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = \'backgroundtasks\') BEGIN CREATE DATABASE backgroundtasks END\" -U SA -P \"8>R#4!a6\" &
       /opt/mssql/bin/sqlservr &
-      wait" 
+      while :
+        do
+            sleep 10
+            /opt/mssql-tools/bin/sqlcmd -Q \"IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = \'backgroundtasks\') BEGIN CREATE DATABASE backgroundtasks END\" -U SA -P \"8>R#4!a6\"
+            if [ $? -eq 0 ]; then
+                break
+            fi
+        done
+      wait"
+      
 
   mongo:
     container_name: mongo
@@ -124,6 +132,7 @@ services:
       - 8181:8031
     volumes:
       - ../MusicStreamingApp/Certificates:/app/certs/.aspnet/https/:ro
+    restart: on-failure
 
   musicservice:
     container_name: musicservice
@@ -139,6 +148,7 @@ services:
       - 8082:7127
     volumes:
       - ../MusicStreamingApp/Certificates:/app/certs/.aspnet/https/:ro
+    restart: on-failure
 
   subscriptionservice:
     container_name: subscriptionservice
@@ -152,6 +162,7 @@ services:
       - 8083:7060
     volumes:
       - ../MusicStreamingApp/Certificates:/app/certs/.aspnet/https/:ro
+    restart: on-failure
 
 volumes:
   elastic_data:    
