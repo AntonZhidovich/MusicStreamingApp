@@ -12,22 +12,26 @@ using MusicService.Infrastructure.Specifications;
 using Microsoft.Net.Http.Headers;
 using System.Security.Claims;
 using MusicService.Application.Specifications;
+using Microsoft.Extensions.Logging;
 
 namespace MusicService.Application.Services
 {
     public class SongService : ISongService
     {
+        private readonly ILogger<SongService> _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ISongSourceRepository _sourceRepository;
         private readonly ICacheRepository _cache;
 
         public SongService(
+            ILogger<SongService> logger,
             IUnitOfWork unitOfWork,
             IMapper mapper,
             ISongSourceRepository sourceRepository,
             ICacheRepository cache)
         {
+            _logger = logger;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _sourceRepository = sourceRepository;
@@ -125,6 +129,8 @@ namespace MusicService.Application.Services
             stream.Position = 0;
             
             await _sourceRepository.UploadAsync(authorName, request.sourceFile.FileName, stream, cancellationToken);
+
+            _logger.LogInformation("Song source {sourceName} is uploaded.", $"{authorName}/{request.sourceFile.FileName}");
         }
 
         public async Task RemoveSongSourceAsync(ClaimsPrincipal user, string sourceName, CancellationToken cancellationToken = default)
@@ -139,6 +145,8 @@ namespace MusicService.Application.Services
             }
             
             await _sourceRepository.RemoveAsync(authorName, sourceName, cancellationToken);
+
+            _logger.LogInformation("Song source {sourceName} is removed.", sourceName);
         }
 
         public async Task<IEnumerable<string>> GetSourcesAsync(ClaimsPrincipal user, CancellationToken cancellationToken = default)
@@ -191,6 +199,8 @@ namespace MusicService.Application.Services
 
             if (song == null)
             {
+                _logger.LogError("Song {songId} was not found.", id);
+
                 throw new NotFoundException(ExceptionMessages.SongNotFound);
             }
 
@@ -217,11 +227,15 @@ namespace MusicService.Application.Services
 
             if (author == null)
             {
+                _logger.LogError("Author {authorName} was not found.", authorName);
+
                 throw new NotFoundException(ExceptionMessages.AuthorNotFound);
             }
 
             if (!_unitOfWork.Authors.UserIsMember(author, userName))
             {
+                _logger.LogError("User {userName} is not member of author {authorName}.", userName, authorName);
+
                 throw new AuthorizationException(ExceptionMessages.NotAuthorMember);
             }
         }

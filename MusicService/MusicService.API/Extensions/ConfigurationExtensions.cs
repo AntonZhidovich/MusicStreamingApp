@@ -8,7 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Minio;
 using MongoDB.Driver;
-using MusicService.API.ExceptionHandlers;
+using MusicService.API.Middleware;
 using MusicService.Application.Consumers;
 using MusicService.Application.Interfaces;
 using MusicService.Application.Options;

@@ -8,16 +8,19 @@ using MusicService.Domain.Exceptions;
 using MusicService.Application.Models.SongService;
 using MusicService.Application.Interfaces;
 using MusicService.Domain.Constants;
+using Microsoft.Extensions.Logging;
 
 namespace MusicService.Application.Services
 {
     public class GenreService : IGenreService
     {
+        private readonly ILogger<GenreService> _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public GenreService(IUnitOfWork unitOfWork, IMapper mapper)
+        public GenreService(ILogger<GenreService> logger, IUnitOfWork unitOfWork, IMapper mapper)
         {
+            _logger = logger;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
@@ -58,6 +61,8 @@ namespace MusicService.Application.Services
             _unitOfWork.Genres.Delete(genre);
             
             await _unitOfWork.CommitAsync(cancellationToken);
+
+            _logger.LogInformation("Genre {genreName} is removed.", name);
         }
 
         private async Task<Genre> GetDomainGenreAsync(string name, CancellationToken cancellationToken = default)
@@ -66,6 +71,8 @@ namespace MusicService.Application.Services
 
             if (genre == null)
             {
+                _logger.LogError("Genre {genreName} was not found,", name);
+
                 throw new NotFoundException(ExceptionMessages.GenreNotFound);
             }
 

@@ -1,4 +1,4 @@
-﻿namespace SubscriptionService.API.Middleware
+﻿namespace MusicService.API.Middleware
 {
     public class LoggingMiddleware
     {

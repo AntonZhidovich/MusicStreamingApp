@@ -3,7 +3,7 @@ using SubscriptionService.BusinessLogic.Exceptions;
 using SubscriptionService.BusinessLogic.Models;
 using System.Net;
 
-namespace SubscriptionService.API.ExceptionHandlers
+namespace SubscriptionService.API.Middleware
 {
     public class GlobalExceptionHandler : IExceptionHandler
     {
@@ -17,7 +17,7 @@ namespace SubscriptionService.API.ExceptionHandlers
         public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
         {
             int statusCode = GetErrorCode(exception);
-            var problemDetails = new 
+            var problemDetails = new
             {
                 Status = statusCode,
                 Title = exception.Message,

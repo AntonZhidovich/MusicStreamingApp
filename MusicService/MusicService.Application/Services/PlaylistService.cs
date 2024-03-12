@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
 using MusicService.Application.Interfaces;
 using MusicService.Application.Models.DTOs;
 using MusicService.Application.Models.PlaylistService;
@@ -12,15 +13,18 @@ namespace MusicService.Application.Services
 {
     public class PlaylistService : IPlaylistService
     {
+        private readonly ILogger<PlaylistService> _logger;
         private readonly IPlaylistRepository _playlistRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
         public PlaylistService(
+            ILogger<PlaylistService> logger,
             IPlaylistRepository playlistRepository,
             IUnitOfWork unitOfWork,
             IMapper mapper)
         {
+            _logger = logger;
             _playlistRepository = playlistRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -73,11 +77,16 @@ namespace MusicService.Application.Services
 
             if (currentPlaylistCount >= maxPlaylistCount) 
             {
+                _logger.LogError("Tariff plan of user {userId} did't allow to create another playlist. Current count: {currentCount}; Max count: {maxCount}.",
+                    userId, currentPlaylistCount, maxPlaylistCount);
+
                 throw new BadRequestException(ExceptionMessages.PlanDoesntAllow);
             }
 
             var playlist = new Playlist { UserId = userId };
             _mapper.Map(request, playlist);
+
+            _logger.LogInformation("User {userId} created a playlist {playlitId}.", userId, playlist.Id);
             
             await _playlistRepository.CreateAsync(playlist, cancellationToken);
         }
@@ -89,6 +98,8 @@ namespace MusicService.Application.Services
             CheckIfUserIsOwner(playlist, GetCurrentUserId(user));
 
             await _playlistRepository.DeleteAsync(id, cancellationToken);
+
+            _logger.LogInformation("Playlist {playlitId} is deleted.", playlist.Id);
         }
 
         public async Task<PlaylistFullDto> GetFullPlaylistAsync(ClaimsPrincipal user, string id, CancellationToken cancellationToken = default)
@@ -124,7 +135,6 @@ namespace MusicService.Application.Services
 
         public async Task UpdateAsync(ClaimsPrincipal user, string id, UpdatePlaylistRequest request, CancellationToken cancellationToken = default)
         {
-
             var playlist = await GetDomainPlaylistAsync(id, cancellationToken);
 
             CheckIfUserIsOwner(playlist, GetCurrentUserId(user));
@@ -137,6 +147,8 @@ namespace MusicService.Application.Services
         {
             if (playlist.UserId != userId)
             {
+                _logger.LogError("User {userId} attempted to access a playlist {playlistId} he doesn't owe.", userId, playlist.Id);
+
                 throw new AuthorizationException(ExceptionMessages.NoAccessToPlaylist);
             }
         }
@@ -147,6 +159,8 @@ namespace MusicService.Application.Services
 
             if (count == null)
             {
+                _logger.LogError("Tariff plan for user {userId} is not specified.", userId);
+
                 throw new BadRequestException(ExceptionMessages.PlanNotFound);
             }
 
@@ -159,6 +173,8 @@ namespace MusicService.Application.Services
 
             if (playlist == null)
             {
+                _logger.LogError("Playist with id {playlistId} was not found.", id);
+
                 throw new NotFoundException(ExceptionMessages.PlaylistNotFound);
             }
 

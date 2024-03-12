@@ -3,10 +3,17 @@ using Microsoft.AspNetCore.Mvc;
 using MusicService.Domain.Exceptions;
 using System.Net;
 
-namespace MusicService.API.ExceptionHandlers
+namespace MusicService.API.Middleware
 {
     public class GlobalExceptionHandler : IExceptionHandler
     {
+        private readonly ILogger<GlobalExceptionHandler> _logger;
+
+        public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger)
+        {
+            _logger = logger;
+        }
+
         public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
         {
             int statusCode = GetErrorCode(exception);
@@ -17,7 +24,9 @@ namespace MusicService.API.ExceptionHandlers
             };
 
             httpContext.Response.StatusCode = statusCode;
-            
+
+            _logger.LogError(exception, $"Exception: {exception.GetType().Name}. {exception.Message}");
+
             await httpContext.Response.WriteAsJsonAsync(problemDetails);
 
             return true;

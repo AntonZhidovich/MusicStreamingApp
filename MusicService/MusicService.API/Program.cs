@@ -1,4 +1,5 @@
 using MusicService.API.Extensions;
+using MusicService.API.Middleware;
 using MusicService.Application.Mapping;
 using MusicService.Infrastructure.Data;
 
@@ -19,9 +20,13 @@ namespace MusicService.API
             builder.Services.ConfigureSwagger();
             builder.Services.AddGrpcClients(builder.Configuration);
             builder.Services.AddCorsPolicy(builder.Configuration);
+            builder.Host.UseLogging();
 
             var app = builder.Build();
             app.Services.MigrateDatabase<MusicDbContext>();
+
+            app.UseExceptionHandler(options => { });
+            app.UseMiddleware<LoggingMiddleware>();
 
             if (app.Environment.IsDevelopment())
             {
@@ -29,7 +34,6 @@ namespace MusicService.API
                 app.UseSwaggerUI();
             }
 
-            app.UseExceptionHandler(options => { });
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
