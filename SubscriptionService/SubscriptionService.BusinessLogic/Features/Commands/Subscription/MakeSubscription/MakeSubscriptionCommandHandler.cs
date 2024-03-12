@@ -2,6 +2,9 @@
 using MediatR;
 using SubscriptionService.BusinessLogic.Constants;
 using SubscriptionService.BusinessLogic.Exceptions;
+using SubscriptionService.BusinessLogic.Features.Producers;
+using SubscriptionService.BusinessLogic.Features.Services.Interfaces;
+using SubscriptionService.BusinessLogic.Models.Messages;
 using SubscriptionService.BusinessLogic.Models.Subscription;
 using SubscriptionService.DataAccess.Constants;
 using SubscriptionService.DataAccess.Entities;
@@ -14,15 +17,30 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.MakeSubscription
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IProducerService _producerService;
+        private readonly IUserServiceGrpcClient _userServiceClient;
 
-        public MakeSubscriptionCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
+        public MakeSubscriptionCommandHandler(
+            IUnitOfWork unitOfWork, 
+            IMapper mapper, 
+            IProducerService producerService, 
+            IUserServiceGrpcClient userServiceClient)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _producerService = producerService;
+            _userServiceClient = userServiceClient;
         }
 
         public async Task<GetSubscriptionDto> Handle(MakeSubscriptionCommand request, CancellationToken cancellationToken)
         {
+            var userExists = await _userServiceClient.UserWithIdExistsAsync(request.Dto.UserId, cancellationToken);
+
+            if (!userExists)
+            {
+                throw new NotFoundException(ExceptionMessages.userNotFound);
+            }
+
             var tariffPlan = await _unitOfWork.TariffPlans.GetByIdAsync(
                 request.Dto.TariffPlanId,
                 cancellationToken);
@@ -63,6 +81,8 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.MakeSubscription
             await _unitOfWork.Subscriptions.CreateAsync(subscription, cancellationToken);
 
             await _unitOfWork.CommitAsync(cancellationToken);
+
+            await _producerService.ProduceSubscriptionMadeAsync(_mapper.Map<SubscriptionMadeMessage>(subscription), cancellationToken);
 
             return _mapper.Map<GetSubscriptionDto>(subscription);
         }

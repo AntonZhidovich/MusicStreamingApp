@@ -2,6 +2,7 @@
 using Identity.BusinessLogic.Constants;
 using Identity.BusinessLogic.Exceptions;
 using Identity.BusinessLogic.Models;
+using Identity.BusinessLogic.Models.Messages;
 using Identity.BusinessLogic.Models.UserService;
 using Identity.BusinessLogic.Services.Interfaces;
 using Identity.BusinessLogic.Specifications;
@@ -15,13 +16,19 @@ namespace Identity.BusinessLogic.Services.Implementations
     {
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
+        private readonly IProducerService _producerService;
+        private readonly IMusicUserGrpcServiceClient _musicUserServiceClient;
 
         public UserService(
             IUserRepository userRepository,
-            IMapper mapper)
+            IMapper mapper,
+            IProducerService producerService,
+            IMusicUserGrpcServiceClient musicUserServiceClient)
         {
             _userRepository = userRepository;
             _mapper = mapper;
+            _producerService = producerService;
+            _musicUserServiceClient = musicUserServiceClient;
         }
 
         public async Task<UsersPageResponse> GetAllAsync(GetUsersRequest request)
@@ -50,6 +57,23 @@ namespace Identity.BusinessLogic.Services.Implementations
             return _mapper.Map<UserDto>(user);
         }
 
+        public async Task<IEnumerable<UserDto>> GetByIdAsync(IEnumerable<string> ids)
+        {
+            return _mapper.Map<IEnumerable<UserDto>>(await _userRepository.GetByIdAsync(ids));
+        }
+
+        public async Task<UserDto> GetByIdAsync(string id)
+        {
+            var user = await _userRepository.GetUserByIdAsync(id);
+
+            if (user == null)
+            {
+                throw new NotFoundException(ExceptionMessages.UserNotFound);
+            }
+
+            return _mapper.Map<UserDto>(user);
+        }
+
         public async Task<UserDto> RegisterAsync(RegisterUserRequest request)
         {
             var user = _mapper.Map<User>(request);
@@ -62,6 +86,8 @@ namespace Identity.BusinessLogic.Services.Implementations
             }
 
             await _userRepository.AddUserToRoleAsync(user, UserRoles.listener);
+
+            await _musicUserServiceClient.AddUserAsync(user);
 
             return _mapper.Map<UserDto>(user);
         }
@@ -79,47 +105,33 @@ namespace Identity.BusinessLogic.Services.Implementations
                 throw new UnprocessableEntityException(ExceptionMessages.InvalidInput, result.Errors);
             }
 
-            return _mapper.Map<UserDto>(user);
+            var updatedDto = _mapper.Map<UserDto>(user);
+
+            await _producerService.ProduceUserUpdatedAsync(new UserUpdatedMessage { Id = updatedDto.Id, NewUserName = updatedDto.UserName });
+
+            return updatedDto;
         }
 
-        public async Task DeleteAsync(DeleteUserRequest request)
-        {
-            var user = await GetDomainUserByEmailAsync(request.Email);
-            await _userRepository.DeleteUserAsync(user);
-        }
-
-        public async Task<IEnumerable<string>> GetRolesAsync(GetUserRolesRequest request)
-        {
-            var user = await GetDomainUserByEmailAsync(request.Email);
-
-            return await _userRepository.GetUserRolesAsync(user);
-        }
-
-        public async Task<bool> CheckPasswordAsync(CheckPasswordRequest request)
-        {
-            var user = await GetDomainUserByEmailAsync(request.Email);
-
-            return await _userRepository.CheckPasswordAsync(user, request.Password);
-        }
-
-        public async Task AddToRoleAsync(string email, RoleDto roleDto)
+        public async Task DeleteAsync(string email)
         {
             var user = await GetDomainUserByEmailAsync(email);
             
-            await _userRepository.AddUserToRoleAsync(user, roleDto.Name);
+            await _userRepository.DeleteUserAsync(user);
+
+            await _producerService.ProduceUserDeletedAsync(new UserDeletedMessage { Id = user.Id });
         }
 
-        public async Task RemoveFromRoleAsync(RemoveUserFromRoleRequest request)
+        public async Task<bool> UserWithIdExists(string id)
         {
-            var user = await GetDomainUserByEmailAsync(request.Email);
-            
-            await _userRepository.RemoveUserFromRoleAsync(user, request.RoleName);
+            var user = await _userRepository.GetUserByIdAsync(id);
+
+            return user != null;
         }
 
         private async Task<User> GetDomainUserByEmailAsync(string email)
         {
             string normalizedEmail = email.Trim().ToUpper();
-            
+
             var user = await _userRepository.GetUserByEmail(normalizedEmail);
 
             if (user == null)

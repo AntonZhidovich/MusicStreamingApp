@@ -9,6 +9,8 @@ namespace Identity.DataAccess.Repositories.Interfaces
         Task<IEnumerable<User>> GetAllUsersAsync(int currentPage, int pageSize);
         Task<IEnumerable<User>> ApplySpecificationAsync(ISpecification<User> specification, int currentPage, int pageSize);
         Task<User?> GetUserByEmail(string email);
+        Task<User?> GetUserByIdAsync(string id);
+        Task<IEnumerable<User>> GetByIdAsync(IEnumerable<string> ids);
         Task<int> CountAsync();
         Task<int> CountAsync(ISpecification<User> specification);
         Task<IdentityResult> AddUserAsync(User user, string password);

@@ -1,5 +1,7 @@
-﻿using FluentValidation;
+﻿using Confluent.Kafka;
+using FluentValidation;
 using FluentValidation.AspNetCore;
+using Identity.Grpc;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -7,6 +9,7 @@ using Microsoft.OpenApi.Models;
 using Minio;
 using MongoDB.Driver;
 using MusicService.API.ExceptionHandlers;
+using MusicService.Application.Consumers;
 using MusicService.Application.Interfaces;
 using MusicService.Application.Options;
 using MusicService.Application.Services;
@@ -25,6 +28,8 @@ namespace MusicService.API.Extensions
         {
             services.Configure<MongoDbOptions>(configuration.GetSection("MongoDbOptions"));
             services.Configure<MinioOptions>(configuration.GetSection("MinioOptions"));
+            services.Configure<ConsumerConfig>(configuration.GetSection("KafkaConsumerConfig"));
+            services.Configure<KafkaTopics>(configuration.GetSection("KafkaTopics"));
 
             return services;
         }
@@ -40,6 +45,9 @@ namespace MusicService.API.Extensions
             services.AddScoped<ISongService, SongService>();
             services.AddScoped<IReleaseService, ReleaseService>();
             services.AddScoped<IPlaylistService, PlaylistService>();
+            services.AddScoped<IUserServiceGrpcClient, UserServiceGrpcClient>();
+            services.AddKafka();
+            services.AddGrpc();
 
             return services;
         }
@@ -127,6 +135,41 @@ namespace MusicService.API.Extensions
         {
             services.AddFluentValidationAutoValidation();
             services.AddValidatorsFromAssemblyContaining<CreateAuthorValidator>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddKafka(this IServiceCollection services)
+        {
+            services.AddHostedService<UserDeletedConsumer>();
+            services.AddHostedService<UserUpdatedConsumer>();
+            services.AddHostedService<SubscriptionMadeConsumer>();
+            services.AddHostedService<SubscriptionCanceledConsumer>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddGrpcClients(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddGrpcClient<UserService.UserServiceClient>(options =>
+            {
+                options.Address = new Uri(configuration["GrpcConfig:Identity:Uri"]!);
+            });
+
+            return services;
+        }
+
+        public static IServiceCollection AddCorsPolicy(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(config =>
+                {
+                config.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+                });
+            });
 
             return services;
         }

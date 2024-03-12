@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using Confluent.Kafka;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using Identity.API.ExceptionHandlers;
 using Identity.BusinessLogic.Mapping;
@@ -13,8 +14,10 @@ using Identity.DataAccess.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using MusicService.Grpc;
 using System.Text;
 
 namespace Identity.API.Extensions
@@ -36,6 +39,9 @@ namespace Identity.API.Extensions
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<ISignInService, SignInService>();
             services.AddScoped<IRoleService, RoleService>();
+            services.AddKafka();
+            services.AddScoped<IMusicUserGrpcServiceClient, MusicUserGrpcServiceClient>();
+            services.AddGrpc();
 
             return services;
         }
@@ -52,6 +58,8 @@ namespace Identity.API.Extensions
         {
             services.Configure<JwtOptions>(configuration.GetSection("JwtOptions"));
             services.Configure<IdentityOptions>(configuration.GetSection("IdentityOptions"));
+            services.Configure<ProducerConfig>(configuration.GetSection("KafkaProducerConfig"));
+            services.Configure<KafkaTopics>(configuration.GetSection("KafkaTopics"));
 
             return services;
         }
@@ -113,6 +121,48 @@ namespace Identity.API.Extensions
                 };
                 securityRequirement.Add(jwtScheme, new List<string>());
                 options.AddSecurityRequirement(securityRequirement);
+            });
+
+            return services;
+        }
+
+        public static IServiceCollection AddKafka(this IServiceCollection services)
+        {
+            services.AddScoped(provider =>
+            {
+                var configOptions = provider.GetService<IOptions<ProducerConfig>>()!;
+
+                var producer = new ProducerBuilder<string, string>(configOptions.Value)
+                    .Build();
+
+                return producer;
+            });
+
+            services.AddScoped<IProducerService, ProducerService>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddGrpcClients(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddGrpcClient<MusicUserService.MusicUserServiceClient>(options =>
+            {
+                options.Address = new Uri(configuration["GrpcConfig:MusicService:Uri"]!);
+            });
+
+            return services;
+        }
+
+        public static IServiceCollection AddCorsPolicy(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(config =>
+                {
+                    config.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                });
             });
 
             return services;

@@ -8,6 +8,7 @@ namespace SubscriptionService.API
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            builder.Services.ApplyConfigurations(builder.Configuration);
             builder.Services.AddDatabase(builder.Configuration);
             builder.Services.AddRepositories();
             builder.Services.AddServices();
@@ -15,6 +16,7 @@ namespace SubscriptionService.API
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwagger();
+            builder.Services.AddGrpcClients(builder.Configuration);
 
             var app = builder.Build();
             app.Services.MigrateDatabase<SubscriptionDbContext>();

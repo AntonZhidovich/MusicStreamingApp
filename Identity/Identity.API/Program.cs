@@ -1,4 +1,5 @@
 using Identity.API.Extensions;
+using Identity.DataAccess.Data;
 
 namespace Identity.API
 {
@@ -15,8 +16,11 @@ namespace Identity.API
             builder.Services.AddControllers();
             builder.Services.AddServices();
             builder.Services.ConfigureSwagger();
+            builder.Services.AddGrpcClients(builder.Configuration);
+            builder.Services.AddCorsPolicy(builder.Configuration);
 
             var app = builder.Build();
+            app.Services.MigrateDatabase<UserDBContext>();
             app.UseMiddleware();
 
             if (app.Environment.IsDevelopment())
@@ -28,7 +32,9 @@ namespace Identity.API
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
+            app.MapGrpcServices();
             app.MapControllers();
+            app.UseCors();
             app.Run();
         }
     }

@@ -14,7 +14,7 @@ namespace SubscriptionService.API.Controllers
 {
     [Route("api/plans")]
     [ApiController]
-    [Authorize(Roles = UserRoles.admin)]
+    [Authorize]
     public class TariffPlanController : ControllerBase
     {
         private readonly ISender _sender;
@@ -41,6 +41,7 @@ namespace SubscriptionService.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = UserRoles.admin)]
         public async Task<IActionResult> CreateAsync([FromBody] CreateTariffPlanDto dto)
         {
             var tariffPlan = await _sender.Send(new CreateTariffPlanCommand(dto), HttpContext.RequestAborted);
@@ -49,6 +50,7 @@ namespace SubscriptionService.API.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = UserRoles.admin)]
         public async Task<IActionResult> UpdateAsync([FromRoute] string id, [FromBody] UpdateTariffPlanDto dto)
         {
             var tariffPlan = await _sender.Send(new UpdateTariffPlanCommand(id, dto), HttpContext.RequestAborted);
@@ -57,6 +59,7 @@ namespace SubscriptionService.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = UserRoles.admin)]
         public async Task<IActionResult> DeleteAsync([FromRoute] string id)
         {
             await _sender.Send(new DeleteTariffPlanCommand(id), HttpContext.RequestAborted);

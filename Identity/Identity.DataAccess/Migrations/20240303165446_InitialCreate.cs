@@ -195,15 +195,25 @@ namespace Identity.DataAccess.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "CreationDate", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "Region", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "af3c8548-ac9e-43bf-8474-ae514d9780d6", 0, "7af8d93c-9b9b-4e09-bc1d-9ef180915552", new DateTime(2024, 2, 1, 11, 39, 22, 185, DateTimeKind.Utc).AddTicks(4671), "dmitry.ivanov@gmail.com", false, "Dmitry", "Ivanov", false, null, "DMITRY.IVANOV@GMAIL.COM", "DMITRY.IVANOV", "AQAAAAIAAYagAAAAEGnb9gCu0ZszBQAsOO8EfkSggUCxR0fk9mQJdz5Imzxtn6HipugF+ELehdTdFZ3wHg==", null, false, "Italy", "LHOBZXJKHQASYZODSS7FPA2UQOKTAHDR", false, "dmitry.ivanov" });
+                values: new object[,]
+                {
+                    { "6930fd61-ac4f-4fc1-ab3c-8cc9db42aa90", 0, "6b975ebc-7954-4be3-91ec-5854ba11b035", new DateTime(2024, 3, 3, 16, 54, 46, 433, DateTimeKind.Utc).AddTicks(8474), "garritsen@gmail.com", false, "Martin", "Garritsen", false, null, "GARRITSEN@GMAIL.COM", "MARTIJN_GARRITSEN", "AQAAAAIAAYagAAAAEIdo5ONoHW/GVFfPqonfYe1pGZPGPNA5LZJkbJCs2pw59yHOx8PVxj62thP8RrEH0A==", null, false, "Amsterdam", "CFSP6QTASV5VVOH2ROTWN7SGSEK3RHFW", false, "Martijn_Garritsen" },
+                    { "98975656-f5e8-42d9-9f6b-58598773e16c", 0, "f1c51ace-2e20-4ac7-8b56-8799f4c794bb", new DateTime(2024, 3, 3, 16, 54, 46, 433, DateTimeKind.Utc).AddTicks(8464), "MikeShinoda@gmail.com", false, "Mike", "Shinoda", false, null, "MIKESHINODA@GMAIL.COM", "MIKESHINODA1977", "AQAAAAIAAYagAAAAEMleAqjG11pRU4FUv3ReSBj+3QvI5irY8WpzypbgyOD9qhLCgI8IRFiWbB7Gq7O6dw==", null, false, "Los Angeles", "BGA2JFI5KXTO6565STR4P34F3QPQR2GG", false, "MikeShinoda1977" },
+                    { "af3c8548-ac9e-43bf-8474-ae514d9780d6", 0, "7af8d93c-9b9b-4e09-bc1d-9ef180915552", new DateTime(2024, 3, 3, 16, 54, 46, 433, DateTimeKind.Utc).AddTicks(8367), "dmitry.ivanov@gmail.com", false, "Dmitry", "Ivanov", false, null, "DMITRY.IVANOV@GMAIL.COM", "DMITRY.IVANOV", "AQAAAAIAAYagAAAAEGnb9gCu0ZszBQAsOO8EfkSggUCxR0fk9mQJdz5Imzxtn6HipugF+ELehdTdFZ3wHg==", null, false, "Italy", "LHOBZXJKHQASYZODSS7FPA2UQOKTAHDR", false, "dmitry.ivanov" },
+                    { "c13d3c43-7724-4cbd-9226-56fb2fb7e482", 0, "48fa758e-e07d-4abf-83ca-797db1fe3311", new DateTime(2024, 3, 3, 16, 54, 46, 433, DateTimeKind.Utc).AddTicks(8379), "bennington@outlook.com", false, "Chester", "Bennington", false, null, "BENNINGTON@OUTLOOK.COM", "CHESTER.BENNINGTON", "AQAAAAIAAYagAAAAECsYLJkr31tTmZasfE+51TiiS2V1NwwmRmFgCtr/p7K0aK6jTznzliXwQVzet9q4PA==", null, false, "Los Angeles", "ZNUHMAR7OTK2XF4DUDTZUOJVRLP5CKSZ", false, "Chester.Bennington" }
+                });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",
                 columns: new[] { "RoleId", "UserId" },
                 values: new object[,]
                 {
+                    { "f95d795a-0d1a-4c38-8323-6f6140f4b54d", "6930fd61-ac4f-4fc1-ab3c-8cc9db42aa90" },
+                    { "f95d795a-0d1a-4c38-8323-6f6140f4b54d", "98975656-f5e8-42d9-9f6b-58598773e16c" },
                     { "f128150c-afbe-472f-af50-0df6d2cb86a1", "af3c8548-ac9e-43bf-8474-ae514d9780d6" },
-                    { "f95d795a-0d1s-4728-8323-ada65d4sa4da", "af3c8548-ac9e-43bf-8474-ae514d9780d6" }
+                    { "f95d795a-0d1a-4c38-8323-6f6140f4b54d", "af3c8548-ac9e-43bf-8474-ae514d9780d6" },
+                    { "f95d795a-0d1s-4728-8323-ada65d4sa4da", "af3c8548-ac9e-43bf-8474-ae514d9780d6" },
+                    { "f95d795a-0d1a-4c38-8323-6f6140f4b54d", "c13d3c43-7724-4cbd-9226-56fb2fb7e482" }
                 });
 
             migrationBuilder.CreateIndex(

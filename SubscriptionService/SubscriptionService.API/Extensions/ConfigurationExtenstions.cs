@@ -1,14 +1,21 @@
-﻿using FluentValidation;
-using FluentValidation.AspNetCore;
+﻿using Confluent.Kafka;
+using FluentValidation;
+using Identity.Grpc;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SubscriptionService.API.ExceptionHandlers;
 using SubscriptionService.BusinessLogic.Features.Behaviors;
+using SubscriptionService.BusinessLogic.Features.Consumers;
+using SubscriptionService.BusinessLogic.Features.Producers;
 using SubscriptionService.BusinessLogic.Features.Queries.GetAllTariffPlans;
+using SubscriptionService.BusinessLogic.Features.Services.Implementations;
+using SubscriptionService.BusinessLogic.Features.Services.Interfaces;
 using SubscriptionService.BusinessLogic.Mapping;
+using SubscriptionService.BusinessLogic.Options;
 using SubscriptionService.BusinessLogic.Validators;
 using SubscriptionService.DataAccess.Data;
 using SubscriptionService.DataAccess.Repositories.Implementations;
@@ -25,6 +32,8 @@ namespace SubscriptionService.API.Extensions
             services.AddAutoMapper(typeof(SubscriptionMappingProfile));
             services.AddMediatR(config => config.RegisterServicesFromAssemblyContaining(typeof(GetAllTariffPlansQuery)));
             services.AddExceptionHandler<GlobalExceptionHandler>();
+            services.AddKafka();
+            services.AddScoped<IUserServiceGrpcClient, UserServiceGrpcClient>();
 
             return services;
         }
@@ -98,6 +107,44 @@ namespace SubscriptionService.API.Extensions
 
                 securityRequirement.Add(jwtScheme, new List<string>());
                 options.AddSecurityRequirement(securityRequirement);
+            });
+
+            return services;
+        }
+
+        public static IServiceCollection ApplyConfigurations(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<ConsumerConfig>(configuration.GetSection("KafkaConsumerConfig"));
+            services.Configure<ProducerConfig>(configuration.GetSection("KafkaProducerConfig"));
+            services.Configure<KafkaTopics>(configuration.GetSection("KafkaTopics"));
+
+            return services;
+        }
+
+        public static IServiceCollection AddKafka(this IServiceCollection services)
+        {
+            services.AddHostedService<UserDeletedConsumer>();
+
+            services.AddScoped(provider =>
+            {
+                var configOptions = provider.GetService<IOptions<ProducerConfig>>()!;
+
+                var producer = new ProducerBuilder<string, string>(configOptions.Value)
+                    .Build();
+
+                return producer;
+            });
+
+            services.AddScoped<IProducerService, ProducerService>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddGrpcClients(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddGrpcClient<UserService.UserServiceClient>(options =>
+            {
+                options.Address = new Uri(configuration["GrpcConfig:Identity:Uri"]!);
             });
 
             return services;

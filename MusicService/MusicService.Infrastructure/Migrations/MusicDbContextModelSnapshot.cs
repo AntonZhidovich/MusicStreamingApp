@@ -89,7 +89,7 @@ namespace MusicService.Infrastructure.Migrations
                         {
                             Id = "e372c6da-4c4d-4cd5-a1ca-c8507cf2d326",
                             BrokenAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2024, 2, 26, 15, 19, 40, 580, DateTimeKind.Local).AddTicks(2768),
+                            CreatedAt = new DateTime(2024, 3, 3, 19, 57, 6, 71, DateTimeKind.Local).AddTicks(7304),
                             Description = "Linkin Park is an American rock band from Agoura Hills, California. The band's current lineup comprises vocalist/rhythm guitarist/keyboardist Mike Shinoda, lead guitarist Brad Delson, bassist Dave Farrell, DJ/turntables Joe Hahn and drummer Rob Bourdon, all of whom are founding members.",
                             IsBroken = false,
                             Name = "Linkin park"
@@ -98,7 +98,7 @@ namespace MusicService.Infrastructure.Migrations
                         {
                             Id = "7bfe40e0-f945-487b-ae93-a07cfbdc87db",
                             BrokenAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2024, 2, 26, 15, 19, 40, 580, DateTimeKind.Local).AddTicks(2781),
+                            CreatedAt = new DateTime(2024, 3, 3, 19, 57, 6, 71, DateTimeKind.Local).AddTicks(7326),
                             Description = "Dutch electronic music producer whose multi-platinum dance anthems topped charts around the globe.",
                             IsBroken = false,
                             Name = "Martin Garrix"
@@ -200,10 +200,6 @@ namespace MusicService.Infrastructure.Migrations
                     b.Property<string>("AuthorId")
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("Roles")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -220,36 +216,26 @@ namespace MusicService.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "70d71f5a-a4ef-488a-b4e9-eb86f82481a8",
+                            Id = "c13d3c43-7724-4cbd-9226-56fb2fb7e482",
                             AuthorId = "e372c6da-4c4d-4cd5-a1ca-c8507cf2d326",
-                            Roles = "[\"creator\",\"listener\",\"admin\"]",
                             UserName = "Chester.Bennington"
                         },
                         new
                         {
-                            Id = "7b761e59-78f3-4862-b1ad-87065bc8f51b",
+                            Id = "6930fd61-ac4f-4fc1-ab3c-8cc9db42aa90",
                             AuthorId = "7bfe40e0-f945-487b-ae93-a07cfbdc87db",
-                            Roles = "[\"creator\",\"listener\"]",
-                            UserName = "Martijn-Garritsen"
+                            UserName = "Martijn_Garritsen"
                         },
                         new
                         {
-                            Id = "d480a3c1-99aa-4775-819b-94e9183d0e21",
+                            Id = "98975656-f5e8-42d9-9f6b-58598773e16c",
                             AuthorId = "e372c6da-4c4d-4cd5-a1ca-c8507cf2d326",
-                            Roles = "[\"creator\",\"listener\"]",
                             UserName = "MikeShinoda1977"
                         },
                         new
                         {
-                            Id = "76ef2410-4e2e-4542-a20b-b0f19dfd5d76",
-                            Roles = "[\"listener\"]",
+                            Id = "af3c8548-ac9e-43bf-8474-ae514d9780d6",
                             UserName = "dmitry.ivanov"
-                        },
-                        new
-                        {
-                            Id = "3e4cc735-f041-424d-9ada-f835a7c1978a",
-                            Roles = "[\"listener\",\"admin\"]",
-                            UserName = "yegor.kozlov02"
                         });
                 });
 

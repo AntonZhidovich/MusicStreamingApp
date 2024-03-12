@@ -1,0 +1,47 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "Identity.Grpc";
+
+service UserService {
+    rpc UserWithIdExists(UserIdRequest) returns (UserWithIdExistsResponse) {}
+    rpc GetIdUserNameMap(GetIdUserNameMapRequest) returns (GetIdUserNameMapResponse) {}
+    rpc UserIsInRole(UserIsInRoleRequest) returns (UserIsInRoleResponse) {}
+    rpc GetUserInfo(UserIdRequest) returns (GetUserInfoResponse) {}
+}
+
+message UserIdRequest{
+    string id = 1;
+}
+
+message GetIdUserNameMapRequest{
+    repeated string ids = 1;
+}
+
+message UserIsInRoleRequest{
+    string id = 1;
+    string role_name = 2;
+}
+
+message UserWithIdExistsResponse{
+    bool user_exists = 1; 
+}
+
+message GetIdUserNameMapResponse{
+    map<string,string> usernames_by_id = 1;
+}
+
+message UserIsInRoleResponse{
+    bool user_is_in_role = 1;
+}
+
+message GetUserInfoResponse{
+    UserInfo user_info = 1;
+}
+
+message UserInfo{
+    string first_name = 1;
+    string last_name  = 2;
+    string region = 3;
+    string email = 4;
+    string username = 5;
+}

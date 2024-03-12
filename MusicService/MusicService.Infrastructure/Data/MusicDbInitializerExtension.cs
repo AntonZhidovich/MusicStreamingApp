@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MusicService.Domain.Constants;
 using MusicService.Domain.Entities;
 
 namespace MusicService.Infrastructure.Data
@@ -11,36 +10,26 @@ namespace MusicService.Infrastructure.Data
             builder.Entity<User>().HasData(
                 new User
                 {
-                    Id = "70d71f5a-a4ef-488a-b4e9-eb86f82481a8",
+                    Id = "c13d3c43-7724-4cbd-9226-56fb2fb7e482",
                     UserName = "Chester.Bennington",
-                    Roles = new List<string> { UserRoles.creator, UserRoles.listener, UserRoles.admin },
                     AuthorId = "e372c6da-4c4d-4cd5-a1ca-c8507cf2d326"
                 },
                 new User
                 {
-                    Id = "7b761e59-78f3-4862-b1ad-87065bc8f51b",
-                    UserName = "Martijn-Garritsen",
-                    Roles = new List<string> { UserRoles.creator, UserRoles.listener },
+                    Id = "6930fd61-ac4f-4fc1-ab3c-8cc9db42aa90",
+                    UserName = "Martijn_Garritsen",
                     AuthorId = "7bfe40e0-f945-487b-ae93-a07cfbdc87db"
                 },
                 new User
                 {
-                    Id = "d480a3c1-99aa-4775-819b-94e9183d0e21",
+                    Id = "98975656-f5e8-42d9-9f6b-58598773e16c",
                     UserName = "MikeShinoda1977",
-                    Roles = new List<string> { UserRoles.creator, UserRoles.listener },
                     AuthorId = "e372c6da-4c4d-4cd5-a1ca-c8507cf2d326"
                 },
                 new User
                 {
-                    Id = "76ef2410-4e2e-4542-a20b-b0f19dfd5d76",
+                    Id = "af3c8548-ac9e-43bf-8474-ae514d9780d6",
                     UserName = "dmitry.ivanov",
-                    Roles = new List<string> { UserRoles.listener }
-                },
-                new User
-                {
-                    Id = "3e4cc735-f041-424d-9ada-f835a7c1978a",
-                    UserName = "yegor.kozlov02",
-                    Roles = new List<string> { UserRoles.listener, UserRoles.admin }
                 });
 
             builder.Entity<Author>().HasData(
