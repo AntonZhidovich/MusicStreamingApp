@@ -22,10 +22,6 @@ message UserIsInRoleRequest{
     string role_name = 2;
 }
 
-message GetUserInfoRequest{
-    string id = 1;
-}
-
 message UserWithIdExistsResponse{
     bool user_exists = 1; 
 }
