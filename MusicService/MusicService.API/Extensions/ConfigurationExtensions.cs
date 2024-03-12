@@ -161,6 +161,13 @@ namespace MusicService.API.Extensions
             services.AddGrpcClient<UserService.UserServiceClient>(options =>
             {
                 options.Address = new Uri(configuration["GrpcConfig:Identity:Uri"]!);
+            })
+            .ConfigurePrimaryHttpMessageHandler(() =>
+            {
+                var handler = new HttpClientHandler();
+                handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator!;
+
+                return handler;
             });
 
             return services;

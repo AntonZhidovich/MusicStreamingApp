@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using SubscriptionService.BusinessLogic.Constants;
 using SubscriptionService.BusinessLogic.Exceptions;
 using SubscriptionService.BusinessLogic.Models.TariffPlan;
@@ -13,12 +14,18 @@ namespace SubscriptionService.BusinessLogic.Features.Queries.GetTariffPlanByName
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ICacheRepository _cacheRepository;
+        private readonly ILogger<GetTariffPlanByNameQueryHandler> _logger;
 
-        public GetTariffPlanByNameQueryHandler(IUnitOfWork unitOfWork, IMapper mapper, ICacheRepository cacheRepository)
+        public GetTariffPlanByNameQueryHandler(
+            IUnitOfWork unitOfWork, 
+            IMapper mapper, 
+            ICacheRepository cacheRepository,
+            ILogger<GetTariffPlanByNameQueryHandler> logger)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _cacheRepository = cacheRepository;
+            _logger = logger;
         }
 
         public async Task<GetTariffPlanDto> Handle(GetTariffPlanByNameQuery request, CancellationToken cancellationToken)
@@ -36,6 +43,8 @@ namespace SubscriptionService.BusinessLogic.Features.Queries.GetTariffPlanByName
 
             if (tariffPlan == null)
             {
+                _logger.LogError("Tariff plan with name {Name} not found.", request.Name);
+
                 throw new NotFoundException(ExceptionMessages.tariffPlanNotFound);
             }
 
