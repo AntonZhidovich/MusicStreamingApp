@@ -22,7 +22,6 @@ namespace Identity.API.Extensions
                     IndexFormat = $"{application}-logs-{environment}-{DateTime.UtcNow:dd-MM-yyyy}"
                 })
                 .ReadFrom.Configuration(context.Configuration);
-
             });
 
             return host;

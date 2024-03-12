@@ -57,7 +57,7 @@ namespace Identity.BusinessLogic.Services.Implementations
             var identityRole = await _roleManager.FindByNameAsync(role.Name);
             
             if (identityRole == null)
-            {   
+            {
                 throw new NotFoundException(ExceptionMessages.RoleNotFound);
             }
 

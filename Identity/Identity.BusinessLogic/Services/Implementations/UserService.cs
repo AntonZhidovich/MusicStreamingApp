@@ -72,6 +72,8 @@ namespace Identity.BusinessLogic.Services.Implementations
 
             if (user == null)
             {
+                _logger.LogError("User with id {userId} was not found.", id);
+
                 throw new NotFoundException(ExceptionMessages.UserNotFound);
             }
 

@@ -18,14 +18,14 @@
             var path = context.Request.Path;
             var query = context.Request.QueryString;
             var request = $"{protocol} {method} {path}{query}";
-
+            
             _logger.LogInformation($"Request starting: {request}. ");
 
             await _next(context);
 
             var statusCode = context.Response.StatusCode;
             var contentLength = context.Response.ContentLength ?? 0;
-
+            
             _logger.LogInformation($"Request finished: {request}, {statusCode}, content length: {contentLength}");
         }
     }
