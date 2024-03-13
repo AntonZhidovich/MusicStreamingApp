@@ -1,0 +1,78 @@
+{
+  "GlobalConfiguration": {
+    "BaseUrl": "https://localhost"
+  },
+  "Routes": [
+    {
+      "UpstreamPathTemplate": "/identity/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "DownstreamPathTemplate": "/api/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7031
+        }
+      ],
+      "SwaggerKey": "identity"
+    },
+    {
+      "UpstreamPathTemplate": "/music/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "DownstreamPathTemplate": "/api/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7127
+        }
+      ],
+      "SwaggerKey": "musicservice"
+    },
+    {
+      "UpstreamPathTemplate": "/subscription/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "DownstreamPathTemplate": "/api/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7060
+        }
+      ],
+      "SwaggerKey": "subscriptionservice"
+    }
+  ],
+  "SwaggerEndPoints": [
+    {
+      "Key": "identity",
+      "Config": [
+        {
+          "Name": "Identity API",
+          "Version": "v1",
+          "Url": "https://localhost:7031/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "musicservice",
+      "Config": [
+        {
+          "Name": "MusicService API",
+          "Version": "v1",
+          "Url": "https://localhost:7127/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "subscriptionservice",
+      "Config": [
+        {
+          "Name": "SucriptionService API",
+          "Version": "v1",
+          "Url": "https://localhost:7060/swagger/v1/swagger.json"
+        }
+      ]
+    }
+  ]
+}

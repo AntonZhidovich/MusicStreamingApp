@@ -1,6 +1,5 @@
 using Identity.API.Extensions;
 using Identity.DataAccess.Data;
-using Microsoft.AspNetCore.HttpOverrides;
 
 namespace Identity.API
 {
@@ -18,7 +17,7 @@ namespace Identity.API
             builder.Services.AddServices();
             builder.Services.ConfigureSwagger();
             builder.Services.AddGrpcClients(builder.Configuration);
-            builder.Services.AddCorsPolicy(builder.Configuration);
+            builder.Services.AddCorsPolicy();
             builder.Host.UseLogging();
 
             var app = builder.Build();

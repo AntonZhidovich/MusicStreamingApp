@@ -19,7 +19,7 @@ namespace MusicService.API
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.ConfigureSwagger();
             builder.Services.AddGrpcClients(builder.Configuration);
-            builder.Services.AddCorsPolicy(builder.Configuration);
+            builder.Services.AddCorsPolicy();
             builder.Host.UseLogging();
 
             var app = builder.Build();

@@ -75,7 +75,7 @@ services:
             fi
         done
       wait"
-      
+     
 
   mongo:
     container_name: mongo
@@ -160,6 +160,21 @@ services:
       - kafka
     ports:
       - 8083:7060
+    volumes:
+      - ../MusicStreamingApp/Certificates:/app/certs/.aspnet/https/:ro
+    restart: on-failure
+
+  gateway:
+    container_name: gateway
+    build:
+      context: .
+      dockerfile: "ApiGateway/Dockerfile"
+    depends_on:
+      - identity
+      - musicservice
+      - subscriptionservice
+    ports:
+      - 8080:7283
     volumes:
       - ../MusicStreamingApp/Certificates:/app/certs/.aspnet/https/:ro
     restart: on-failure
