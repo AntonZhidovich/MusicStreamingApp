@@ -12,11 +12,13 @@ namespace ApiGateway
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddJwtAuthentication(builder.Configuration);
             builder.Services.ConfigureOcelot(builder.Configuration, builder.Environment);
 
             var app = builder.Build();
 
             app.UseHttpsRedirection();
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseDownstreamSwagger();
             app.UseOcelot();

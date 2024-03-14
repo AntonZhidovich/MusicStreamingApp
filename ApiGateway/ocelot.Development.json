@@ -1,19 +1,52 @@
 {
   "GlobalConfiguration": {
-    "BaseUrl": "https://localhost"
+    "BaseUrl": "https://localhost:7283"
   },
   "Routes": [
     {
+      "Priority": 1,
+      "UpstreamPathTemplate": "/identity/authorization/{everything}",
+      "UpstreamHttpMethod": [ "Post" ],
+      "DownstreamPathTemplate": "/api/authorization/{everything}",
+      "DownstreamScheme": "https",
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7031
+        }
+      ]
+    },
+    {
+      "Priority": 1,
+      "UpstreamPathTemplate": "/identity/users",
+      "UpstreamHttpMethod": [ "Post" ],
+      "DownstreamPathTemplate": "/api/users",
+      "DownstreamScheme": "https",
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7031
+        }
+      ]
+    },
+    {
+      "Priority": 0,
       "UpstreamPathTemplate": "/identity/{everything}",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
       "DownstreamPathTemplate": "/api/{everything}",
       "DownstreamScheme": "https",
+      "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
           "Port": 7031
         }
       ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
       "SwaggerKey": "identity"
     },
     {
@@ -21,12 +54,16 @@
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
       "DownstreamPathTemplate": "/api/{everything}",
       "DownstreamScheme": "https",
+      "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
           "Port": 7127
         }
       ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
       "SwaggerKey": "musicservice"
     },
     {
@@ -34,12 +71,16 @@
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
       "DownstreamPathTemplate": "/api/{everything}",
       "DownstreamScheme": "https",
+      "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
           "Port": 7060
         }
       ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
       "SwaggerKey": "subscriptionservice"
     }
   ],

@@ -1,4 +1,7 @@
-﻿using Ocelot.DependencyInjection;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Ocelot.DependencyInjection;
+using System.Text;
 
 namespace ApiGateway.Extensions
 {
@@ -30,6 +33,28 @@ namespace ApiGateway.Extensions
             }
 
             return app;
+        }
+
+        public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddAuthentication(options =>
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            {
+                var key = configuration["JwtOptions:Key"]!;
+                var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
+
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidIssuer = configuration["JwtOptions:Issuer"],
+                    ValidateLifetime = true,
+                    IssuerSigningKey = securityKey,
+                    ValidateIssuerSigningKey = true,
+                    ValidateAudience = false
+                };
+            });
+
+            return services;
         }
     }
 }

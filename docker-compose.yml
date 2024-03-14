@@ -9,6 +9,7 @@ services:
       discovery.type: single-node
     ports:
       - 9200:9200
+    restart: always
     volumes:
       -  elastic_data:/usr/share/elasticsearch/data
  
@@ -117,6 +118,7 @@ services:
       - 6379:6379
     volumes:
       - redis_data:/data
+    restart: always
     command: "redis-server --save 60 1"
     
 
@@ -144,6 +146,7 @@ services:
       - kafka
       - mongo
       - minio_mc_init
+      - redis
     ports:
       - 8082:7127
     volumes:
@@ -173,10 +176,12 @@ services:
       - identity
       - musicservice
       - subscriptionservice
+      - redis
+    user: root
     ports:
       - 8080:7283
     volumes:
-      - ../MusicStreamingApp/Certificates:/app/certs/.aspnet/https/:ro
+      - ../MusicStreamingApp/Certificates:/root/.aspnet/https/:ro
     restart: on-failure
 
 volumes:
