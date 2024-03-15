@@ -14,9 +14,11 @@ namespace ApiGateway
             builder.Services.AddSwaggerGen();
             builder.Services.AddJwtAuthentication(builder.Configuration);
             builder.Services.ConfigureOcelot(builder.Configuration, builder.Environment);
+            builder.Services.AddCorsPolicy();
 
             var app = builder.Build();
 
+            app.UseCors();
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
