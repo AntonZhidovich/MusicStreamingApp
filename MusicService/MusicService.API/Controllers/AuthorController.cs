@@ -35,6 +35,14 @@ namespace MusicService.API.Controllers
             return Ok(author);
         }
 
+        [HttpGet("username/{username}")]
+        public async Task<IActionResult> GetByUserNameAsync([FromRoute] string username)
+        {
+            var author = await _authorService.GetByUsernameAsync(username, HttpContext.RequestAborted);
+
+            return Ok(author);
+        }
+
         [HttpDelete("{name}")]
         [Authorize(Roles = $"{UserRoles.admin},{UserRoles.creator}")]
         public async Task<IActionResult> DeleteAsync([FromRoute] string name)

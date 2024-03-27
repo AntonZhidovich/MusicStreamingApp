@@ -132,6 +132,20 @@ namespace MusicService.Application.Services
             return authors.GetPageResponse<Author, AuthorDto>(allAuthorsCount, request, _mapper);
         }
 
+        public async Task<AuthorDto> GetByUsernameAsync(string username, CancellationToken cancellationToken = default)
+        {
+            var user = await GetDomainUserAsync(username, cancellationToken);
+
+            if (user.Author == null)
+            {
+                throw new NotFoundException(ExceptionMessages.AuthorNotFound);
+            }
+
+            var author = await GetDomainAuthorAsync(user.Author.Name, cancellationToken);
+
+            return _mapper.Map<AuthorDto>(author);
+        }
+
         public async Task<AuthorDto> GetByNameAsync(string name, CancellationToken cancellationToken = default)
         {
             var key = GetCacheKey(name);

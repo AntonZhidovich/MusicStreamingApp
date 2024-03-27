@@ -1,0 +1,52 @@
+
+<div class="col px-2" >
+    <button type="button" class="btn btn-info btn-new-release mt-3 mx-3" style="font-size: 12pt; font-weight: bold; top: 65px"
+    (click)="onNewPlaylistClick();">New playlist</button>
+</div>
+
+<div class="list-empty" >
+    @if (playlists.length == 0) {
+        <h1>You don't have any playlists yet. Create!</h1>
+    }
+</div>
+
+<ul class="playlist-list">
+
+    @if(newPlaylistInfo.creatingMode) {
+        <div class="song mx-3 me-5" style="position: relative;" >
+            <div class="column">
+            <div class="d-flex">
+                    <div class="input-group w-50">
+                        <input class="form-control" placeholder="Playlist name" [(ngModel)]="newPlaylistInfo.name">
+                        <div class="input-group-append " style="float: left;">
+                            <div class="btn-group">
+                                <button class="btn btn-success" (click)="onSaveClick();" >Save</button>
+                                <button class="btn btn-danger" (click)="onCancelClick();">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @if(errorMessage) {
+                    <div class="validation-error">{{errorMessage}}</div>
+                }
+            </div>
+        </div>
+    }
+
+    @for (playlist of playlists; track $index) {
+        <li class="song mx-3 me-5" style="position: relative;" (click)="onPlaylistClick(playlist);">
+            <div class="d-flex">
+                <div class="author-details">
+                    <div class="song-title">{{playlist.name}}</div>
+                    <p class="genre">Songs: {{playlist.songsCount}}</p>
+                </div>
+                <div class="btn-group my-2" style="margin-left: auto;">
+                    <button class="btn btn-info" (click)="onEditClick(playlist, $event);">Edit</button>
+                    <button class="btn btn-danger" (click)="onDeleteClick(playlist.id, playlist.name, $event);">Delete</button>
+                </div>
+            </div>
+        </li>
+    }
+</ul>
+
+<edit-playlist-modal [playlistId]="editPlaylistDetail.playlistId" [(showModal)]="editPlaylistDetail.showModal"></edit-playlist-modal>

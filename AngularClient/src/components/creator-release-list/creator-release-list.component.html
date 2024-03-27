@@ -1,0 +1,24 @@
+<h1 class="release-title">Releases</h1>
+
+<div class="col px-2" >
+    <button type="button" class="btn btn-info btn-new-release mt-3 mx-2" style="font-size: 12pt; font-weight: bold; z-index: 100;" (click)="onButtonNewRelease()">New release</button>
+</div>
+
+
+<div class="list-empty" >
+    @if (releases.length == 0) {
+        <h1>You don't have any releases yet. Create!</h1>
+    }
+</div>
+
+<ul class="release-list">
+    @for(release of releases; track $index) {
+        <li>
+            <release-item [release]="release" (onAuthorDeleted)="loadReleases();" (click)="onItemClick(release);"></release-item>
+        </li>
+    }
+</ul>
+    
+<create-release-modal [(showModal)]="isCreatingRelease" (releaseSubmitted)="onReleaseSubmitted();"></create-release-modal>
+<create-song-modal [(showModal)]="isAddingSong"></create-song-modal>
+<edit-release-modal [(showModal)]="isEditingRelease" [releaseId]="releaseToEdit.id" (releaseChanged)="loadReleases();"></edit-release-modal>

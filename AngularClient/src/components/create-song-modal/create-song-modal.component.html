@@ -1,0 +1,72 @@
+<div class="modal" [style.display]="showModal ? 'block' : 'none'">
+    <div class="class modal-background"></div>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" style="font-weight: bold;">New song</h5>
+                <button type="button" class="btn-close" (click)="onCancelNewSong();">
+                    <span aria-hidden="true"></span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="form">
+                    <div class="input-group"> 
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="floatingInput" placeholder="Title" formControlName="title">
+                            <label for="floatingInput">Title</label>
+                        </div>
+                        <div class=" form-floating mb-3">
+                            <input class="form-control" type="time" id="floatingInput" formControlName="duration" step="2">
+                            <label for="floatingInput">Duration</label>
+                        </div>
+                    </div>
+                
+                    @if (genres.length > 0) {
+                        <p class="ms-1">Genres: {{genres.join(", ")}} </p>
+                    }
+
+                    <div  style="width:100%; position: relative;">
+                        <div class=" form-floating">
+                                <input class="form-control" id="floatingInput" placeholder="Genre" formControlName="genre">
+                                <label for="floatingInput">Genre</label>
+                        </div>
+                        <div class = "btn-add-genre">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-success" (click)="onAddGenre();">+</button>
+                                <button type="button" class="btn btn-secondary" (click)="onClearGenres();">-</button>
+                            </div>
+                        </div>
+                    </div>
+                    <label for="sourceSelect" class="form-label mt-2 mx-1" >Select existing song source</label>
+                    <div class="d-flex">
+                        <select class="form-select" id="sourceSelect" [(ngModel)]="selectedSource" [ngModelOptions]="{standalone: true}">
+                            <option selected="true" style='display: none'></option>
+                            @for (source of songSources; track $index) {
+                                <option> {{source}} </option>
+                            }
+                        </select>
+                        <div class="btn-group p-2">
+                            <button type="button" class="btn btn-success" (click)="loadSources();">
+                                <i class="bi bi-arrow-repeat"></i>
+                            </button>
+                        </div>
+                    </div>
+                        
+                    <div >
+                        <label for="formFile" class="form-label mt-2 mx-1">Upload new song source</label>
+                        <input class="form-control" type="file" id="formFile" (change)="onSourceSelected($event);">
+                    </div>
+
+                    <button type="button" class="btn btn-success mx-2 mt-2" style="font-size: small;" (click)="onUploadSource();">Upload new</button>
+                    <button type="button" class="btn btn-danger mx-2 mt-2" style="font-size: small;" (click)="onDeleteSource();">Del selected</button>
+
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" (click)="onSaveSong();">Save</button>
+                <button type="button" class="btn btn-secondary" (click)="onCancelNewSong();">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

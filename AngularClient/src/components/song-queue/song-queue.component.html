@@ -1,0 +1,29 @@
+<div class="sidebar" [style.width.px]="width">
+    <div class="resizer" (mousedown)="OnResizerMouseDown($event)">
+    </div>
+        <h1 class="sidebar-title">Queue</h1>
+        @if (playerService.playlist.length > 0) {
+            @for (song of playerService.playlist; track $index) {
+                <div class="sidebar-item mx-4" [class.sidebar-border-warning]="$index == playerService.currentIndex"
+                    (click)="onSongSelected($index);">
+                    <div class="sidebar-item-title">{{song.title}}</div>
+                    <div class="class row">
+                        <div class="playlist-count">{{song.release.authors.join(" ft. ")}}</div>
+                        <div class="playlist-count">{{song.genres.join(", ")}}</div>
+                    </div>
+                    <div class="btn-group" style="margin-left: auto;">
+                        <button class="btn btn-warning" (click)="onAddClick(song, $event);">
+                            <i class="bi bi-music-note-list"></i>
+                        </button>
+                        <button class="btn btn-warning" (click)="onRemoveClick($index, $event);">
+                            <i class="bi bi-trash3"></i>
+                        </button>
+                    </div>
+                </div>
+            }
+        } @else {
+            <div class="class sidebar-empty my-4">
+                Choose any song or playlist to play!
+            </div>
+        }
+</div>

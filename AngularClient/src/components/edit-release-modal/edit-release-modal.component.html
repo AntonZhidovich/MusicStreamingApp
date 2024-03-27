@@ -1,0 +1,51 @@
+<div class="modal" [style.display]="showModal ? 'block' : 'none'">
+    <div class="class modal-background"></div>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" style="font-weight: bold;">{{release.name}} ({{release.releasedAt | date}})</h5>
+                <button type="button" class="btn-close" (click)="onCancelEdit();">
+                    <span aria-hidden="true"></span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h5>Release details</h5>
+                <form [formGroup]="form">
+                    <div class="input-group"> 
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="floatingInput" placeholder="Title" formControlName="name">
+                            <label for="floatingInput">Title</label>
+                        </div>
+                        <div class=" form-floating mb-3" >
+                            <input class="form-control" type="date" id="floatingInput" formControlName="releasedAt" step="1">
+                            <label for="floatingInput">Released at</label>
+                        </div>
+                    </div>
+                    
+                    <div class="btn-group my-2 me-2">
+                        <button type="button" class="btn btn-primary mb-3" style="font-size:small;" (click)="onSaveRelease();">Save</button>
+                        <button type="button" class="btn btn-secondary mb-3" style="font-size:small;" (click)="onDeleteRelease();">Delete</button>
+                    </div>
+                    
+                </form>
+
+                <h5>Songs</h5>
+                    @for(song of release.songs; track $index) {
+                        <div class="container bordered-secondary px-2 my-2" style="justify-content: space-between; display: flex;">
+                            <div class="my-auto">
+                                <div class="song-title-release">{{song.title}}</div>
+                                <span class="song-duration-release ms-3" >{{song.durationMinutes}}</span>
+                            </div>
+                        </div>
+                    }
+                    <button type="button" class="btn btn-info mb-3" style="font-size:small;" (click)="onAddSong();">Add new song</button>
+                </div>
+
+            <div class="modal-footer" bis_skin_checked="1">
+                <button type="button" class="btn btn-secondary" (click)="onCancelEdit();">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<create-song-modal [(showModal)]="showAddSongModal" (songSubmitted)="onSongSubmitted($event);" ></create-song-modal>

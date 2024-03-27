@@ -1,0 +1,33 @@
+<div class="sidebar">
+    <h1 class="sidebar-title"> {{author.name}} </h1>
+    @if (author.userNames.length > 0) {
+        @for (userName of author.userNames; track $index) {
+            <div class="sidebar-item mx-4">
+                <div class="sidebar-item-title"> {{userName}} </div>
+                <div class="btn-group" style="margin-left: auto;">
+                    <button class="btn btn-danger"  (click)="onDeleteClick(userName)">Remove</button>
+                </div>
+            </div>
+        }
+    }
+
+    @if (addAuthorInfo.inAddingMode){
+        <div class="sidebar-item mx-4">
+            <div class="input-group mb-3">
+                <input class="form-control" placeholder="Author name" [(ngModel)]="addAuthorInfo.userName" required="">
+                <div class="btn-group input-group-append">
+                    <button class="btn btn-success" (click)="onSaveClick();">Save</button>
+                    <button class="btn btn-danger" (click)="onCancelClick();">Cancel</button>
+                </div>
+        </div>
+    </div>
+    }
+
+    <div class="validation-error mx-4">
+        @if (errorMessage){
+            <p> {{errorMessage}} </p>
+        }
+    </div>
+
+    <button class="btn btn-secondary playlist-add mx-4 mb-3" (click)="onAddClick();">Add user</button>
+</div>

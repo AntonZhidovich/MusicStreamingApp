@@ -1,0 +1,33 @@
+<nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark" style="z-index: 10;">
+    <div class="container-fluid" bis_skin_checked="1">
+      <a class="navbar-brand">Listn Music</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/creator">Creator</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link">Admin</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" [class.show]="showDropDown" data-bs-toggle="dropdown" role="button" (click)="onShowDropdown();">Home</a>
+            <div class="dropdown-menu show" [class.show]="showDropDown">
+              <a class="dropdown-item" routerLink="home/authors" (click)="onShowDropdown();">Authors</a>
+              <a class="dropdown-item" routerLink="home/releases" (click)="onShowDropdown();">Releases</a>
+              <a class="dropdown-item" routerLink="home/songs" (click)="onShowDropdown();">Songs</a>
+              <a class="dropdown-item" routerLink="home/playlists" (click)="onShowDropdown();">Playlists</a>
+            </div>
+          </li>
+        </ul>
+
+        <player></player>
+
+        <form class="ms-auto">
+          <button class="btn btn-secondary" (click)="onLogoutClick();">Logout</button>
+        </form>
+      </div>
+    </div>
+  </nav>

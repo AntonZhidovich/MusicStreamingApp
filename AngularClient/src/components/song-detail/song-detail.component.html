@@ -1,0 +1,18 @@
+<div class="container bordered-secondary px-2 my-2" style="justify-content: space-between; display: flex;">
+    <div class="column">
+        <div class="my-auto">
+            <div class="song-title-release">{{song.title}}</div>
+            <span class="song-duration-release ms-3" >{{song.durationMinutes}}</span>
+        </div>
+        <div class="my-auto">
+            <span class="song-duration-release" >{{song.release.authors.join(" ft. ")}}</span>
+        </div>
+    </div>
+    @if (editMode) {
+        <div>
+            <div class="btn-group my-2 me-2" style="float: right;">
+                <button class="btn btn-secondary" style="font-size: small;" (click)="onDeleteButton();">Remove</button>
+            </div>
+        </div>
+    }
+</div>

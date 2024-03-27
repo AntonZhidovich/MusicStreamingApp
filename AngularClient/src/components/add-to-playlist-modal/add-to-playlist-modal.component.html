@@ -1,0 +1,33 @@
+<div class="modal" [style.display]="_showModal ? 'block' : 'none'">
+    <div class="class modal-background"></div>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" style="font-weight: bold;">Add song to playlist</h5>
+                <button type="button" class="btn-close" (click)="onCancel();">
+                    <span aria-hidden="true"></span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <song-detail [song]="song"></song-detail>
+                
+                <label for="sourceSelect" class="form-label mt-2 mx-1" >Select playlist</label>
+                <div class="d-flex">
+                    <select class="form-select" id="sourceSelect" [(ngModel)]="selectedPlaylistId">
+                        <option selected="true" style='display: none'></option>
+                        @for (playlist of playlists; track $index) {
+                            <option  [value]="playlist.id"> {{playlist.name}} — {{playlist.createdAt | date}} — {{playlist.songsCount}} songs</option>
+                        }
+                    </select>
+                </div>
+                    
+            </div>
+
+            <div class="modal-footer" bis_skin_checked="1">
+                <button type="button" class="btn btn-primary" (click)="onSave();">Save</button>
+                <button type="button" class="btn btn-secondary" (click)="onCancel();">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

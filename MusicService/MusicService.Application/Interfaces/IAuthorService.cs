@@ -9,6 +9,7 @@ namespace MusicService.Application.Interfaces
     {
         Task<PageResponse<AuthorDto>> GetAllAsync(GetPageRequest request, CancellationToken cancellationToken = default);
         Task<AuthorDto> GetByNameAsync(string name, CancellationToken cancellationToken = default);
+        Task<AuthorDto> GetByUsernameAsync(string username, CancellationToken cancellationToken = default);
         Task<AuthorDto> CreateAsync(CreateAuthorRequest request, CancellationToken cancellationToken = default);
         Task AddUserToAuthorAsync(AuthorUserRequest request, ClaimsPrincipal currentUser, CancellationToken cancellationToken = default);
         Task RemoveUserFromAuthorAsync(AuthorUserRequest request, ClaimsPrincipal currentUser, CancellationToken cancellationToken = default);

@@ -1,0 +1,3 @@
+<router-outlet></router-outlet>
+<song-queue (onAddToPlaylist)="addSongToPlaylist($event);"></song-queue>
+<add-to-playlist-modal [(showModal)]="addSongToPlaylistDetails.showModal" [song]="addSongToPlaylistDetails.song"></add-to-playlist-modal>

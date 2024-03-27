@@ -1,0 +1,56 @@
+<div class="auth-card">
+    <div class="card text-center bg-primary my-3 border-warning">
+        <form [formGroup]="form">
+            <legend class="m-2">Registration</legend>
+            <div class="input-group mx-3">
+                <div class="form-field me-3">
+                    <input formControlName="firstName" class="form-control" [class.border-danger]="form.controls['firstName'].invalid && submitted"  placeholder="First Name">
+                </div>
+                <div class="form-field ms-3">
+                    <input formControlName="lastName"  class="form-control" [class.border-danger]="form.controls['lastName'].invalid && submitted" placeholder="Last Name">
+                </div>
+            </div>
+                <div class="form-field m-3">
+                <input formControlName="email" [class.is-invalid]="form.controls['email'].invalid && submitted"  class="form-control" placeholder="Email">
+                <div class="validation-error my-0">
+                    @if(errors && errors['Email']){
+                        @for(error of errors['Email']; track $index){
+                            <p> {{error}} </p>
+                        }
+                    }
+                </div>
+            </div>
+            <div class="form-field m-3">
+                <input formControlName="userName"  class="form-control" [class.is-invalid]="form.controls['userName'].invalid && submitted" placeholder="Username">
+                <div class="validation-error my-0">
+                    @if(errors && errors['UserName']){
+                        @for(error of errors['Email']; track $index){
+                            <p> {{error}} </p>
+                        }
+                    }
+                </div>
+            </div>  
+            <div class="form-field m-3">
+                <input formControlName="password"  class="form-control" [class.is-invalid]="form.controls['password'].invalid && submitted" placeholder="Password">
+            </div> 
+            <div class="form-field m-3">
+                <input formControlName="region"  class="form-control" [class.is-invalid]="form.controls['region'].invalid && submitted" placeholder="Region">
+            </div>
+            <div class="validation-error my-0">
+                @if(errorDetails){
+                    @for(detail of errorDetails; track $index){
+                        <p> {{detail.Error}} </p>
+                    }
+                }
+            </div>
+            <div class="d-grid m-3">
+                <button class="btn btn-warning text-black" 
+                (click)="register()">Create an account!</button>
+            </div> 
+            <div>
+                <p class="d-xxl-inline-block mx-1">Already have an account?</p>
+                <a routerLink="/authorization">Sign in</a>
+            </div>  
+        </form>
+    </div>
+</div>   

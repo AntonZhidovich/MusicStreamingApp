@@ -1,0 +1,67 @@
+
+    <ul class="author-list">
+        @for (author of authors; track $index){
+            <li class="home-list-item mx-5">
+                <div class="author-details">
+                    <div class="author-name"> {{author.name}} </div>
+                    <div class="author-dates row">
+                        <div>
+                            Created: {{author.createdAt | date}} 
+                            @if (!author.isBroken) {
+                                — Broken: {{author.brokenAt | date}} 
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="author-description"> {{author.description}}</div>
+            </li>
+        }
+
+        <li class="home-list-item mx-5">
+            <div class="author-details">
+                <div class="author-name">Author name 1</div>
+                <div class="author-dates">
+                    <span class="created-at">01-01-2022</span> - <span class="broken-at">01-01-2023</span>
+                </div>
+            </div>
+            <div class="author-description">
+                Description.
+            </div>
+        </li>
+        <li class="home-list-item mx-5">
+            <div class="author-details">
+                <div class="author-name">Author name 2</div>
+                <div class="author-dates">
+                    <span class="created-at">02-02-2021</span> - <span class="broken-at">02-02-2022</span>
+                </div>
+            </div>
+            <div class="author-description">
+                Description.
+            </div>
+        </li>
+
+        <li class="home-list-item mx-5">
+            <div class="author-details">
+                <div class="author-name">Author name 1</div>
+                <div class="author-dates">
+                    <span class="created-at">01-01-2022</span> - <span class="broken-at">01-01-2023</span>
+                </div>
+            </div>
+            <div class="author-description">
+                Description.
+            </div>
+        </li>
+        <li class="home-list-item mx-5">
+            <div class="author-details">
+                <div class="author-name">Author name 2</div>
+                <div class="author-dates">
+                    <span class="created-at">02-02-2021</span> - <span class="broken-at">02-02-2022</span>
+                </div>
+            </div>
+            <div class="author-description">
+                Description.
+            </div>
+        </li>
+
+    </ul>
+    

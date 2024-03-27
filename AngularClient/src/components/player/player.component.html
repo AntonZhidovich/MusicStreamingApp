@@ -1,0 +1,55 @@
+<div class="container border-warning" [style.display]="playerService.playlist.length > 0 ? 'block' : 'none'">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="audio-player">
+
+          <div class="btn-group">
+            <button class="btn btn-warning" (click)="onPreviousButton();">
+              <i class="bi bi-skip-start-fill"></i>
+            </button>
+            @if (!isPlaying) {
+              <button class="btn btn-warning" (click)="onPlayButton();">
+                <i class="bi bi-play-fill"></i>
+              </button>
+            } @else {
+              <button class="btn btn-warning" (click)="onPauseButton();">
+                <i class="bi bi-pause-fill"></i>
+              </button>
+            }
+            <button class="btn btn-warning" (click)="onNextButton();">
+              <i class="bi bi-skip-end-fill"></i>
+            </button>
+          </div>
+          
+          <div class="mx-2 clickable">
+            <div class="player-song-title"> {{currentSong.title}} </div>
+            <div class="player-artist">{{currentSong.release.authors.join(" ft. ")}} – {{currentSong.release.name}}</div>
+          </div>
+          <div class="clickable" style="width:35%">
+            <div #container class="progress" style="max-height: 10px;" (mousedown)="omTimeLineClick($event, container);">
+                <div class="progress-bar progress-bar-striped bg-warning progress-bar-animated" 
+                    aria-valuemin="0" aria-valuemax="1" [style.width.%]="currentTime"></div>
+            </div>
+        </div>
+        <div style="width: 79px;">
+            <div class="time mx-1">{{currentSongTime}}/{{songDuration}}</div>
+        </div>
+
+        <div class="column mx-2">
+          <button type="button" class="btn btn-warning mx-3 mt-2 py-0"(click)="onMuteButton();">
+            @if (!player.muted) {
+              <i class="bi bi-volume-up-fill" style="font-size: small;"></i>
+            } @else {
+              <i class="bi bi-volume-mute-fill" style="font-size: small;"></i>
+            }
+          </button>
+          
+          <div class="form-range ms-1" style="width: 60px; flex:right; color: var(--bs-warning);">
+            <input #range type="range" class="form-range" min="0" max="100" value="100" (input)="onVolumeInput(range.value)">
+          </div>
+        </div>
+
+        </div>
+      </div>
+    </div>
+  </div>

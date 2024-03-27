@@ -32,6 +32,20 @@
       ]
     },
     {
+      "Priority": 1,
+      "UpstreamPathTemplate": "/music/songs/sources/{authorName}/{sourceName}",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamPathTemplate": "/api/songs/sources/{authorName}/{sourceName}",
+      "DownstreamScheme": "https",
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "musicservice",
+          "Port": 7127
+        }
+      ]
+    },
+    {
       "Priority": 0,
       "UpstreamPathTemplate": "/identity/{everything}",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
