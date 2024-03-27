@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Confluent.Kafka;
+using Hangfire;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using MusicService.Application.Models.Messages;
@@ -35,6 +36,8 @@ namespace SubscriptionService.BusinessLogic.Features.Consumers
             unitOfWork.Subscriptions.Delete(subscription);
 
             await unitOfWork.CommitAsync(cancellationToken);
+
+            RecurringJob.RemoveIfExists(subscription.Id);
 
             _consumer.Commit();
         }

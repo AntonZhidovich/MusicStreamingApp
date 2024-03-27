@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using SubscriptionService.BusinessLogic.Extensions;
 using SubscriptionService.BusinessLogic.Features.Services.Interfaces;
 using SubscriptionService.BusinessLogic.Models;
@@ -15,12 +16,14 @@ namespace SubscriptionService.BusinessLogic.Features.Queries.GetAllSubscriptions
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IUserServiceGrpcClient _userServiceClient;
+        private readonly ILogger<GetAllSubscriptionsQueryHandler> _logger;
 
-        public GetAllSubscriptionsQueryHandler(IUnitOfWork unitOfWork, IMapper mapper, IUserServiceGrpcClient userServiceClient)
+        public GetAllSubscriptionsQueryHandler(IUnitOfWork unitOfWork, IMapper mapper, IUserServiceGrpcClient userServiceClient, ILogger<GetAllSubscriptionsQueryHandler> logger)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _userServiceClient = userServiceClient;
+            _logger = logger;
         }
 
         public async Task<PageResponse<GetSubscriptionWithUserNameDto>> Handle(GetAllSubscriptionsQuery request,
@@ -37,6 +40,8 @@ namespace SubscriptionService.BusinessLogic.Features.Queries.GetAllSubscriptions
 
             var usernamesById = (await _userServiceClient.GetIdUserNameMap(subscriptions.Select(subscription => subscription.UserId),
                 cancellationToken: cancellationToken)).UsernamesById;
+
+            _logger.LogInformation("Fetched id-username map from Identity.");
 
             foreach (var subscription in pageResponse.Items)
             {

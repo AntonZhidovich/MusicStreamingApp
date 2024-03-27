@@ -1,7 +1,7 @@
 ﻿using Confluent.Kafka;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using Identity.API.ExceptionHandlers;
+using Identity.API.Middleware;
 using Identity.BusinessLogic.Mapping;
 using Identity.BusinessLogic.Options;
 using Identity.BusinessLogic.Services.Implementations;
@@ -96,6 +96,7 @@ namespace Identity.API.Extensions
 
         public static IApplicationBuilder UseMiddleware(this IApplicationBuilder app)
         {
+            app.UseMiddleware<LoggingMiddleware>();
             app.UseExceptionHandler(options => { });
 
             return app;
@@ -148,6 +149,13 @@ namespace Identity.API.Extensions
             services.AddGrpcClient<MusicUserService.MusicUserServiceClient>(options =>
             {
                 options.Address = new Uri(configuration["GrpcConfig:MusicService:Uri"]!);
+            })
+            .ConfigurePrimaryHttpMessageHandler(() =>
+            {
+                var handler = new HttpClientHandler();
+                handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator!;
+
+                return handler;
             });
 
             return services;

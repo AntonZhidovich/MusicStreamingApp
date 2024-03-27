@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Hangfire;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using SubscriptionService.BusinessLogic.Constants;
 using SubscriptionService.BusinessLogic.Exceptions;
 using SubscriptionService.BusinessLogic.Features.Producers;
@@ -18,19 +19,22 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.CancelSubscription
         private readonly IProducerService _producerService;
         private readonly IUserServiceGrpcClient _userServiceClient;
         private readonly IEmailSenderService _emailSender;
+        private readonly ILogger<CancelSubscriptionCommandHandler> _logger;
 
         public CancelSubscriptionCommandHandler(
             IUnitOfWork unitOfWork, 
             IMapper mapper, 
             IProducerService producerService,
             IUserServiceGrpcClient userServiceClient,
-            IEmailSenderService emailSender)
+            IEmailSenderService emailSender,
+            ILogger<CancelSubscriptionCommandHandler> logger)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _producerService = producerService;
             _userServiceClient = userServiceClient;
             _emailSender = emailSender;
+            _logger = logger;
         }
 
         public async Task Handle(CancelSubscriptionCommand request, CancellationToken cancellationToken)
@@ -41,6 +45,8 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.CancelSubscription
 
             if (subscription == null)
             {
+                _logger.LogError("Subscription with {SubscriptionId} not found.", request.SubscriptionId);
+
                 throw new NotFoundException(ExceptionMessages.subscriptionNotFound);
             }
 
@@ -65,6 +71,8 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.CancelSubscription
                         Subscription = subscriptionDto
                     }));
             }
+
+            _logger.LogInformation("Subscription with {SubscriptionId} is canceled.", request.SubscriptionId);
         }
     }
 }

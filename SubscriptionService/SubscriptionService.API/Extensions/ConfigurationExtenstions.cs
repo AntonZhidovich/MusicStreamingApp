@@ -9,7 +9,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RazorLight;
-using SubscriptionService.API.ExceptionHandlers;
+using SubscriptionService.API.Middleware;
 using SubscriptionService.BusinessLogic.Features.Behaviors;
 using SubscriptionService.BusinessLogic.Features.Consumers;
 using SubscriptionService.BusinessLogic.Features.Producers;
@@ -167,6 +167,13 @@ namespace SubscriptionService.API.Extensions
             services.AddGrpcClient<UserService.UserServiceClient>(options =>
             {
                 options.Address = new Uri(configuration["GrpcConfig:Identity:Uri"]!);
+            })
+            .ConfigurePrimaryHttpMessageHandler(() =>
+            {
+                var handler = new HttpClientHandler();
+                handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator!;
+
+                return handler;
             });
 
             return services;

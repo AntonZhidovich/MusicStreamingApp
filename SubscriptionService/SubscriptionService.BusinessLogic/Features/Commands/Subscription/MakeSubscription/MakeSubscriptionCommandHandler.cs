@@ -2,6 +2,7 @@
 using Google.Protobuf.WellKnownTypes;
 using Hangfire;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using SubscriptionService.BusinessLogic.Constants;
 using SubscriptionService.BusinessLogic.Exceptions;
 using SubscriptionService.BusinessLogic.Features.Producers;
@@ -23,6 +24,7 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.MakeSubscription
         private readonly IUserServiceGrpcClient _userServiceClient;
         private readonly IEmailSenderService _emailSender;
         private readonly IBackgroundJobsService _backgroundJobsService;
+        private readonly ILogger<MakeSubscriptionCommandHandler> _logger;
 
         public MakeSubscriptionCommandHandler(
             IUnitOfWork unitOfWork, 
@@ -30,7 +32,8 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.MakeSubscription
             IProducerService producerService, 
             IUserServiceGrpcClient userServiceClient,
             IEmailSenderService emailSender,
-            IBackgroundJobsService backgroundJobsService)
+            IBackgroundJobsService backgroundJobsService,
+            ILogger<MakeSubscriptionCommandHandler> logger)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -38,11 +41,14 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.MakeSubscription
             _userServiceClient = userServiceClient;
             _emailSender = emailSender;
             _backgroundJobsService = backgroundJobsService;
+            _logger = logger;
         }
 
         public async Task<GetSubscriptionDto> Handle(MakeSubscriptionCommand request, CancellationToken cancellationToken)
         {
             var userInfo = await _userServiceClient.GetUserInfoAsync(request.Dto.UserId, cancellationToken);
+
+            _logger.LogInformation("Fetched info for user {Id} from identity.", request.Dto.UserId);
 
             var tariffPlan = await _unitOfWork.TariffPlans.GetByIdAsync(
                 request.Dto.TariffPlanId,
@@ -50,6 +56,8 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.MakeSubscription
 
             if (tariffPlan == null)
             {
+                _logger.LogError("Tariff plan with id {Id} not found.", request.Dto.TariffPlanId);
+
                 throw new NotFoundException(ExceptionMessages.tariffPlanNotFound);
             }
 
@@ -59,6 +67,8 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.MakeSubscription
 
             if (currentSubscription != null)
             {
+                _logger.LogError("User {Id} already has a subscription.", request.Dto.UserId);
+
                 throw new BadRequestException(ExceptionMessages.subscriptionExists);
             }
 
@@ -88,6 +98,8 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.MakeSubscription
 
             await _unitOfWork.CommitAsync(cancellationToken);
 
+            _logger.LogInformation("Subscription with id {Id} is persisted.", subscription.Id);
+
             await _producerService.ProduceSubscriptionMadeAsync(_mapper.Map<SubscriptionMadeMessage>(subscription), cancellationToken);
 
             var subscriptionDto = _mapper.Map<GetSubscriptionDto>(subscription);
@@ -101,6 +113,8 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.MakeSubscription
             RecurringJob.AddOrUpdate(subscription.Id,
                 () => _backgroundJobsService.MakeSubscriptionPayment(subscription.Id),
                 subscriptionPaymentCron);
+
+            _logger.LogInformation("All the tasks for subscription {Id} are created.", subscription.Id);
 
             return subscriptionDto;
         }

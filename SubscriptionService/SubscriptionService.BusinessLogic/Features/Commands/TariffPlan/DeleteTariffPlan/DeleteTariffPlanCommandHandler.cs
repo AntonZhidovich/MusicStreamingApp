@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using SubscriptionService.BusinessLogic.Constants;
 using SubscriptionService.BusinessLogic.Exceptions;
 using SubscriptionService.BusinessLogic.Models.TariffPlan;
@@ -12,11 +13,13 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.DeleteTariffPlan
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICacheRepository _cache;
+        private readonly ILogger<DeleteTariffPlanCommandHandler> _logger;
 
-        public DeleteTariffPlanCommandHandler(IUnitOfWork unitOfWork, ICacheRepository cache)
+        public DeleteTariffPlanCommandHandler(IUnitOfWork unitOfWork, ICacheRepository cache, ILogger<DeleteTariffPlanCommandHandler> logger)
         {
             _unitOfWork = unitOfWork;
             _cache = cache;
+            _logger = logger;
         }
 
         public async Task Handle(DeleteTariffPlanCommand request, CancellationToken cancellationToken)
@@ -25,6 +28,8 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.DeleteTariffPlan
 
             if (tariffPlan == null)
             {
+                _logger.LogError("Tariff plan with id {Id} not found.", request.Id);
+
                 throw new NotFoundException(ExceptionMessages.tariffPlanNotFound);
             }
 

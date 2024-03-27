@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
 using MusicService.Application.Interfaces;
 using MusicService.Application.Models;
 using MusicService.Application.Models.DTOs;
@@ -15,17 +16,20 @@ namespace MusicService.Application.Services
 {
     public class ReleaseService : IReleaseService
     {
+        private readonly ILogger<ReleaseService> _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ISongService _songService;
         private readonly IMapper _mapper;
         private readonly ICacheRepository _cache;
 
         public ReleaseService(
+            ILogger<ReleaseService> logger,
             IUnitOfWork unitOfWork,
             ISongService songService,
             IMapper mapper,
             ICacheRepository cache)
         {
+            _logger = logger;
             _unitOfWork = unitOfWork;
             _songService = songService;
             _mapper = mapper;
@@ -96,6 +100,8 @@ namespace MusicService.Application.Services
 
         public async Task<ReleaseDto> CreateAsync(CreateReleaseRequest request, ClaimsPrincipal user, CancellationToken cancellationToken = default)
         {
+            _logger.LogInformation("Attempt to create release {releaseName} from authors {@authors}.", request.Name, request.AuthorNames);
+
             var release = _mapper.Map<Release>(request);
             release.Id = Guid.NewGuid().ToString();
 
@@ -103,7 +109,10 @@ namespace MusicService.Application.Services
             
             release.Authors.AddRange(authors);
 
-            if (request.AuthorNames.Count != authors.Count()) { throw new NotFoundException(ExceptionMessages.AuthorNotFound); }
+            if (request.AuthorNames.Count != authors.Count()) 
+            {
+                throw new NotFoundException(ExceptionMessages.AuthorNotFound); 
+            }
 
             if (!user.IsInRole(UserRoles.admin)) 
             { 
@@ -119,12 +128,15 @@ namespace MusicService.Application.Services
             
             await _unitOfWork.CommitAsync(cancellationToken);
 
+            _logger.LogInformation("Release {releaseId} is persisted.", release.Id);
+
             return _mapper.Map<ReleaseDto>(release);
         }
 
         public async Task DeleteAsync(string id, ClaimsPrincipal user, CancellationToken cancellationToken = default)
         {
             var release = await GetDomainReleaseAsync(id, cancellationToken);
+            
             var authors = await _unitOfWork.Authors.GetByNameAsync(release.Authors.Select(author => author.Name), cancellationToken);
 
             if (!user.IsInRole(UserRoles.admin)) 
@@ -137,6 +149,8 @@ namespace MusicService.Application.Services
             await _unitOfWork.CommitAsync(cancellationToken);
 
             await _cache.RemoveAsync(id, cancellationToken);
+
+            _logger.LogInformation("Release {releaseId} is deleted.", id);
         }
 
         public async Task RemoveSongFromReleaseAsync(string releaseId, string songId, ClaimsPrincipal user, CancellationToken cancellationToken = default)
@@ -164,6 +178,8 @@ namespace MusicService.Application.Services
             await _unitOfWork.CommitAsync(cancellationToken);
 
             await _cache.RemoveAsync(releaseId, cancellationToken);
+
+            _logger.LogInformation("Song {songId} is removed from release {releaseId}", song.Id, release.Id);
         }
 
         public async Task<ReleaseShortDto> UpdateAsync(string id, UpdateReleaseRequest request, ClaimsPrincipal user, CancellationToken cancellationToken = default)
@@ -205,6 +221,8 @@ namespace MusicService.Application.Services
             
             await _unitOfWork.Songs.CreateAsync(song, cancellationToken);
 
+            _logger.LogInformation("Song {songId} is added to release {releaseId}", song.Id, release.Id);
+
             return song;
         }
 
@@ -214,6 +232,8 @@ namespace MusicService.Application.Services
 
             if (release == null)
             {
+                _logger.LogError("Release {releaseId} is not found.", id);
+
                 throw new NotFoundException(ExceptionMessages.ReleaseNotFound);
             }
 
@@ -244,6 +264,8 @@ namespace MusicService.Application.Services
             {
                 return;
             }
+
+            _logger.LogError("User {userName} is not a member of author;", currentUserName);
 
             throw new AuthorizationException(ExceptionMessages.NotAuthorMember);
         }

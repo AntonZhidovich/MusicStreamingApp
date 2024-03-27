@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using SubscriptionService.BusinessLogic.Constants;
 using SubscriptionService.BusinessLogic.Exceptions;
 using SubscriptionService.BusinessLogic.Models.Subscription;
@@ -13,11 +14,13 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.MakeSubscriptionPa
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly ILogger<MakeSubscriptionPaymentCommandHandler> _logger;
 
-        public MakeSubscriptionPaymentCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
+        public MakeSubscriptionPaymentCommandHandler(IUnitOfWork unitOfWork, IMapper mapper, ILogger<MakeSubscriptionPaymentCommandHandler> logger)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<GetSubscriptionDto> Handle(MakeSubscriptionPaymentCommand request,
@@ -29,6 +32,8 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.MakeSubscriptionPa
 
             if (subscription == null)
             {
+                _logger.LogError("Subscription with id {Id} not found.", request.Id);
+
                 throw new NotFoundException(ExceptionMessages.subscriptionNotFound);
             }
 
@@ -47,6 +52,8 @@ namespace SubscriptionService.BusinessLogic.Features.Commands.MakeSubscriptionPa
             _unitOfWork.Subscriptions.Update(subscription);
 
             await _unitOfWork.CommitAsync(cancellationToken);
+
+            _logger.LogInformation("Payment for subscription {Id} is made.", subscription.Id);
 
             return _mapper.Map<GetSubscriptionDto>(subscription);
         }

@@ -7,17 +7,25 @@ using Identity.DataAccess.Entities;
 using Identity.DataAccess.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using System.Data;
 
 namespace Identity.BusinessLogic.Services.Implementations
 {
     public class RoleService : IRoleService
     {
+        private readonly ILogger<RoleService> _logger;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
 
-        public RoleService(RoleManager<IdentityRole> roleManager, IMapper mapper, IUserRepository userRepository)
+        public RoleService(
+            ILogger<RoleService> logger,
+            RoleManager<IdentityRole> roleManager, 
+            IMapper mapper, 
+            IUserRepository userRepository)
         {
+            _logger = logger;
             _roleManager = roleManager;
             _mapper = mapper;
             _userRepository = userRepository;
@@ -28,6 +36,8 @@ namespace Identity.BusinessLogic.Services.Implementations
             var role = new IdentityRole(roleDto.Name);
 
             await _roleManager.CreateAsync(role);
+
+            _logger.LogInformation("Role {roleName} is created.", roleDto.Name);
 
             return _mapper.Map<RoleDto>(role);
         }
@@ -52,6 +62,8 @@ namespace Identity.BusinessLogic.Services.Implementations
             }
 
             await _roleManager.DeleteAsync(identityRole);
+            
+            _logger.LogInformation("Role {roleName} is removed.", role.Name);
         }
 
         public async Task<IEnumerable<string>> GetUserRolesByEmailAsync(string email)
@@ -78,6 +90,8 @@ namespace Identity.BusinessLogic.Services.Implementations
             var user = await GetDomainUserByEmailAsync(email);
 
             await _userRepository.AddUserToRoleAsync(user, roleName);
+
+            _logger.LogInformation("User {Email} is added to role {roleName}", email, roleName);
         }
 
         public async Task RemoveUserFromRoleAsync(string email, string roleName)
@@ -85,6 +99,8 @@ namespace Identity.BusinessLogic.Services.Implementations
             var user = await GetDomainUserByEmailAsync(email);
 
             await _userRepository.RemoveUserFromRoleAsync(user, roleName);
+
+            _logger.LogInformation("User {Email} is removed from role {roleName}", email, roleName);
         }
 
         private async Task<User> GetDomainUserByEmailAsync(string email)

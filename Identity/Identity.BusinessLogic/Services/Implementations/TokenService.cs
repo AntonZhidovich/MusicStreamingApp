@@ -6,12 +6,13 @@ using Identity.BusinessLogic.Options;
 using Identity.BusinessLogic.Services.Interfaces;
 using Identity.DataAccess.Entities;
 using Identity.DataAccess.Repositories.Interfaces;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Security.Principal;
 using System.Text;
 
 namespace Identity.BusinessLogic.Services.Implementations
@@ -19,13 +20,16 @@ namespace Identity.BusinessLogic.Services.Implementations
     public class TokenService : ITokenService
     {
         private readonly JwtOptions _jwtOptions;
+        private readonly ILogger<TokenService> _logger;
         private readonly ITokenRepository _tokenRepository;
 
         public TokenService(
+            ILogger<TokenService> logger,
             IOptions<JwtOptions> jwtOptions,
             ITokenRepository tokenRepository)
         {
             _jwtOptions = jwtOptions.Value;
+            _logger = logger;
             _tokenRepository = tokenRepository;
         }
 
@@ -91,6 +95,7 @@ namespace Identity.BusinessLogic.Services.Implementations
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var jwtToken = tokenHandler.CreateToken(descriptor);
+            _logger.LogInformation("Access token for {userName} is generated.", identity.Name);
 
             return tokenHandler.WriteToken(jwtToken);
         }
@@ -117,6 +122,7 @@ namespace Identity.BusinessLogic.Services.Implementations
             }
             
             await _tokenRepository.AddTokenAsync(token, cancellationToken);
+            _logger.LogInformation("Refresh token for user with id {userId} is generated.", userId);
 
             return tokenString;
         }

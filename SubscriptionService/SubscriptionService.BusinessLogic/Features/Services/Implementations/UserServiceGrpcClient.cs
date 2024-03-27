@@ -1,4 +1,5 @@
 ﻿using Identity.Grpc;
+using Microsoft.Extensions.Logging;
 using SubscriptionService.BusinessLogic.Constants;
 using SubscriptionService.BusinessLogic.Exceptions;
 using SubscriptionService.BusinessLogic.Features.Services.Interfaces;
@@ -8,10 +9,12 @@ namespace SubscriptionService.BusinessLogic.Features.Services.Implementations
     public class UserServiceGrpcClient : IUserServiceGrpcClient
     {
         private readonly UserService.UserServiceClient _userServiceClient;
+        private readonly ILogger<UserServiceGrpcClient> _logger;
 
-        public UserServiceGrpcClient(UserService.UserServiceClient userServiceClient)
+        public UserServiceGrpcClient(UserService.UserServiceClient userServiceClient, ILogger<UserServiceGrpcClient> logger)
         {
             _userServiceClient = userServiceClient;
+            _logger = logger;
         }
 
         public async Task<bool> UserWithIdExistsAsync(string id, CancellationToken cancellationToken = default)
@@ -41,6 +44,8 @@ namespace SubscriptionService.BusinessLogic.Features.Services.Implementations
 
             if (response.UserInfo == null)
             {
+                _logger.LogError("Error in fetching info for user {Id}", id);
+
                 throw new NotFoundException(ExceptionMessages.userNotFound);
             }
 

@@ -9,22 +9,26 @@ using Identity.BusinessLogic.Specifications;
 using Identity.DataAccess.Constants;
 using Identity.DataAccess.Entities;
 using Identity.DataAccess.Repositories.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace Identity.BusinessLogic.Services.Implementations
 {
     public class UserService : IUserService
     {
+        private readonly ILogger<UserService> _logger;
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
         private readonly IProducerService _producerService;
         private readonly IMusicUserGrpcServiceClient _musicUserServiceClient;
 
         public UserService(
+            ILogger<UserService> logger,
             IUserRepository userRepository,
             IMapper mapper,
             IProducerService producerService,
             IMusicUserGrpcServiceClient musicUserServiceClient)
         {
+            _logger = logger;
             _userRepository = userRepository;
             _mapper = mapper;
             _producerService = producerService;
@@ -68,6 +72,8 @@ namespace Identity.BusinessLogic.Services.Implementations
 
             if (user == null)
             {
+                _logger.LogError("User with id {userId} was not found.", id);
+
                 throw new NotFoundException(ExceptionMessages.UserNotFound);
             }
 
@@ -77,17 +83,25 @@ namespace Identity.BusinessLogic.Services.Implementations
         public async Task<UserDto> RegisterAsync(RegisterUserRequest request)
         {
             var user = _mapper.Map<User>(request);
+
+            _logger.LogInformation("Attempt to registrate user {Email}", request.Email);
             
             var result = await _userRepository.AddUserAsync(user, request.Password);
 
             if (!result.Succeeded)
             {
+                _logger.LogError("User {Email} failed to registrate. Errors: {@Errors}.", request.Email, result.Errors);
+
                 throw new UnprocessableEntityException(ExceptionMessages.InvalidCredentials, result.Errors);
             }
 
             await _userRepository.AddUserToRoleAsync(user, UserRoles.listener);
+            
+            _logger.LogInformation("User {Email} is persisted.", request.Email);
 
             await _musicUserServiceClient.AddUserAsync(user);
+
+            _logger.LogInformation("User {Email} is sent to MusicService.", request.Email);
 
             return _mapper.Map<UserDto>(user);
         }
@@ -109,6 +123,8 @@ namespace Identity.BusinessLogic.Services.Implementations
 
             await _producerService.ProduceUserUpdatedAsync(new UserUpdatedMessage { Id = updatedDto.Id, NewUserName = updatedDto.UserName });
 
+            _logger.LogInformation("User {Email} is updated.", user.Email);
+
             return updatedDto;
         }
 
@@ -117,6 +133,8 @@ namespace Identity.BusinessLogic.Services.Implementations
             var user = await GetDomainUserByEmailAsync(email);
             
             await _userRepository.DeleteUserAsync(user);
+
+            _logger.LogInformation("User {Email} is deleted.", email);
 
             await _producerService.ProduceUserDeletedAsync(new UserDeletedMessage { Id = user.Id });
         }
@@ -136,6 +154,8 @@ namespace Identity.BusinessLogic.Services.Implementations
 
             if (user == null)
             {
+                _logger.LogError("User {Email} was not found.", email);
+
                 throw new NotFoundException(ExceptionMessages.UserNotFound);
             }
 

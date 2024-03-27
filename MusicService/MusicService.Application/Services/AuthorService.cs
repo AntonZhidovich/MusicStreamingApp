@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
 using MusicService.Application.Interfaces;
 using MusicService.Application.Models;
 using MusicService.Application.Models.AuthorService;
@@ -14,17 +15,20 @@ namespace MusicService.Application.Services
 {
     public class AuthorService : IAuthorService
     {
+        private readonly ILogger<AuthorService> _logger;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserServiceGrpcClient _userServiceClient;
         private readonly ICacheRepository _cache;
 
         public AuthorService(
+            ILogger<AuthorService> logger,
             IMapper mapper,
             IUnitOfWork unitOfWork,
             IUserServiceGrpcClient userServiceClient,
             ICacheRepository cache)
         {
+            _logger = logger;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _userServiceClient = userServiceClient;
@@ -33,12 +37,16 @@ namespace MusicService.Application.Services
 
         public async Task AddUserToAuthorAsync(AuthorUserRequest request, ClaimsPrincipal currentUser, CancellationToken cancellationToken = default)
         {
+            _logger.LogInformation("Attempt to add {userName} to author {authorName}.", request.UserName, request.AuthorName);
+
             var user = await GetDomainUserAsync(request.UserName, cancellationToken);
 
             await CheckIfUserIsInRoleAsync(user, UserRoles.creator, cancellationToken);
 
             if (user.Author != null)
             {
+                _logger.LogError("User {userName} is already in author {authorName}.", request.UserName, user.Author.Name);
+
                 throw new BadRequestException(ExceptionMessages.UserAlreadyInAuthor);
             }
 
@@ -54,11 +62,15 @@ namespace MusicService.Application.Services
             
             await _unitOfWork.CommitAsync(cancellationToken);
 
+            _logger.LogInformation("User {UserName} is added to Author {AuthorName}.", request.UserName, request.AuthorName);
+
             await _cache.RemoveAsync(GetCacheKey(request.AuthorName), cancellationToken);
         }
 
         public async Task<AuthorDto> CreateAsync(CreateAuthorRequest request, CancellationToken cancellationToken = default)
         {
+            _logger.LogInformation("Attempt to create author {authorName}.", request.Name);
+
             if (await _unitOfWork.Authors.GetByNameAsync(request.Name, cancellationToken) != null)
             {
                 throw new BadRequestException(ExceptionMessages.AuthorAlreadyExists);
@@ -78,6 +90,8 @@ namespace MusicService.Application.Services
                 }
 
                 artists.Add(user);
+
+                _logger.LogInformation("User {userName} is added to author {authorName}.", user.UserName, request.Name);
             }
 
             var author = _mapper.Map<Author>(request);
@@ -86,6 +100,8 @@ namespace MusicService.Application.Services
             
             await _unitOfWork.Authors.CreateAsync(author, cancellationToken);
             await _unitOfWork.CommitAsync(cancellationToken);
+
+            _logger.LogInformation("Author {authorName} is persisted.", request.Name);
 
             return _mapper.Map<AuthorDto>(author);
         }
@@ -104,6 +120,8 @@ namespace MusicService.Application.Services
             await _unitOfWork.CommitAsync(cancellationToken);
 
             await _cache.RemoveAsync(name, cancellationToken);
+
+            _logger.LogInformation("Author {authorName} is deleted.", name);
         }
 
         public async Task<PageResponse<AuthorDto>> GetAllAsync(GetPageRequest request, CancellationToken cancellationToken = default)
@@ -147,11 +165,6 @@ namespace MusicService.Application.Services
 
             var user = await GetDomainUserAsync(request.UserName, cancellationToken);
 
-            if (user == null)
-            {
-                throw new NotFoundException(ExceptionMessages.UserNotFound);
-            }
-
             if (user.Author != author)
             {
                 throw new NotFoundException(ExceptionMessages.UserNotFound);
@@ -162,6 +175,8 @@ namespace MusicService.Application.Services
             await _unitOfWork.CommitAsync(cancellationToken);
 
             await _cache.RemoveAsync(GetCacheKey(request.AuthorName), cancellationToken);
+
+            _logger.LogInformation("User {userName} is removed from author {authorName}.", user.UserName, author.Name);
         }
 
         public async Task<AuthorDto> UpdateAsync(string name, 
@@ -192,6 +207,8 @@ namespace MusicService.Application.Services
 
             if (author == null)
             {
+                _logger.LogError("Author {authorName} was not found.", name);
+
                 throw new NotFoundException(ExceptionMessages.AuthorNotFound);
             }
 
@@ -204,6 +221,8 @@ namespace MusicService.Application.Services
 
             if (user == null)
             {
+                _logger.LogError("User {userName} was not found.", userName);
+
                 throw new NotFoundException(ExceptionMessages.UserNotFound);
             }
 
@@ -226,6 +245,8 @@ namespace MusicService.Application.Services
 
             if (!userIsInRole)
             {
+                _logger.LogError("User {userName} is not in {roleName} role to do action he attempts.", user.UserName, roleName);
+
                 throw new BadRequestException(ExceptionMessages.UserIsNotCreator);
             }
         }

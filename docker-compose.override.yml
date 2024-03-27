@@ -1,0 +1,124 @@
+version: "3.9"
+
+services:
+  elasticsearch:
+    environment:
+      xpack.security.enabled: false
+      discovery.type: single-node
+    volumes:
+      -  elastic_data:/usr/share/elasticsearch/data
+ 
+  kibana:
+    depends_on:
+      - elasticsearch
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+
+  zookeeper:
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOO_MY_ID: 1
+    volumes:
+      - zookeeper_data:/var/lib/zookeeper/data
+      - zookeeper_log:/var/lib/zookeeper/log
+
+  kafka:
+    depends_on:
+      - zookeeper
+    volumes:
+      - kafka_data:/kafka
+    environment:
+      KAFKA_BROKER_ID: 0
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: INTERNAL_LISTENER://kafka:9092, HOST_LISTENER://kafka:29092
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL_LISTENER://kafka:9092, HOST_LISTENER://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL_LISTENER:PLAINTEXT,HOST_LISTENER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL_LISTENER
+      KAFKA_CREATE_TOPICS: "user-updated:1:1,user-deleted:1:1,subscription-made:1:1,subscription-canceled:1:1"
+    
+  mssql:  
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "8>R#4!a6"
+    user: root
+    volumes:
+      - mssql_data:/var/opt/mssql/data
+    restart: unless-stopped
+    entrypoint: >
+      /bin/sh -c "
+      /opt/mssql/bin/sqlservr &
+      while :
+        do
+            sleep 10
+            /opt/mssql-tools/bin/sqlcmd -Q \"IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = \'backgroundtasks\') BEGIN CREATE DATABASE backgroundtasks END\" -U SA -P \"8>R#4!a6\"
+            if [ $? -eq 0 ]; then
+                break
+            fi
+        done
+      wait"
+      
+  mongo:
+    volumes:
+      - mongo_data:/data
+    restart: unless-stopped
+
+  minio:
+    environment:
+      MINIO_ROOT_USER: dmitry.ivanov
+      MINIO_ROOT_PASSWORD: Password_1234
+    command: server /data --console-address ":9090"
+ 
+  minio_mc_init:
+    depends_on: 
+      - minio
+    entrypoint: 
+      /bin/sh -c "
+      /usr/bin/mc alias set minio http://minio:9000 dmitry.ivanov Password_1234;
+      /usr/bin/mc mb minio/songs;
+      /usr/bin/mc admin user add minio 0y3bOwfDQ4coqhs4ygew aEYmOtrZkqN9VRg69LFHmEJ7LF9Ae2YmqfEHEEMe;
+      /usr/bin/mc admin policy attach minio readwrite --user=0y3bOwfDQ4coqhs4ygew;
+      exit 0"
+
+  redis:
+    volumes:
+      - redis_data:/data
+    command: "redis-server --save 60 1"
+    
+  identity:  
+    depends_on:
+      - mssql
+    volumes:
+      - ../MusicStreamingApp/Certificates:/app/certs/.aspnet/https/:ro
+    restart: on-failure
+
+  musicservice:
+    depends_on:
+      - mssql
+      - kafka
+      - mongo
+      - minio_mc_init
+    volumes:
+      - ../MusicStreamingApp/Certificates:/app/certs/.aspnet/https/:ro
+    restart: on-failure
+
+  subscriptionservice:
+    depends_on:
+      - mssql
+      - kafka
+    volumes:
+      - ../MusicStreamingApp/Certificates:/app/certs/.aspnet/https/:ro
+    restart: on-failure
+
+volumes:
+  elastic_data:    
+  mssql_data:
+  kafka_data:
+  zookeeper_data:
+  zookeeper_log:
+  mongo_data:
+  redis_data:
+
+networks:
+  default:
+    driver: bridge
+    name: appnet

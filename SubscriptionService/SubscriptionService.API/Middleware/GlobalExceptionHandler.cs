@@ -1,23 +1,33 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
-using MusicService.Domain.Exceptions;
+using SubscriptionService.BusinessLogic.Exceptions;
+using SubscriptionService.BusinessLogic.Models;
 using System.Net;
 
-namespace MusicService.API.ExceptionHandlers
+namespace SubscriptionService.API.Middleware
 {
     public class GlobalExceptionHandler : IExceptionHandler
     {
+        private readonly ILogger<GlobalExceptionHandler> _logger;
+
+        public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger)
+        {
+            _logger = logger;
+        }
+
         public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
         {
             int statusCode = GetErrorCode(exception);
-            var problemDetails = new ProblemDetails
+            var problemDetails = new
             {
                 Status = statusCode,
                 Title = exception.Message,
+                Details = GetErrorDetails(exception)
             };
 
             httpContext.Response.StatusCode = statusCode;
-            
+
+            _logger.LogError(exception, $"Exception: {exception.GetType().Name}. {exception.Message}");
+
             await httpContext.Response.WriteAsJsonAsync(problemDetails);
 
             return true;
@@ -38,6 +48,20 @@ namespace MusicService.API.ExceptionHandlers
                 default:
                     return (int)HttpStatusCode.BadRequest;
             }
+        }
+
+        private static IEnumerable<ErrorDetail>? GetErrorDetails(Exception exception)
+        {
+            IEnumerable<ErrorDetail>? detail = null;
+
+            switch (exception)
+            {
+                case ValidationPipelineException validationException:
+                    detail = validationException.ValidationErrors;
+                    break;
+            }
+
+            return detail;
         }
     }
 }
