@@ -1,6 +1,6 @@
 export class AuthorModel {
     name = "";
-    userNames = [""];
+    userNames: string[] = [];
     createdAt = new Date();
     isBroken  = false;
     brokenAt = new Date();

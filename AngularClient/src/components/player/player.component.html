@@ -26,7 +26,7 @@
             <div class="player-artist">{{currentSong.release.authors.join(" ft. ")}} – {{currentSong.release.name}}</div>
           </div>
           <div class="clickable" style="width:35%">
-            <div #container class="progress" style="max-height: 10px;" (mousedown)="omTimeLineClick($event, container);">
+            <div #container class="progress" style="max-height: 10px;" (mousedown)="onTimeLineClick($event, container);">
                 <div class="progress-bar progress-bar-striped bg-warning progress-bar-animated" 
                     aria-valuemin="0" aria-valuemax="1" [style.width.%]="currentTime"></div>
             </div>
@@ -38,15 +38,30 @@
         <div class="column mx-2">
           <button type="button" class="btn btn-warning mx-3 mt-2 py-0"(click)="onMuteButton();">
             @if (!player.muted) {
-              <i class="bi bi-volume-up-fill" style="font-size: small;"></i>
+              <i class="bi bi-volume-up-fill font-small"></i>
             } @else {
-              <i class="bi bi-volume-mute-fill" style="font-size: small;"></i>
+              <i class="bi bi-volume-mute-fill font-small"></i>
             }
           </button>
           
           <div class="form-range ms-1" style="width: 60px; flex:right; color: var(--bs-warning);">
             <input #range type="range" class="form-range" min="0" max="100" value="100" (input)="onVolumeInput(range.value)">
-          </div>
+          </div>          
+        </div>
+        <div style="flex: right;">
+          <button type="button" class="btn btn-warning" style="font-size: small;" (click)="onRepeatModeClick();">
+            @switch (this.playerService.playbackMode) {
+              @case(1) {
+                <i class="bi bi-repeat"></i> 
+              }
+              @case(2){
+                <i class="bi bi-repeat-1"></i>
+              }
+              @default{
+                <i class="bi bi-ban"></i>
+              }
+            }
+          </button>
         </div>
 
         </div>

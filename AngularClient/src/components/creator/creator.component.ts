@@ -11,7 +11,7 @@ import { AuthorSidebarComponent } from "../author-sidebar/author-sidebar.compone
     standalone: true,
     templateUrl: "./creator.component.html",
     imports: [NavbarComponent, CreatorReleaseListComponent, AuthorSidebarComponent],
-    providers: [AuthService, AuthorService]
+    providers: [AuthorService]
 })
 export class CreatorComponent {
     authorNotFound = false;
@@ -31,6 +31,7 @@ export class CreatorComponent {
         .subscribe({
             next: (result: AuthorModel) => {
                 this.currentAuthor = result;
+                console.log(result);
                 this.authorNotFound = false;
             },
             error: (error) => {

@@ -9,8 +9,7 @@ import { AuthInterceptor } from '../../interceptors/auth.interceptor';
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet, SigninComponent, HttpClientModule],
-  providers: [AuthService],
-  templateUrl: './app.component.html',
+  templateUrl: './app.component.html'
 })
 export class AppComponent {
   title = 'MusicStreamingAppClient';

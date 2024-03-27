@@ -11,10 +11,10 @@
         }
     }
 
-    @if (addAuthorInfo.inAddingMode){
+    @if (isAddingUserMode || isCreatingAuthorMode){
         <div class="sidebar-item mx-4">
             <div class="input-group mb-3">
-                <input class="form-control" placeholder="Author name" [(ngModel)]="addAuthorInfo.userName" required="">
+                <input class="form-control" placeholder="Author name" [(ngModel)]="inputName" required>
                 <div class="btn-group input-group-append">
                     <button class="btn btn-success" (click)="onSaveClick();">Save</button>
                     <button class="btn btn-danger" (click)="onCancelClick();">Cancel</button>
@@ -29,5 +29,16 @@
         }
     </div>
 
-    <button class="btn btn-secondary playlist-add mx-4 mb-3" (click)="onAddClick();">Add user</button>
+    @if (authorNotFound) {
+        <h5 class="mx-4">Still not in the band? Create it!</h5>
+        <button class="btn btn-secondary playlist-add mx-4 mb-3" (click)="onCreateAuthor();">Create </button>
+
+    } @else {
+        <div class="d-flex" style="justify-content: space-between;">
+            <button class="btn btn-secondary playlist-add mx-4 mb-3" (click)="onAddClick();">Add user</button>
+            <button class="btn btn-danger playlist-add mx-4 mb-3" (click)="onDeleteAuthor();">Delete author</button>
+        </div>
+    }
+
+
 </div>

@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { SongService } from './song.service';
 import { SongModel } from '../models/SongModel';
-import { EventEmitter } from 'stream';
+import { RepeatPlayback } from '../models/RepeatPlayback';
 
 @Injectable({
   providedIn: 'root'
@@ -46,6 +46,7 @@ export class PlayerService {
   }
 
   setPlaylist(songs: SongModel[], index: number = 0) {
+    this.audioElement.pause();
     this.playlist = Array.from(songs);
     this.currentIndex = index;
     this.currentSong.set(this.playlist[index]);
@@ -55,6 +56,11 @@ export class PlayerService {
     if (this.currentIndex > 0) {
       this.currentIndex--;
       this.currentSong.set(this.playlist[this.currentIndex]);
+    } else {
+      if (this.playbackMode == RepeatPlayback.RepeatAll) {
+        this.currentIndex = this.playlist.length - 1;
+        this.currentSong.set(this.playlist[this.currentIndex]);
+      }
     }
   }
 
@@ -75,22 +81,18 @@ export class PlayerService {
   }
 
   selectNextSong() {
-    if(this.currentIndex < this.playlist.length - 1) {
-      this.currentIndex++;
-    }
-    else {
-      switch (this.playbackMode) {
-        case RepeatPlayback.RepeatAll:
-          this.currentIndex = 0;
-          break;
-        case RepeatPlayback.RepeateOne:
-          break;
-        case RepeatPlayback.NoRepeat:
-          return;
-      }
+    if (this.playbackMode == RepeatPlayback.RepeateOne) {
+      this.audioElement.play();
+      return;
     }
 
-    this.currentSong.set(this.playlist[this.currentIndex]);
+    if(this.currentIndex < this.playlist.length - 1) {
+      this.currentSong.set(this.playlist[++this.currentIndex]);
+    } 
+    else if (this.playbackMode == RepeatPlayback.RepeatAll) {
+        this.currentIndex = 0;
+        this.currentSong.set(this.playlist[this.currentIndex]);
+    }
   }
 
   handleError(event: Event) {
@@ -98,10 +100,13 @@ export class PlayerService {
     this.removeSong(this.currentIndex);
     this.selectNextSong();
   }
-}
 
-enum RepeatPlayback {
-  RepeatAll = 1,
-  RepeateOne = 2,
-  NoRepeat = 3
+  switchPlaybackMode() {
+    if (this.playbackMode == 3) {
+      this.playbackMode = 1;
+    }
+    else {
+      this.playbackMode++;
+    }
+  }
 }

@@ -1,0 +1,35 @@
+<div class="sidebar">
+        <h1 class="sidebar-title">Roles</h1>
+        @if (createRoleDetails.isCreating){
+            <div class="sidebar-item mx-4">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="Enter role name" [(ngModel)]="createRoleDetails.role.name" required>
+                    <div class="input-group-append">
+                        <div class="btn-group">
+                            <button class="btn btn-success" (click)="onSaveClick()">Save</button>
+                            <button class="btn btn-danger" (click)="onCancelClick();">Cancel</button>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    }
+        @if (roles.length > 0) {
+            @for (role of roles; track $index) {
+                <div class="sidebar-item mx-4">
+                    <div class="sidebar-item-title">{{role.name}}</div>
+                    <div class="class row">
+                    </div>
+                    <div class="btn-group" style="margin-left: auto;">
+                        <button class="btn btn-danger" (click)="onRemoveClick(role);">
+                            <i class="bi bi-trash3"></i>
+                        </button>
+                    </div>
+                </div>
+            }
+        } @else {
+            <div class="class sidebar-empty my-4">
+                No roles found.
+            </div>
+        }
+        <button class="btn btn-secondary playlist-add mx-4 mb-3" (click)="onCreateClick();">New</button>
+</div>

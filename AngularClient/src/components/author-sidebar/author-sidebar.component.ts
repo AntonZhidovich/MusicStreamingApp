@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { AuthorModel } from "../../models/AuthorModel";
 import { FormsModule } from "@angular/forms";
 import { AuthorService } from "../../services/author.service";
+import { AuthService } from "../../services/auth.service";
 
 @Component({
     selector: "author-sidebar",
@@ -11,31 +12,35 @@ import { AuthorService } from "../../services/author.service";
     providers: [AuthorService]
 })
 export class AuthorSidebarComponent {
+    @Input() authorNotFound = false;
     @Input() author = new AuthorModel();
     @Output() onAuthorUpdate = new EventEmitter();
     @Output() onNewRelease = new EventEmitter();
 
-    addAuthorInfo = {
-        inAddingMode: false,
-        userName: ""
-    }
+    inputName = "";
+    isAddingUserMode = false;
+    isCreatingAuthorMode = false;
 
     errorMessage: string | undefined;
 
-    constructor(private authorService: AuthorService) {}
+    constructor(private authorService: AuthorService,
+                private authService: AuthService) {}
 
     showAuthor() {
         console.log(this.author);
     }
 
     onAddClick(){
-        this.addAuthorInfo.inAddingMode = true;
+        this.isAddingUserMode = true;
     }
 
     onCancelClick(){
         this.errorMessage = undefined;
-        this.addAuthorInfo.inAddingMode = false;
-        this.addAuthorInfo.userName = "";
+        this.resetInput();
+    }
+
+    onCreateAuthor(){
+        this.isCreatingAuthorMode = true;
     }
 
     onDeleteClick(userName: string){
@@ -53,11 +58,18 @@ export class AuthorSidebarComponent {
 
     onSaveClick(){
         this.errorMessage = undefined;
-        this.authorService.addUserToAuthor(this.author.name, this.addAuthorInfo.userName)
+        if (this.isAddingUserMode) {
+            this.addUserToAuthor();
+        } else {
+            this.createAuthor();
+        }
+    }
+
+    addUserToAuthor() {
+        this.authorService.addUserToAuthor(this.author.name, this.inputName)
         .subscribe({
             next: () => {
-                this.addAuthorInfo.userName = "";
-                this.addAuthorInfo.inAddingMode = false;
+                this.resetInput;
                 this.onAuthorUpdate.emit();
             },
             error: (error) => {
@@ -67,4 +79,42 @@ export class AuthorSidebarComponent {
         });
     }
 
+    createAuthor() {
+        let userNames = [this.authService.getAuthorizedUsername()];
+        this.authorService.createAuthor(this.inputName, userNames)
+        .subscribe({
+            next: () => {
+                this.resetInput();
+                this.onAuthorUpdate.emit();
+            },
+            error: (error) => {
+                console.log(error);
+                this.errorMessage = error.error.title;
+            }
+        });
+    }
+
+    onDeleteAuthor() {
+        if (!confirm(`You sure you want to delete author ${this.author.name}?`)) {
+            return;
+        }
+
+        this.authorService.deleteAuthor(this.author.name)
+            .subscribe({
+                next: (result) => {
+                    this.authorNotFound = true;
+                    this.author = new AuthorModel();
+                    this.onAuthorUpdate.emit();
+                },
+                error: (error) => {
+                    console.log(error);
+                }
+            })
+    }
+
+    resetInput() {
+        this.isAddingUserMode = false;
+        this.isCreatingAuthorMode = false;
+        this.inputName = "";
+    }
 }

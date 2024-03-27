@@ -32,10 +32,6 @@ export class SongQueueComponent {
     constructor(public playerService: PlayerService,
                 private PlaylistService: PlayerService) {}
 
-    ngOnInit() : void{
-
-    }
-
     onSongSelected(index: number) {
         this.playerService.setCurrentSong(index);
     }

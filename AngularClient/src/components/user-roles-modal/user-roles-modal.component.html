@@ -1,0 +1,42 @@
+<div class="modal" [style.display]="showModal ? 'block' : 'none'">
+    <div class="class modal-background"></div>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" style="font-weight: bold;">{{user.email}} roles</h5>
+                <button type="button" class="btn-close" (click)="onCancel();">
+                    <span aria-hidden="true"></span>
+                </button>
+            </div>
+            <div class="modal-body">
+            <p class="mx-3">User roles</p>
+                
+                @for(role of userRoles; track $index) {
+                    <div class="container bordered-secondary px-2 my-2" style="justify-content: space-between; display: flex;">
+                        <div class="my-auto">
+                            <div class="song-title-release"> {{role}} </div>
+                        </div>
+                        <div class="btn-group my-1 me-2" style="float: right;">
+                            <button class="btn btn-secondary" style="font-size: small;" (click)="onRemove(role);">Remove</button>
+                        </div>
+                    </div>
+                }
+                
+                <p class="mx-3">Add to role</p>
+                <select class="form-select" id="sourceSelect" [(ngModel)]="selectedRole">
+                    <option selected="true" style='display: none'></option>
+                    @for (role of roles; track $index) {
+                        <option> {{role.name}} </option>
+                    }
+                </select>
+
+            </div>
+
+            <div class="modal-footer" bis_skin_checked="1">
+                <button type="button" class="btn btn-success" (click)="onSave();">Save</button>
+                <button type="button" class="btn btn-secondary" (click)="onCancel();">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+

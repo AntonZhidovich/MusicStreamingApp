@@ -20,6 +20,23 @@ export class AuthorService {
         return this.httpClient.get<AuthorModel[]>(path, {params});
     }
 
+    createAuthor(name: string, userNames: string[]) {
+        let model = {
+            name: name,
+            userNames: userNames
+        };
+        
+        let path = `${environment.gatewayUrl}/${this.authorsUrl}`;
+
+        return this.httpClient.post(path, model);
+    }
+
+    deleteAuthor(name: string) {
+        let path =  `${environment.gatewayUrl}/${this.authorsUrl}/${name}`;
+
+        return this.httpClient.delete(path);
+    }
+
     getAuthorByUserName(username: string) : Observable<AuthorModel> {
         let path = `${environment.gatewayUrl}/${this.authorsUrl}/username/${username}`;
         return this.httpClient.get<AuthorModel>(path);

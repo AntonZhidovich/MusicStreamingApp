@@ -1,4 +1,4 @@
-import { Component, Injector, Input, effect } from "@angular/core";
+import { Component, Input, effect } from "@angular/core";
 import { SongModel } from "../../models/SongModel";
 import { PlayerService } from "../../services/player.service";
 import { FormsModule } from "@angular/forms";
@@ -33,7 +33,9 @@ export class PlayerComponent {
         effect(() => {
             this.currentSong = this.playerService.currentSong();
             if(this.currentSong.sourceName.length > 0) {
+                this.isPlaying = true;
                 this.showPlayer = true;
+                console.log("here");
                 this.player.src = "https://localhost:8080/music/songs/sources/"+ this.currentSong.sourceName;
             }
             this.onPlayButton();
@@ -89,9 +91,13 @@ export class PlayerComponent {
         return result
     }
     
-    omTimeLineClick(event: MouseEvent, progressBar: HTMLElement) {
+    onTimeLineClick(event: MouseEvent, progressBar: HTMLElement) {
         this.currentTime = 100*event.offsetX / progressBar.clientWidth;
         this.player.currentTime = this.currentTime*this.player.duration /100
+    }
+    
+    onRepeatModeClick() {
+        this.playerService.switchPlaybackMode();
     }
 
 }

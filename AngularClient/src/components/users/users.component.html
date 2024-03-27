@@ -1,0 +1,30 @@
+<div class="list-empty" >
+    @if (users.length == 0) {
+        <h1>No users found.</h1>
+    }
+</div>
+
+<ul class="song-list pt-2">
+    @for (user of users; track $index) {
+        <li class="song mx-5" style="position: relative;">
+            <div>
+                <div class="author-details d-flex">
+                    <div class="row">
+                        <div class="song-title">{{user.email}}</div>
+                        <p class="author">{{user.userName}}</p>
+                    </div>
+                    <div class="row">
+                        <p class="author">{{user.firstName}} {{user.lastName}}</p>
+                        <p class="genre">Registered: {{user.creationDate | date}}, {{user.region}}</p>
+                    </div>
+                    <div class="btn-group ms-auto mt-3 me-3" style="height: 40px; width: 250px;">
+                        <button  class="btn btn-info" (click)="onRolesButton(user, $event);"  (click)="onRolesButton(user, $event);"><i class="bi bi-people-fill"></i> Roles</button>
+                        <button class="btn btn-danger" (click)="onDeleteButton(user, $event);"><i class="bi bi-person-x" (click)="onDeleteButton(user, $event)"></i> Delete</button>
+                    </div>
+                </div>
+            </div>
+        </li>
+    }
+</ul>
+
+<user-roles-modal [user]="editUserInfo.user" [(showModal)]="editUserInfo.showModal"></user-roles-modal>
