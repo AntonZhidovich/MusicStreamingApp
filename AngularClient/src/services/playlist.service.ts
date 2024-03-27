@@ -1,53 +1,42 @@
-import { Injectable, SkipSelf } from "@angular/core";
-import { environment } from "../environments/environment";
+import { Injectable } from "@angular/core";
 import { PlaylistModel } from "../models/PlaylistModel";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { PlaylistWithSongsModel } from "../models/PlaylisWithSongsModel";
+import { endpoints } from "../endpoints";
 
 @Injectable({
     providedIn: "root"
 })
 export class PlaylistService {
-    
-    private playlistUrl = "music/playlists";
-
     constructor (private httpClient: HttpClient) {}
 
     delete(id: string){
-        let path = `${environment.gatewayUrl}/${this.playlistUrl}/${id}`;
-
-        return this.httpClient.delete(path);
+        return this.httpClient.delete(`${endpoints.playlists}/${id}`);
     }
 
     create(name: string) {
-        let path = `${environment.gatewayUrl}/${this.playlistUrl}`;
-
         var model = {
             "name" : name
         };
 
-        return this.httpClient.post(path, model);
+        return this.httpClient.post(endpoints.playlists, model);
     }
 
     update(newName: string, id: string) {
-        let path = `${environment.gatewayUrl}/${this.playlistUrl}/${id}`;
-
         var model = {
             "name" : newName
         };
 
-        return this.httpClient.put(path, model);
+        return this.httpClient.put(`${endpoints.playlists}/${id}`, model);
     }
 
-    getPlaylists() : Observable<PlaylistModel[]> {
-        let path = `${environment.gatewayUrl}/${this.playlistUrl}`;
-        
-        return this.httpClient.get<PlaylistModel[]>(path);
+    getPlaylists() : Observable<PlaylistModel[]> {       
+        return this.httpClient.get<PlaylistModel[]>(endpoints.playlists);
     }
 
     addSongToPlaylist(playlistId: string, songId: string) {
-        let path = `${environment.gatewayUrl}/${this.playlistUrl}/${playlistId}/songs`;
+        let path = `${endpoints.playlists}/${playlistId}/songs`;
 
         return this.httpClient.post(path, {
             songId: songId
@@ -55,13 +44,13 @@ export class PlaylistService {
     }
 
     deleteSongFromPlaylist(playlistId: string, songId: string) {
-        let path = `${environment.gatewayUrl}/${this.playlistUrl}/${playlistId}/songs/${songId}`;
+        let path = `${endpoints.playlists}/${playlistId}/songs/${songId}`;
 
         return this.httpClient.delete(path);
     }
 
     getPlaylistWithSongs(playlistId : string): Observable<PlaylistWithSongsModel>  {
-        let path = `${environment.gatewayUrl}/${this.playlistUrl}/${playlistId}/songs`;
+        let path =`${endpoints.playlists}/${playlistId}/songs`;
 
         return this.httpClient.get<PlaylistWithSongsModel>(path);
     }

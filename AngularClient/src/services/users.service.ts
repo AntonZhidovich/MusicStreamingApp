@@ -1,41 +1,39 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { environment } from "../environments/environment";
 import { PageResponse } from "../models/PageResponse";
 import { Observable } from "rxjs";
+import { endpoints } from "../endpoints";
 
 @Injectable({
     providedIn: "root"
 })
 export class UsersService {
-    usersUrl = `${environment.gatewayUrl}/identity/users`;
-
     constructor (private httpClient: HttpClient) {}
 
     getUsers(): Observable<any> {
-        return this.httpClient.get<PageResponse>(this.usersUrl);
+        return this.httpClient.get<PageResponse>(endpoints.users);
     }
 
     getUserRoles(email: string): Observable<string[]> {
-        let path = `${this.usersUrl}/${email}/roles`;
+        let path = `${endpoints.users}/${email}/roles`;
 
         return this.httpClient.get<string[]>(path);
     }
 
     addUserToRole(email: string, roleName: string) {
-        let path = `${this.usersUrl}/${email}/roles/${roleName}`;
+        let path = `${endpoints.users}/${email}/roles/${roleName}`;
 
         return this.httpClient.post(path, {});
     }
 
     removeUserFromRole(email: string, roleName: string) {
-        let path = `${this.usersUrl}/${email}/roles/${roleName}`;
+        let path = `${endpoints.users}/${email}/roles/${roleName}`;
 
         return this.httpClient.delete(path);
     }
 
     deleteUser(email: string) {
-        let path = `${this.usersUrl}/${email}`;
+        let path = `${endpoints.users}/${email}`;
 
         return this.httpClient.delete(path);
     }

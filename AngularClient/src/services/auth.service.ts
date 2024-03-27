@@ -5,6 +5,7 @@ import { environment } from '../environments/environment';
 import { Tokens } from '../models/Tokens';
 import { RegisterModel } from '../models/RegisterModel';
 import { Observable, firstValueFrom, tap } from 'rxjs';
+import { endpoints } from '../endpoints';
 
 @Injectable({
   providedIn: 'root'
@@ -20,9 +21,8 @@ export class AuthService {
   constructor(private http: HttpClient) { }
 
   async login(model: LoginModel) : Promise<boolean> {
-    let path = `${environment.gatewayUrl}/${this.authUrl}/`;
       
-    var tokens = await firstValueFrom(this.http.post<Tokens>(path, model)).catch(() => {});
+    var tokens = await firstValueFrom(this.http.post<Tokens>(endpoints.authorization, model)).catch(() => {});
     
     if (tokens) {
       this.storeTokens(tokens);
@@ -48,8 +48,7 @@ export class AuthService {
   }
 
   register(model: RegisterModel){
-    let path = `${environment.gatewayUrl}/${this.registerUrl}`;
-    return this.http.post(path, model);
+    return this.http.post(endpoints.registration, model);
   }
 
   getAuthorizedUsername() : string {

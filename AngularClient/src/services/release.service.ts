@@ -7,64 +7,52 @@ import { CreateReleaseModel } from "../models/CreateReleaseModel";
 import { ReleaseModel } from "../models/ReleaseModel";
 import { AddSongToReleaseModel } from "../models/AddSongToReleaseModel";
 import { UpdateReleaseModel } from "../models/UpdateRelease";
+import { endpoints } from "../endpoints";
 
 @Injectable()
 export class ReleaseService {
-    
-    releaseUrl = "music/releases";
-
     constructor(private httpClient: HttpClient) {}
 
     getReleases(currentPage: number, pageSize: number) : Observable<PageResponse> {
-        let path = `${environment.gatewayUrl}/${this.releaseUrl}`;
         let params = new HttpParams()
         .set("currentPage", currentPage)
         .set("pageSize", pageSize);
 
-        return this.httpClient.get<PageResponse>(path, {params});
+        return this.httpClient.get<PageResponse>(endpoints.releases, {params});
     }
 
     getReleasesFromAuthor(authorName: string, currentPage: number, pageSize: number) : Observable<PageResponse> {
-        let path = `${environment.gatewayUrl}/${this.releaseUrl}/author/${authorName}`;
         let params = new HttpParams()
             .set("currentPage", currentPage)
             .set("pageSize", pageSize);
         
-        return this.httpClient.get<PageResponse>(path, {params});
+        return this.httpClient.get<PageResponse>(`${endpoints.authorInRelease}/${authorName}`, {params});
     }
 
-    createRelease(release: CreateReleaseModel) {
-        let path = `${environment.gatewayUrl}/${this.releaseUrl}`;
-        
-        return this.httpClient.post(path, release);
+    createRelease(release: CreateReleaseModel) { 
+        return this.httpClient.post(endpoints.releases, release);
     }
 
     updateRelease(id: string, release: UpdateReleaseModel) {
-        let path = `${environment.gatewayUrl}/${this.releaseUrl}/${id}`;
-
-        return this.httpClient.put(path, release);
+        return this.httpClient.put(`${endpoints.releases}/${id}`, release);
     }
 
     deleteRelease(id: string) {
-        let path = `${environment.gatewayUrl}/${this.releaseUrl}/${id}`;
-
-        return this.httpClient.delete(path);
+        return this.httpClient.delete(`${endpoints.releases}/${id}`);
     }
 
     getReleaseDetails(id: string) : Observable<ReleaseModel> {
-        let path = `${environment.gatewayUrl}/${this.releaseUrl}/${id}`;
-
-        return this.httpClient.get<ReleaseModel>(path);
+        return this.httpClient.get<ReleaseModel>(`${endpoints.releases}/${id}`);
     }
 
     addSongToRelease(releaseId: string, song: AddSongToReleaseModel){
-        let path = `${environment.gatewayUrl}/${this.releaseUrl}/${releaseId}/songs`;
+        let path = `${endpoints.releases}/${releaseId}/songs`;
 
         return this.httpClient.post(path, song);
     }
 
     removeSongFromRelease(releaseId: string, songId: string) {
-        let path = `${environment.gatewayUrl}/${this.releaseUrl}/${releaseId}/songs/${songId}`;
+        let path = `${endpoints.releases}/${releaseId}/songs/${songId}`;
 
         return this.httpClient.delete(path);
     }
