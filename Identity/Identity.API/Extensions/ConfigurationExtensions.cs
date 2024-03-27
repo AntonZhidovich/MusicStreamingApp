@@ -161,7 +161,7 @@ namespace Identity.API.Extensions
             return services;
         }
 
-        public static IServiceCollection AddCorsPolicy(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddCorsPolicy(this IServiceCollection services)
         {
             services.AddCors(options =>
             {

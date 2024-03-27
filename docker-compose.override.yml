@@ -109,6 +109,17 @@ services:
       - ../MusicStreamingApp/Certificates:/app/certs/.aspnet/https/:ro
     restart: on-failure
 
+  gateway:
+    depends_on:
+      - identity
+      - musicservice
+      - subscriptionservice
+      - redis
+    user: root
+    volumes:
+      - ../MusicStreamingApp/Certificates:/root/.aspnet/https/:ro
+    restart: on-failure
+
 volumes:
   elastic_data:    
   mssql_data:

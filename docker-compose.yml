@@ -77,3 +77,11 @@ services:
       dockerfile: "SubscriptionService/Dockerfile"
     ports:
       - 8083:7060
+
+  gateway:
+    container_name: gateway
+    build:
+      context: .
+      dockerfile: "ApiGateway/Dockerfile"
+    ports:
+      - 8080:7283
