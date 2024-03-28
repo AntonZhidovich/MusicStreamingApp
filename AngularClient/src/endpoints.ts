@@ -3,6 +3,7 @@ import { environment } from "./environments/environment";
 export const endpoints = {
     authorization: `${environment.gatewayUrl}/identity/authorization`,
     registration: `${environment.gatewayUrl}/identity/users`,
+    refresh: `${environment.gatewayUrl}/identity/authorization/refresh`,
     users: `${environment.gatewayUrl}/identity/users`,
     authors: `${environment.gatewayUrl}/music/authors`,
     authorByUsername: `${environment.gatewayUrl}/music/authors/username`,

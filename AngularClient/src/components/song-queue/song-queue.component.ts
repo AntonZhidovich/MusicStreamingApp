@@ -19,6 +19,7 @@ export class SongQueueComponent {
     height: number = 0;
     width:number = 450;
     playlists: PlaylistModel[] = [];
+    private window!: Window;
     
     songs: SongModel[] = [];
     currentIndex = 0;
@@ -31,6 +32,10 @@ export class SongQueueComponent {
 
     constructor(public playerService: PlayerService,
                 private PlaylistService: PlayerService) {}
+
+    ngOnInit() {
+        this.window = window;
+    }
 
     onSongSelected(index: number) {
         this.playerService.setCurrentSong(index);

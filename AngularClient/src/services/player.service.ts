@@ -89,9 +89,11 @@ export class PlayerService {
     if(this.currentIndex < this.playlist.length - 1) {
       this.currentSong.set(this.playlist[++this.currentIndex]);
     } 
-    else if (this.playbackMode == RepeatPlayback.RepeatAll) {
+    else {
+      if (this.playbackMode == RepeatPlayback.RepeatAll) {
         this.currentIndex = 0;
         this.currentSong.set(this.playlist[this.currentIndex]);
+      }
     }
   }
 

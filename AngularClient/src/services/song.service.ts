@@ -1,4 +1,4 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable, signal } from "@angular/core";
 import { SongModel } from "../models/SongModel";
 import { Observable } from "rxjs";
@@ -13,8 +13,12 @@ export class SongService {
 
     constructor(private httpClient: HttpClient) {}
 
-    getSongs() : Observable<PageResponse>{
-        return this.httpClient.get<PageResponse>(endpoints.songs);
+    getSongs(currentPage = 1, pageSize = 10) : Observable<PageResponse>{
+        let params = new HttpParams()
+        .set("currentPage", currentPage)
+        .set("pageSize", pageSize);
+
+        return this.httpClient.get<PageResponse>(endpoints.songs, { params });
     }
 
     getSources() {    

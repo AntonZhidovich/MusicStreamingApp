@@ -1,5 +1,5 @@
 
-    <ul class="author-list">
+    <ul class="author-list" infinite-scroll (loadElements)="onLoadElements();">
         @for (author of authors; track $index){
             <li class="home-list-item mx-5">
                 <div class="author-details">

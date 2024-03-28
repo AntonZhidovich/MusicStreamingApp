@@ -2,39 +2,53 @@ import { Component } from "@angular/core";
 import { AuthorModel } from "../../models/AuthorModel";
 import { AuthorService } from "../../services/author.service";
 import { DatePipe } from "@angular/common";
+import { InfiniteScrollDirective } from "../../InfiniteScrollDirective";
 
 @Component({
     selector: "authors",
     standalone: true,
     templateUrl: "./authors.component.html",
-    imports: [DatePipe],
+    imports: [InfiniteScrollDirective, DatePipe],
     providers: [AuthorService]
 })
 export class AuthorsComponent {
     
     authors: AuthorModel[] = [];
-    currentPage = 1;
-    pageSize = 10;
-    pagesCount = 1;
-    endOfList = false;
+
+    pageInfo = {
+        currentPage: 0,
+        pageSize: 10,
+        pagesCount: Number.MAX_VALUE
+    }
+    isLoadingPage = false;
 
     constructor(private authorService: AuthorService) {}
     
     ngOnInit() {
-        this.loadAuthors();
+        this.loadNextPage();
     }
 
-    private loadAuthors() {
-        if (this.endOfList) {
-            return;
+    onLoadElements() {
+        if (!this.isLoadingPage){
+            if (this.pageInfo.currentPage < this.pageInfo.pagesCount) {
+                this.loadNextPage();
+            }
         }
+    }
 
-        this.authorService.getAuthors(this.currentPage, this.pageSize)
+    private loadNextPage() {
+        ++this.pageInfo.currentPage;
+        this.isLoadingPage = true;
+        this.authorService.getAuthors(this.pageInfo.currentPage, this.pageInfo.pageSize)
         .subscribe({
             next: (result: any) => {
-                this.pagesCount = result.pagesCount;
-                this.currentPage = result.currentPage;
+                this.pageInfo.pagesCount = result.pagesCount;
                 this.authors = this.authors.concat(result.items);
+                this.isLoadingPage = false;
+            },
+            error: (error) => {
+                console.log(error);
+                this.isLoadingPage = false;
             }
         })
     }

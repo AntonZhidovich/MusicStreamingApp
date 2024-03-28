@@ -4,7 +4,7 @@
     }
 </div>
 
-<ul class="song-list">
+<ul class="song-list" infinite-scroll (loadElements)="onLoadElements();" >
     @for (song of songs; track $index) {
         <li class="song mx-3" style="position: relative;" >
             <div (click)="onSongClick($index);">

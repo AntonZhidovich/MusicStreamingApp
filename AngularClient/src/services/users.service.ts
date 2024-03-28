@@ -1,4 +1,4 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { PageResponse } from "../models/PageResponse";
 import { Observable } from "rxjs";
@@ -10,8 +10,12 @@ import { endpoints } from "../endpoints";
 export class UsersService {
     constructor (private httpClient: HttpClient) {}
 
-    getUsers(): Observable<any> {
-        return this.httpClient.get<PageResponse>(endpoints.users);
+    getUsers(currentPage = 1, pageSize = 10): Observable<any> {
+        let params = new HttpParams()
+        .set("currentPage", currentPage)
+        .set("pageSize", pageSize);
+
+        return this.httpClient.get<PageResponse>(endpoints.users, { params });
     }
 
     getUserRoles(email: string): Observable<string[]> {

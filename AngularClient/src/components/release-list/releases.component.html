@@ -1,4 +1,4 @@
-<ul class="release-list"  style="justify-content: space-evenly;">
+<ul class="release-list"  style="justify-content: space-evenly;" infinite-scroll (loadElements)="onLoadElements();">
     @for (release of releases; track $index) {
         <release-item [release]="release"></release-item>
     }

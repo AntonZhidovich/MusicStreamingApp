@@ -1,11 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { LoginModel } from '../models/LoginModel';
-import { environment } from '../environments/environment';
 import { Tokens } from '../models/Tokens';
 import { RegisterModel } from '../models/RegisterModel';
 import { Observable, firstValueFrom, tap } from 'rxjs';
 import { endpoints } from '../endpoints';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -13,12 +13,11 @@ import { endpoints } from '../endpoints';
 export class AuthService {
 
   public loggedIn = false;
-  private authUrl = "identity/authorization";
-  private registerUrl = "identity/users";
 
   isRefreshingToken = false;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,
+              private router: Router) { }
 
   async login(model: LoginModel) : Promise<boolean> {
       
@@ -66,11 +65,10 @@ export class AuthService {
   useRefreshToken() : Observable<Tokens> {
     let accessToken = this.getAccessToken();
     let refreshToken = this.getRefreshToken();
-    let path = `${environment.gatewayUrl}/${this.authUrl}/refresh`;
     
     let model = new Tokens(accessToken!, refreshToken!);
     this.isRefreshingToken = true;
-    return this.http.post<Tokens>(path, model)
+    return this.http.post<Tokens>(endpoints.refresh, model)
       .pipe(tap(() => this.isRefreshingToken = false));
   }
 
